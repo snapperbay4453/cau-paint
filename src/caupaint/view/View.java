@@ -2,13 +2,15 @@
 package caupaint.view;
 import caupaint.model.*;
 import caupaint.controller.*;
+import caupaint.observer.*;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
-public class View {
+public class View implements LayerObserver{
     
     private Layer layer;
     private Controller controller;
@@ -24,6 +26,8 @@ public class View {
     public View(Controller controller, Layer layer) {
         this.controller = controller;
         this.layer = layer;
+        
+        layer.registerLayerObserver(this);
     }
     
     public void createView() {
@@ -55,20 +59,21 @@ public class View {
     class AddShapeListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             controller.addShape(new Rectangle());
-            frame.repaint();
         }
     }
     class DeleteLastShapeListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             controller.deleteLastShape();
-            frame.repaint();
         }
     }
     class ClearListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             controller.clearLayer();
-            frame.repaint();
         }
+    }
+    
+    public void updateLayer() {
+        frame.repaint();
     }
     
 }
