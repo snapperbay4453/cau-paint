@@ -7,14 +7,20 @@ import javax.swing.*;
 
 public class Layer implements LayerInterface, LayerSubject{
     
-    ArrayList<Shape> layerArrayList;
+    ArrayList<Shape> layerArrayList; // Shape를 저장하는 ArrayList
     
-    ArrayList<LayerObserver> LayerObserverArrayList = new ArrayList<LayerObserver>();
+    ArrayList<LayerObserver> LayerObserverArrayList = new ArrayList<LayerObserver>(); // Layer를 구독하는 옵저버들을 저장하는 ArrayList
     
+    /*
+    ** 생성자
+    */
     public Layer() {
         layerArrayList = new ArrayList<Shape>();
     }
     
+    /*
+    ** Shape 관련 메소드
+    */
     public void addShape(Shape shape) {
         if (!layerArrayList.isEmpty()) {
             Shape lastShape = layerArrayList.get(layerArrayList.size() - 1);
@@ -41,10 +47,16 @@ public class Layer implements LayerInterface, LayerSubject{
         notifyLayerObservers();
     }
     
+    /*
+    ** getter, setter
+    */
     public ArrayList<Shape> getArrayList() {
         return this.layerArrayList;
     }
     
+    /*
+    ** 옵저버 관련 메소드
+    */
     public void registerLayerObserver(LayerObserver o) {
 	LayerObserverArrayList.add(o);
     }

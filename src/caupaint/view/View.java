@@ -22,14 +22,19 @@ public class View implements LayerObserver{
     private JButton deleteLastShapeButton;
     private JButton clearButton;
     
-    
+    /*
+    ** 생성자
+    */
     public View(Controller controller, Layer layer) {
         this.controller = controller;
         this.layer = layer;
         
-        layer.registerLayerObserver(this);
+        layer.registerLayerObserver(this); // LayerObserver를 구현하는 클래스에 옵저버로 등록
     }
     
+    /*
+    ** 윈도우 생성
+    */
     public void createView() {
         frame = new JFrame("View");
         canvas = new Canvas(layer);
@@ -56,6 +61,9 @@ public class View implements LayerObserver{
         frame.setVisible(true);    
     }
     
+    /*
+    ** 리스너 관련 메소드
+    */
     class AddShapeListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             controller.addShape(new Rectangle());
@@ -72,6 +80,9 @@ public class View implements LayerObserver{
         }
     }
     
+   /*
+    ** 옵저버 관련 메소드
+    */
     public void updateLayer() {
         frame.repaint();
     }

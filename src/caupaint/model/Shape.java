@@ -8,6 +8,9 @@ public class Shape {
     private Color color;
     private int degree;
     
+    /*
+    ** 생성자
+    */
     public Shape(Point position, Point size, Color color, int degree) {
         this.position = position;
         this.size = size;
@@ -27,6 +30,9 @@ public class Shape {
         this.degree = 0;
     }
     
+    /*
+    ** getter, setter
+    */
     public int getPositionX() {
         return (int)position.getX();
     }
@@ -65,6 +71,9 @@ public class Shape {
         this.degree = degree;
     }
     
+    /*
+    ** 그래픽 관련 메소드
+    */
     public void draw(Graphics g) {
 
     }
