@@ -77,6 +77,7 @@ public class Canvas extends JPanel {
             //controller.modifyShape(new Point(e.getX(), e.getY()));
             variable.setPointEnd(new Point(e.getX(), e.getY()));
             variable.refreshTempShape();
+            
         }
     }
 

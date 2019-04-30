@@ -11,7 +11,7 @@ public class Variable {
     
     private Point pointStart;
     private Point pointEnd;
-    private Shape tempShape;
+    private Shape tempShape; // Layer에 추가하기 전 임시로 shape를 저장
     
     public Variable(Controller controller) {
         this.controller = controller;
