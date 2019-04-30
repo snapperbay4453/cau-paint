@@ -28,6 +28,7 @@ public class View implements LayerObserver{
     private JButton drawRectangleButton;
     private JButton deleteLastShapeButton;
     private JButton clearButton;
+    private JButton chooseColorButton;
 
     private JToolBar toolBar;
     
@@ -49,7 +50,7 @@ public class View implements LayerObserver{
     public void createView() {
         // 프레임 및 기본 구성요소 생성
         frame = new JFrame("View");
-        canvas = new Canvas(layer, variable, controller);
+        canvas = new Canvas(layer, controller);
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //메뉴바 생성
@@ -70,6 +71,8 @@ public class View implements LayerObserver{
         deleteLastShapeButton.setToolTipText("마지막으로 추가한 도형을 삭제합니다.");
         clearButton = new JButton(new ImageIcon("src/caupaint/source/icon/delete.png"));
         clearButton.setToolTipText("모든 도형을 삭제합니다.");
+        chooseColorButton = new JButton("색상 설정");
+        chooseColorButton.setToolTipText("색상을 설정합니다.");
         
         // 툴바 생성
         toolBar = new JToolBar();
@@ -80,6 +83,8 @@ public class View implements LayerObserver{
         toolBar.addSeparator();
         toolBar.add(deleteLastShapeButton);
         toolBar.add(clearButton);
+        toolBar.addSeparator();
+        toolBar.add(chooseColorButton);
         
         //메뉴를 리스너에 등록함
         exitMenuItem.addActionListener(new MenuBarClickedActionListener());
@@ -89,6 +94,7 @@ public class View implements LayerObserver{
         drawRectangleButton.addActionListener(new ButtonClickedActionListener());
         deleteLastShapeButton.addActionListener(new ButtonClickedActionListener());
         clearButton.addActionListener(new ButtonClickedActionListener());
+        chooseColorButton.addActionListener(new ButtonClickedActionListener());
 
         // 레이아웃 지정
         frame.getContentPane().add(BorderLayout.NORTH, toolBar);
@@ -115,6 +121,7 @@ public class View implements LayerObserver{
             else if (event.getSource() == drawRectangleButton) canvas.activateCanvasMouseAdapter();
             else if (event.getSource() == deleteLastShapeButton) controller.deleteLastShape();
             else if (event.getSource() == clearButton) controller.clearLayer();
+            else if (event.getSource() == chooseColorButton) controller.chooseColor();
         }
     }
 

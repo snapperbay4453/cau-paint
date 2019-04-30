@@ -21,7 +21,7 @@ public class Controller{
     }
     
     /*
-    ** Shape 관련 메소드
+    ** Layer, Shape 관련 메소드
     */
     public void addShape(Shape shape) {
         layer.addShape(shape);
@@ -38,5 +38,31 @@ public class Controller{
     public void clearLayer() {
         layer.clear();
     }
+    
+    /*
+    ** Variable 관련 메소드
+    */
+    public void chooseColor() {
+        variable.chooseColor();
+    }
+    public Shape getTempShape() {
+        return variable.getTempShape();
+    }
+    public void setPointStart(Point point){
+        variable.setPointStart(point);
+    }
+    public void setPointEnd(Point point){
+        variable.setPointEnd(point);
+    }
+    public void makeTempShape(){
+        variable.makeTempShape();
+    }
+    public void refreshTempShape(){
+        variable.refreshTempShape();
+    }
+    public void finalizeTempShape(){
+        variable.finalizeTempShape();
+    }
+    
     
 }

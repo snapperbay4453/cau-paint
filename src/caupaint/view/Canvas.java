@@ -11,33 +11,39 @@ import java.awt.event.*;
 public class Canvas extends JPanel {
     
     private Layer layer;
-    private Variable variable;
     private Controller controller;
     
     private MouseAdapter canvasMouseAdapter;
+    private boolean isCanvasMouseAdapterActivated;
     
     /*
     ** 생성자
     */
-    public Canvas(Layer layer, Variable variable, Controller controller) {
+    public Canvas(Layer layer, Controller controller) {
         this.setBackground(Color.white);
         this.layer = layer;
-        this.variable = variable;
         this.controller = controller;
         
         canvasMouseAdapter = new CanvasMouseAdapter();
+        isCanvasMouseAdapterActivated = false;
     }
     
     /*
     ** 마우스 리스너 활성화/비활성화 메소드
     */
     public void activateCanvasMouseAdapter(){
-        this.addMouseListener(canvasMouseAdapter);
-        this.addMouseMotionListener(canvasMouseAdapter);
+        if (isCanvasMouseAdapterActivated == false) {
+            this.addMouseListener(canvasMouseAdapter);
+            this.addMouseMotionListener(canvasMouseAdapter);
+            isCanvasMouseAdapterActivated = true;
+        }
     }
     public void deactivateCanvasMouseAdapter(){
-        this.removeMouseListener(canvasMouseAdapter);
-        this.removeMouseMotionListener(canvasMouseAdapter);
+        if (isCanvasMouseAdapterActivated == true) {
+            this.removeMouseListener(canvasMouseAdapter);
+            this.removeMouseMotionListener(canvasMouseAdapter);
+            isCanvasMouseAdapterActivated = false;
+        }
     }
     
     
@@ -52,22 +58,22 @@ public class Canvas extends JPanel {
                 layer.getShape(i).draw(g);
             }
         }
-        if (variable.getTempShape() != null) {
-            variable.getTempShape().draw(g);
+        if (controller.getTempShape() != null) {
+            controller.getTempShape().draw(g);
         }
         
     }
         
     class CanvasMouseAdapter extends MouseAdapter{
         public void mousePressed(MouseEvent e) {
-            //controller.addShape(new Point(e.getX(), e.getY()), new Point(0,0));
-            variable.setPointStart(new Point(e.getX(), e.getY()));
-            variable.setPointEnd(new Point(e.getX(), e.getY()));
-            variable.makeTempShape();
+            //controller.addShacanvas.setPointStartpe(new Point(e.getX(), e.getY()), new Point(0,0));
+            controller.setPointStart(new Point(e.getX(), e.getY()));
+            controller.setPointEnd(new Point(e.getX(), e.getY()));
+            controller.makeTempShape();
         }
         public void mouseReleased(MouseEvent e) {
             //controller.modifyShape(new Point(e.getX(), e.getY()));
-            variable.finalizeTempShape();
+            controller.finalizeTempShape();
         }
         public void mouseClicked(MouseEvent e) {}
         public void mouseEntered(MouseEvent e) {}
@@ -75,8 +81,8 @@ public class Canvas extends JPanel {
         public void mouseMoved(MouseEvent e) {}
         public void mouseDragged(MouseEvent e) {
             //controller.modifyShape(new Point(e.getX(), e.getY()));
-            variable.setPointEnd(new Point(e.getX(), e.getY()));
-            variable.refreshTempShape();
+            controller.setPointEnd(new Point(e.getX(), e.getY()));
+            controller.refreshTempShape();
             
         }
     }

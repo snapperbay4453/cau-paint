@@ -4,6 +4,7 @@ import caupaint.controller.*;
 
 import java.awt.*;
 import static java.lang.Math.*;
+import javax.swing.*;
 
 public class Variable {
     
@@ -11,6 +12,7 @@ public class Variable {
     
     private Point pointStart;
     private Point pointEnd;
+    private Color color;
     private Shape tempShape; // Layer에 추가하기 전 임시로 shape를 저장
     
     public Variable(Controller controller) {
@@ -18,12 +20,21 @@ public class Variable {
         
         pointStart = new Point(0,0);
         pointEnd = new Point(0,0);
+        color = new Color(0, 0, 0);
         tempShape = null;
     }
     
+    public void chooseColor() {
+        JColorChooser chooser=new JColorChooser();
+        color = chooser.showDialog(null,"Color",Color.YELLOW);
+    }
+    
+    /*
+    ** tempShape 관련 메소드
+    */
     public void makeTempShape() {
         tempShape = new Rectangle();
-        refreshTempShape();
+        tempShape.setColor(color);
     }
     public void refreshTempShape() {
         tempShape.setPosition(new Point(min((int)pointStart.getX(), (int)pointEnd.getX()), min((int)pointStart.getY(), (int)pointEnd.getY())));
