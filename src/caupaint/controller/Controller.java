@@ -2,12 +2,12 @@
 package caupaint.controller;
 import caupaint.model.*;
 import caupaint.view.*;
-import caupaint.observer.*;
 import java.awt.Point;
 
 public class Controller{
     
     private Layer layer;
+    private Variable variable;
     private View view;
     
     /*
@@ -15,13 +15,17 @@ public class Controller{
     */
     public Controller() {
         layer = new Layer();
-        view = new View(this, layer);
+        variable = new Variable(this);
+        view = new View(layer, variable, this);
         view.createView();
     }
     
     /*
     ** Shape 관련 메소드
     */
+    public void addShape(Shape shape) {
+        layer.addShape(shape);
+    }
     public void addShape(Point position, Point size) {
         layer.addRectangle(position, size);
     }

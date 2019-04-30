@@ -22,6 +22,10 @@ public class Layer implements LayerSubject{
     /*
     ** Shape 관련 메소드
     */
+    public void addShape(Shape shape) {
+        layerArrayList.add(shape);
+        notifyLayerObservers();
+    }
     public void addRectangle(Point position, Point size) {
         layerArrayList.add(new Rectangle(position, size));
         notifyLayerObservers();
@@ -45,6 +49,13 @@ public class Layer implements LayerSubject{
     public void clear() {
         layerArrayList.clear();
         notifyLayerObservers();
+    }
+    
+    /*
+    ** draw 관련 메소드
+    */
+    public void drawShape(Shape shape, Point pointStart, Point pointEnd) {
+        
     }
     
     /*

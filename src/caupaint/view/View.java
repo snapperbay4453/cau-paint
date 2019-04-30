@@ -14,13 +14,13 @@ import javax.swing.*;
 public class View implements LayerObserver{
     
     private Layer layer;
+    private Variable variable;
     private Controller controller;
     
     private JFrame frame;
     private Canvas canvas;
     private JPanel header;
     private JButton idleButton;
-    private JButton addShapeButton;
     private JButton drawRectangleButton;
     private JButton deleteLastShapeButton;
     private JButton clearButton;
@@ -28,9 +28,10 @@ public class View implements LayerObserver{
     /*
     ** 생성자
     */
-    public View(Controller controller, Layer layer) {
-        this.controller = controller;
+    public View(Layer layer, Variable variable, Controller controller) {
         this.layer = layer;
+        this.variable = variable;
+        this.controller = controller;
         
         layer.registerLayerObserver(this); // LayerObserver를 구현하는 클래스에 옵저버로 등록
     }
@@ -40,7 +41,7 @@ public class View implements LayerObserver{
     */
     public void createView() {
         frame = new JFrame("View");
-        canvas = new Canvas(layer, controller);
+        canvas = new Canvas(layer, variable, controller);
         header = new JPanel();
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         

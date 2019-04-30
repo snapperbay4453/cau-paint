@@ -58,8 +58,8 @@ public class Shape {
         return degree;
     }
     
-    public void setPosition(Point position) {
-        this.position.setLocation(position);
+    public void setPosition(Point point) {
+        position.setLocation(point);
     }
     public void setPositionX(int x) {
         position.setLocation(x, this.getPositionY());
@@ -67,8 +67,8 @@ public class Shape {
     public void setPositionY(int y) {
         position.setLocation(this.getPositionX(), y);
     }
-    public void setSize(Point size) {
-        this.size.setLocation(size);
+    public void setSize(Point point) {
+        size.setLocation(point);
     }
     public void setSizeX(int x) {
         size.setLocation(x, this.getPositionY());
