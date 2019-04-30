@@ -52,13 +52,6 @@ public class Layer implements LayerSubject{
     }
     
     /*
-    ** draw 관련 메소드
-    */
-    public void drawShape(Shape shape, Point pointStart, Point pointEnd) {
-        
-    }
-    
-    /*
     ** getter, setter
     */
     public ArrayList<Shape> getArrayList() {

@@ -2,6 +2,7 @@
 package caupaint.view;
 import caupaint.model.*;
 import caupaint.controller.*;
+import caupaint.model.Enum.*;
 import caupaint.observer.*;
 
 import java.awt.BorderLayout;
@@ -26,6 +27,7 @@ public class View implements LayerObserver{
     
     private JButton idleButton;
     private JButton drawRectangleButton;
+    private JButton drawOvalButton;
     private JButton deleteLastShapeButton;
     private JButton clearButton;
     private JButton chooseColorButton;
@@ -67,6 +69,8 @@ public class View implements LayerObserver{
         idleButton.setToolTipText("어떠한 입력에도 반응하지 않고 대기합니다.");
         drawRectangleButton = new JButton(new ImageIcon("src/caupaint/source/icon/rectangle.png"));
         drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");
+        drawOvalButton = new JButton(new ImageIcon("src/caupaint/source/icon/oval.png"));
+        drawOvalButton.setToolTipText("마우스로 드래그하여 타원을 그립니다.");
         deleteLastShapeButton = new JButton(new ImageIcon("src/caupaint/source/icon/undo.png"));
         deleteLastShapeButton.setToolTipText("마지막으로 추가한 도형을 삭제합니다.");
         clearButton = new JButton(new ImageIcon("src/caupaint/source/icon/delete.png"));
@@ -79,7 +83,9 @@ public class View implements LayerObserver{
         
         // 버튼을 툴바에 추가함
         toolBar.add(idleButton);
+        toolBar.addSeparator();
         toolBar.add(drawRectangleButton);
+        toolBar.add(drawOvalButton);
         toolBar.addSeparator();
         toolBar.add(deleteLastShapeButton);
         toolBar.add(clearButton);
@@ -92,6 +98,7 @@ public class View implements LayerObserver{
         // 버튼을 리스너에 등록함
         idleButton.addActionListener(new ButtonClickedActionListener());
         drawRectangleButton.addActionListener(new ButtonClickedActionListener());
+        drawOvalButton.addActionListener(new ButtonClickedActionListener());
         deleteLastShapeButton.addActionListener(new ButtonClickedActionListener());
         clearButton.addActionListener(new ButtonClickedActionListener());
         chooseColorButton.addActionListener(new ButtonClickedActionListener());
@@ -118,7 +125,14 @@ public class View implements LayerObserver{
     class ButtonClickedActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() == idleButton) canvas.deactivateCanvasMouseAdapter();
-            else if (event.getSource() == drawRectangleButton) canvas.activateCanvasMouseAdapter();
+            else if (event.getSource() == drawRectangleButton){
+                variable.setShapeType(ShapeType.RECTANGLE);
+                canvas.activateCanvasMouseAdapter();
+            }
+            else if (event.getSource() == drawOvalButton){
+                variable.setShapeType(ShapeType.OVAL);
+                canvas.activateCanvasMouseAdapter();
+            }
             else if (event.getSource() == deleteLastShapeButton) controller.deleteLastShape();
             else if (event.getSource() == clearButton) controller.clearLayer();
             else if (event.getSource() == chooseColorButton) controller.chooseColor();

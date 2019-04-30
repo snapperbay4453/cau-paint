@@ -66,13 +66,11 @@ public class Canvas extends JPanel {
         
     class CanvasMouseAdapter extends MouseAdapter{
         public void mousePressed(MouseEvent e) {
-            //controller.addShacanvas.setPointStartpe(new Point(e.getX(), e.getY()), new Point(0,0));
             controller.setPointStart(new Point(e.getX(), e.getY()));
             controller.setPointEnd(new Point(e.getX(), e.getY()));
             controller.makeTempShape();
         }
         public void mouseReleased(MouseEvent e) {
-            //controller.modifyShape(new Point(e.getX(), e.getY()));
             controller.finalizeTempShape();
         }
         public void mouseClicked(MouseEvent e) {}
@@ -80,7 +78,6 @@ public class Canvas extends JPanel {
         public void mouseExited(MouseEvent e) {}
         public void mouseMoved(MouseEvent e) {}
         public void mouseDragged(MouseEvent e) {
-            //controller.modifyShape(new Point(e.getX(), e.getY()));
             controller.setPointEnd(new Point(e.getX(), e.getY()));
             controller.refreshTempShape();
             

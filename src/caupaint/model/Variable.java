@@ -1,5 +1,6 @@
 
 package caupaint.model;
+import caupaint.model.Enum.*;
 import caupaint.controller.*;
 
 import java.awt.*;
@@ -10,6 +11,7 @@ public class Variable {
     
     Controller controller;
     
+    private ShapeType shapeType;
     private Point pointStart;
     private Point pointEnd;
     private Color color;
@@ -18,12 +20,16 @@ public class Variable {
     public Variable(Controller controller) {
         this.controller = controller;
         
+        shapeType = ShapeType.RECTANGLE;
         pointStart = new Point(0,0);
         pointEnd = new Point(0,0);
         color = new Color(0, 0, 0);
         tempShape = null;
     }
     
+    /*
+    ** Shape의 속성 관련 메소드
+    */
     public void chooseColor() {
         JColorChooser chooser=new JColorChooser();
         color = chooser.showDialog(null,"Color",Color.YELLOW);
@@ -33,7 +39,14 @@ public class Variable {
     ** tempShape 관련 메소드
     */
     public void makeTempShape() {
-        tempShape = new Rectangle();
+        switch (shapeType){
+            case RECTANGLE:
+                tempShape = new Rectangle();
+                break;
+            case OVAL:
+                tempShape = new Oval();
+                break;
+        }
         tempShape.setColor(color);
     }
     public void refreshTempShape() {
@@ -48,6 +61,9 @@ public class Variable {
     /*
     ** getter, setter
     */
+    public ShapeType getShapeType() {
+        return shapeType;
+    }
     public Point getPointStart() {
         return pointStart;
     }
@@ -56,6 +72,9 @@ public class Variable {
     }
     public Shape getTempShape() {
         return tempShape;
+    }
+    public void setShapeType(ShapeType shapeType) {
+        this.shapeType = shapeType;
     }
     public void setPointStart(Point point) {
         this.pointStart = point;
