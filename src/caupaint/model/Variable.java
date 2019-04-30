@@ -2,12 +2,14 @@
 package caupaint.model;
 import caupaint.model.Enum.*;
 import caupaint.controller.*;
+import caupaint.observer.*;
 
 import java.awt.*;
 import static java.lang.Math.*;
+import java.util.ArrayList;
 import javax.swing.*;
 
-public class Variable {
+public class Variable implements VariableSubject{
     
     Controller controller;
     
@@ -17,6 +19,11 @@ public class Variable {
     private Color color;
     private Shape tempShape; // Layer에 추가하기 전 임시로 shape를 저장
     
+    private ArrayList<VariableObserver> VariableObserverArrayList = new ArrayList<VariableObserver>(); // Variable을 구독하는 옵저버들을 저장하는 ArrayList
+    
+    /*
+    ** 생성자
+    */
     public Variable(Controller controller) {
         this.controller = controller;
         
@@ -33,6 +40,7 @@ public class Variable {
     public void chooseColor() {
         JColorChooser chooser=new JColorChooser();
         color = chooser.showDialog(null,"Color",Color.YELLOW);
+        notifyVariableObservers();
     }
     
     /*
@@ -52,6 +60,7 @@ public class Variable {
     public void refreshTempShape() {
         tempShape.setPosition(new Point(min((int)pointStart.getX(), (int)pointEnd.getX()), min((int)pointStart.getY(), (int)pointEnd.getY())));
         tempShape.setSize(new Point(abs((int)pointStart.getX() - (int)pointEnd.getX()), abs((int)pointStart.getY() - (int)pointEnd.getY())));
+        notifyVariableObservers();
     }
     public void finalizeTempShape() {   
         controller.addShape(tempShape);
@@ -70,17 +79,39 @@ public class Variable {
     public Point getPointEnd() {
         return pointEnd;
     }
+    public Color getColor() {
+        return color;
+    }
     public Shape getTempShape() {
         return tempShape;
     }
     public void setShapeType(ShapeType shapeType) {
         this.shapeType = shapeType;
+        notifyVariableObservers();
     }
     public void setPointStart(Point point) {
         this.pointStart = point;
+        notifyVariableObservers();
     }
     public void setPointEnd(Point point) {
         this.pointEnd = point;
+        notifyVariableObservers();
+    }
+    // setColor()는 chooseColor()로 대체
+    
+    /*
+    ** 옵저버 관련 메소드
+    */
+    public void registerVariableObserver(VariableObserver o) {
+	VariableObserverArrayList.add(o);
+    }
+    public void removeVariableObserver(VariableObserver o) {
+	VariableObserverArrayList.remove(o);
+    }
+    public void notifyVariableObservers() {
+	for (VariableObserver o : VariableObserverArrayList) {
+            o.updateVariable();
+	}
     }
     
 }

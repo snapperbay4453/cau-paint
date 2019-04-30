@@ -8,9 +8,9 @@ import javax.swing.*;
 
 public class Layer implements LayerSubject{
     
-    ArrayList<Shape> layerArrayList; // Shape를 저장하는 ArrayList
+    private ArrayList<Shape> layerArrayList; // Shape를 저장하는 ArrayList
     
-    ArrayList<LayerObserver> LayerObserverArrayList = new ArrayList<LayerObserver>(); // Layer를 구독하는 옵저버들을 저장하는 ArrayList
+    private ArrayList<LayerObserver> LayerObserverArrayList = new ArrayList<LayerObserver>(); // Layer를 구독하는 옵저버들을 저장하는 ArrayList
 
     /*
     ** 생성자

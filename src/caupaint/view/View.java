@@ -12,7 +12,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class View implements LayerObserver{
+public class View implements LayerObserver, VariableObserver{
     
     private Layer layer;
     private Variable variable;
@@ -44,6 +44,7 @@ public class View implements LayerObserver{
         this.controller = controller;
         
         layer.registerLayerObserver(this); // LayerObserver를 구현하는 클래스에 옵저버로 등록
+        variable.registerVariableObserver(this); // VariableObserver를 구현하는 클래스에 옵저버로 등록        
     }
     
     /*
@@ -75,8 +76,9 @@ public class View implements LayerObserver{
         deleteLastShapeButton.setToolTipText("마지막으로 추가한 도형을 삭제합니다.");
         clearButton = new JButton(new ImageIcon("src/caupaint/source/icon/delete.png"));
         clearButton.setToolTipText("모든 도형을 삭제합니다.");
-        chooseColorButton = new JButton("색상 설정");
+        chooseColorButton = new JButton(new ImageIcon("src/caupaint/source/icon/bgcolor.png"));
         chooseColorButton.setToolTipText("색상을 설정합니다.");
+        chooseColorButton.setBackground(variable.getColor());
         
         // 툴바 생성
         toolBar = new JToolBar();
@@ -90,6 +92,7 @@ public class View implements LayerObserver{
         toolBar.add(deleteLastShapeButton);
         toolBar.add(clearButton);
         toolBar.addSeparator();
+        toolBar.add(new JLabel("색상 "));
         toolBar.add(chooseColorButton);
         
         //메뉴를 리스너에 등록함
@@ -143,6 +146,10 @@ public class View implements LayerObserver{
     ** 옵저버 관련 메소드
     */
     public void updateLayer() {
+        frame.repaint();
+    }
+    public void updateVariable() {
+        chooseColorButton.setBackground(variable.getColor());
         frame.repaint();
     }
     
