@@ -33,16 +33,22 @@ public class Shape {
     /*
     ** getter, setter
     */
-    public int getPositionX() {
+    public Point getPosition() {
+        return position;
+    }
+    public int getPositionX() { // int 반환 함수로 남겨둠
         return (int)position.getX();
     }
-    public int getPositionY() {
+    public int getPositionY() { // int 반환 함수로 남겨둠
         return (int)position.getY();
     }
-    public int getSizeX() {
+    public Point getSize() {
+        return size;
+    }
+    public int getSizeX() { // int 반환 함수로 남겨둠
         return (int)size.getX();
     }
-    public int getSizeY() {
+    public int getSizeY() { // int 반환 함수로 남겨둠
         return (int)size.getY();
     }
     public Color getColor() {
@@ -52,11 +58,17 @@ public class Shape {
         return degree;
     }
     
+    public void setPosition(Point position) {
+        this.position.setLocation(position);
+    }
     public void setPositionX(int x) {
         position.setLocation(x, this.getPositionY());
     }
     public void setPositionY(int y) {
         position.setLocation(this.getPositionX(), y);
+    }
+    public void setSize(Point size) {
+        this.size.setLocation(size);
     }
     public void setSizeX(int x) {
         size.setLocation(x, this.getPositionY());

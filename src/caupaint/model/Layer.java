@@ -1,16 +1,17 @@
 
 package caupaint.model;
 import caupaint.observer.*;
+import java.awt.Point;
 
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class Layer implements LayerInterface, LayerSubject{
+public class Layer implements LayerSubject{
     
     ArrayList<Shape> layerArrayList; // Shape를 저장하는 ArrayList
     
     ArrayList<LayerObserver> LayerObserverArrayList = new ArrayList<LayerObserver>(); // Layer를 구독하는 옵저버들을 저장하는 ArrayList
-    
+
     /*
     ** 생성자
     */
@@ -21,14 +22,13 @@ public class Layer implements LayerInterface, LayerSubject{
     /*
     ** Shape 관련 메소드
     */
-    public void addShape(Shape shape) {
-        if (!layerArrayList.isEmpty()) {
-            Shape lastShape = layerArrayList.get(layerArrayList.size() - 1);
-            shape.setPositionX(lastShape.getPositionX() + 50);
-            shape.setPositionY(lastShape.getPositionY() + 50);
-        }
-        
-        layerArrayList.add(shape);
+    public void addRectangle(Point position, Point size) {
+        layerArrayList.add(new Rectangle(position, size));
+        notifyLayerObservers();
+    }
+    public void modifyShapeSizeAbsolute(Point point) {
+        Shape lastShape = layerArrayList.get(layerArrayList.size() - 1);
+        lastShape.setSize(new Point((int)point.getX() - lastShape.getPositionX(), (int)point.getY() - lastShape.getPositionY()));
         notifyLayerObservers();
     }
     public void deleteShape(int index) {
@@ -52,6 +52,17 @@ public class Layer implements LayerInterface, LayerSubject{
     */
     public ArrayList<Shape> getArrayList() {
         return this.layerArrayList;
+    }
+    public Shape getShape(int index) {
+        return layerArrayList.get(index);
+    }
+    public void setArrayList(ArrayList<Shape> layerArrayList) {
+        this.layerArrayList = layerArrayList;
+        notifyLayerObservers();
+    }
+    public void setShape(int index, Shape shape) {
+       layerArrayList.set(index, shape);
+       notifyLayerObservers();
     }
     
     /*
