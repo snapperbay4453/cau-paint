@@ -25,7 +25,7 @@ public class Shape {
     }
     public Shape() {
         this.position = new Point(0, 0);
-        this.size =  new Point(100, 100);
+        this.size =  new Point(0, 0);
         this.color = new Color(0, 0, 0);
         this.degree = 0;
     }

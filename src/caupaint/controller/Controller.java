@@ -3,6 +3,7 @@ package caupaint.controller;
 import caupaint.model.*;
 import caupaint.view.*;
 import java.awt.Point;
+import java.util.Vector;
 
 public class Controller{
     
@@ -37,6 +38,9 @@ public class Controller{
     }
     public void clearLayer() {
         layer.clear();
+    }
+    public Vector<Shape> getLayerArrayListToVector(){
+        return layer.getVector();
     }
     
     /*

@@ -4,6 +4,7 @@ import caupaint.observer.*;
 import java.awt.Point;
 
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.*;
 
 public class Layer implements LayerSubject{
@@ -56,6 +57,13 @@ public class Layer implements LayerSubject{
     */
     public ArrayList<Shape> getArrayList() {
         return this.layerArrayList;
+    }
+    public Vector<Shape> getVector() {  // ArrayList를 Vector 형식으로 반환하는 메소드
+        Vector<Shape> layerVector = new Vector<Shape>();
+        for (Shape shape : layerArrayList) {
+            layerVector.add(shape);
+        }
+        return layerVector;
     }
     public Shape getShape(int index) {
         return layerArrayList.get(index);

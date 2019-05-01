@@ -46,7 +46,6 @@ public class Canvas extends JPanel {
         }
     }
     
-    
     /*
     ** 그래픽 관련 메소드
     */

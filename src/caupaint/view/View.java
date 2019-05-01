@@ -6,10 +6,7 @@ import caupaint.model.Enum.*;
 import caupaint.observer.*;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import javax.swing.*;
 
 public class View implements LayerObserver, VariableObserver{
@@ -20,6 +17,7 @@ public class View implements LayerObserver, VariableObserver{
     
     private JFrame frame;
     private Canvas canvas;
+    private Sidebar sidebar;
     
     private JMenuBar menuBar;
     private JMenu fileMenu;
@@ -33,7 +31,6 @@ public class View implements LayerObserver, VariableObserver{
     private JButton chooseColorButton;
 
     private JToolBar toolBar;
-    
     
     /*
     ** 생성자
@@ -54,6 +51,7 @@ public class View implements LayerObserver, VariableObserver{
         // 프레임 및 기본 구성요소 생성
         frame = new JFrame("View");
         canvas = new Canvas(layer, controller);
+        sidebar = new Sidebar(layer, controller);
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //메뉴바 생성
@@ -95,7 +93,7 @@ public class View implements LayerObserver, VariableObserver{
         toolBar.add(new JLabel("색상 "));
         toolBar.add(chooseColorButton);
         
-        //메뉴를 리스너에 등록함
+        // 메뉴를 리스너에 등록함
         exitMenuItem.addActionListener(new MenuBarClickedActionListener());
         
         // 버튼을 리스너에 등록함
@@ -105,14 +103,15 @@ public class View implements LayerObserver, VariableObserver{
         deleteLastShapeButton.addActionListener(new ButtonClickedActionListener());
         clearButton.addActionListener(new ButtonClickedActionListener());
         chooseColorButton.addActionListener(new ButtonClickedActionListener());
-
+        
         // 레이아웃 지정
         frame.getContentPane().add(BorderLayout.NORTH, toolBar);
+        frame.getContentPane().add(BorderLayout.EAST, sidebar);
         frame.getContentPane().add(BorderLayout.CENTER, canvas);
         
         // 프레임 설정
         frame.setTitle("CauPaint");
-        frame.setSize(600,600);
+        frame.setSize(1280,720);
         frame.setJMenuBar(menuBar);
         frame.setVisible(true);    
     }
@@ -146,6 +145,7 @@ public class View implements LayerObserver, VariableObserver{
     ** 옵저버 관련 메소드
     */
     public void updateLayer() {
+        sidebar.refreshLayerListData();
         frame.repaint();
     }
     public void updateVariable() {
