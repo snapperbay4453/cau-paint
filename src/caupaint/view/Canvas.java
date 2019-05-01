@@ -25,7 +25,8 @@ public class Canvas extends JPanel {
         this.controller = controller;
         
         canvasMouseAdapter = new CanvasMouseAdapter();
-        isCanvasMouseAdapterActivated = false;
+        //isCanvasMouseAdapterActivated = false;
+        activateCanvasMouseAdapter();
     }
     
     /*

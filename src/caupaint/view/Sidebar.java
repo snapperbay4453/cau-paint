@@ -58,7 +58,7 @@ public class Sidebar extends JPanel {
     */
     class LayerListSelectionListener implements ListSelectionListener{
         public void valueChanged(ListSelectionEvent e){
-            
+            controller.setLastSelectedIndex(layerList.getSelectedIndex());
         }
     }
 }

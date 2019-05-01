@@ -17,7 +17,9 @@ public class Variable implements VariableSubject{
     private ShapeType shapeType;
     private Point pointStart;
     private Point pointEnd;
+    private Point pointChange;
     private Color color;
+    private int lastSelectedIndex;
     private Shape tempShape; // Layer에 추가하기 전 임시로 shape를 저장
     
     private ArrayList<VariableObserver> VariableObserverArrayList = new ArrayList<VariableObserver>(); // Variable을 구독하는 옵저버들을 저장하는 ArrayList
@@ -32,7 +34,9 @@ public class Variable implements VariableSubject{
         shapeType = ShapeType.RECTANGLE;
         pointStart = new Point(0,0);
         pointEnd = new Point(0,0);
+        pointChange = new Point(0,0);
         color = new Color(0, 0, 0);
+        lastSelectedIndex = -1;
         tempShape = null;
     }
     
@@ -87,6 +91,9 @@ public class Variable implements VariableSubject{
     public Color getColor() {
         return color;
     }
+    public int getLastSelectedIndex() {
+        return lastSelectedIndex;
+    }
     public Shape getTempShape() {
         return tempShape;
     }
@@ -107,6 +114,9 @@ public class Variable implements VariableSubject{
         notifyVariableObservers();
     }
     // setColor()는 chooseColor()로 대체
+    public void setLastSelectedIndex(int index) {
+        if (index != -1) lastSelectedIndex = index; // 선택 해제된 경우를 배제함
+    }
     
     /*
     ** 옵저버 관련 메소드

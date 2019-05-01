@@ -10,6 +10,7 @@ import javax.swing.*;
 public class Layer implements LayerSubject{
     
     private ArrayList<Shape> layerArrayList; // Shape를 저장하는 ArrayList
+    private Point recentMousePosition;
     
     private ArrayList<LayerObserver> LayerObserverArrayList = new ArrayList<LayerObserver>(); // Layer를 구독하는 옵저버들을 저장하는 ArrayList
 
@@ -18,6 +19,7 @@ public class Layer implements LayerSubject{
     */
     public Layer() {
         layerArrayList = new ArrayList<Shape>();
+        recentMousePosition = new Point(0,0);
     }
     
     /*
@@ -27,18 +29,24 @@ public class Layer implements LayerSubject{
         layerArrayList.add(shape);
         notifyLayerObservers();
     }
-    public void addRectangle(Point position, Point size) {
-        layerArrayList.add(new Rectangle(position, size));
-        notifyLayerObservers();
-    }
-    public void modifyShapeSizeAbsolute(Point point) {
-        Shape lastShape = layerArrayList.get(layerArrayList.size() - 1);
-        lastShape.setSize(new Point((int)point.getX() - lastShape.getPositionX(), (int)point.getY() - lastShape.getPositionY()));
-        notifyLayerObservers();
+    public void moveShape(int index, Point currentMousePosition) throws IndexOutOfBoundsException{
+        try {
+            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
+            layerArrayList.get(index).setPositionX(layerArrayList.get(index).getPositionX() + ((int)currentMousePosition.getX() - (int)recentMousePosition.getX()));
+            layerArrayList.get(index).setPositionY(layerArrayList.get(index).getPositionY() + ((int)currentMousePosition.getY() - (int)recentMousePosition.getY()));
+            recentMousePosition = currentMousePosition;
+            notifyLayerObservers();
+        } catch (IndexOutOfBoundsException exp) {
+            JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
     }
     public void deleteShape(int index) throws ArrayIndexOutOfBoundsException {
         try {
-            if (index == -1) throw new ArrayIndexOutOfBoundsException(); // 도형이 없을 경우 예외 호출
+            if (layerArrayList.size() == 0){ // 삭제할 도형이 없을 경우 예외 호출
+                JOptionPane.showMessageDialog(null, "삭제할 도형이 없습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (index == -1) throw new ArrayIndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
             if (JOptionPane.showConfirmDialog(null, "현재 도형을 삭제합니다.", "도형 삭제", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                 layerArrayList.remove(index);
                 notifyLayerObservers();
@@ -47,12 +55,15 @@ public class Layer implements LayerSubject{
             JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void deleteLastShape() {
-        this.deleteShape(layerArrayList.size() - 1);
-    }
     public void clear() {
-        layerArrayList.clear();
-        notifyLayerObservers();
+        if (layerArrayList.size() == 0){ // 삭제할 도형이 없을 경우 예외 호출
+            JOptionPane.showMessageDialog(null, "삭제할 도형이 없습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (JOptionPane.showConfirmDialog(null, "모든 도형을 삭제합니다.", "모든 도형 삭제", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+            layerArrayList.clear();
+            notifyLayerObservers();
+        }
     }
     
     /*
@@ -78,6 +89,9 @@ public class Layer implements LayerSubject{
     public void setShape(int index, Shape shape) {
        layerArrayList.set(index, shape);
        notifyLayerObservers();
+    }
+    public void setRecentMousePosition(Point point) {
+        recentMousePosition = point;
     }
     
     /*

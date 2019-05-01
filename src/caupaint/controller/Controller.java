@@ -27,11 +27,8 @@ public class Controller{
     public void addShape(Shape shape) {
         layer.addShape(shape);
     }
-    public void addShape(Point position, Point size) {
-        layer.addRectangle(position, size);
-    }
-    public void modifyShape(Point position) {
-        layer.modifyShapeSizeAbsolute(position);
+    public void moveShape(int index, Point point) {
+        layer.moveShape(index, point);
     }
     public void deleteShape(int index) {
         layer.deleteShape(index);
@@ -39,7 +36,7 @@ public class Controller{
     public void clearLayer() {
         layer.clear();
     }
-    public Vector<Shape> getLayerArrayListToVector(){
+    public Vector<Shape> getLayerArrayListToVector(){ // 사이드바에 Layer의 정보를 표시하기 위해 ArrayList를 Vector로 바꿔 반환하는 함수
         return layer.getVector();
     }
     
@@ -58,6 +55,10 @@ public class Controller{
     public void setPointEnd(Point point){
         variable.setPointEnd(point);
     }
+    public void setLastSelectedIndex(int index) {
+        variable.setLastSelectedIndex(index);
+    }
+    
     public void makeTempShape(){
         variable.makeTempShape();
     }
@@ -81,6 +82,7 @@ public class Controller{
                 makeTempShape();
                 break;
             case MOVE:
+                layer.setRecentMousePosition(mousePosition);
                 break;
             default:
                 break;
@@ -94,6 +96,7 @@ public class Controller{
                 finalizeTempShape();
                 break;
             case MOVE:
+                layer.setRecentMousePosition(mousePosition);
                 break;
             default:
                 break;
@@ -108,6 +111,7 @@ public class Controller{
                 refreshTempShape();
                 break;
             case MOVE:
+                moveShape(variable.getLastSelectedIndex(), mousePosition);
                 break;
             default:
                 break;

@@ -91,7 +91,7 @@ public class View implements LayerObserver, VariableObserver{
         toolBar.add(idleButton);
         toolBar.add(drawRectangleButton);
         toolBar.add(drawOvalButton);
-        //toolBar.add(moveShapeButton);
+        toolBar.add(moveShapeButton);
         //toolBar.add(resizeShapeButton);
         toolBar.addSeparator();
         toolBar.add(deleteShapeButton);
@@ -138,17 +138,17 @@ public class View implements LayerObserver, VariableObserver{
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() == idleButton){
                 variable.setFunctionType(FunctionType.IDLE);
-                canvas.deactivateCanvasMouseAdapter();
+                //canvas.deactivateCanvasMouseAdapter();
             }
             else if (event.getSource() == drawRectangleButton){
                 variable.setFunctionType(FunctionType.DRAW);
                 variable.setShapeType(ShapeType.RECTANGLE);
-                canvas.activateCanvasMouseAdapter();
+                //canvas.activateCanvasMouseAdapter();
             }
             else if (event.getSource() == drawOvalButton){
                 variable.setFunctionType(FunctionType.DRAW);
                 variable.setShapeType(ShapeType.OVAL);
-                canvas.activateCanvasMouseAdapter();
+                //canvas.activateCanvasMouseAdapter();
             }
             else if (event.getSource() == moveShapeButton){
                 variable.setFunctionType(FunctionType.MOVE);
