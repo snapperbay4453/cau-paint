@@ -4,6 +4,8 @@ import java.awt.*;
 
 public class Oval extends Shape{
    
+    static final String iconName = "oval";
+    
     public Oval(Point position, Point size, Color color, int degree) {
         super(position, size, color, degree);
     }
@@ -12,6 +14,10 @@ public class Oval extends Shape{
     }
     public Oval() {
         super();
+    }
+    
+    public String getIconName() {
+        return "oval";
     }
     
     /*

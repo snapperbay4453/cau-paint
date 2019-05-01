@@ -64,7 +64,7 @@ public class View implements LayerObserver, VariableObserver{
         menuBar.add(fileMenu);
         
         // 버튼 생성
-        idleButton = new JButton(new ImageIcon("src/caupaint/source/icon/cursor.png"));
+        idleButton = new JButton(new ImageIcon("src/caupaint/source/icon/cursor.png"));   
         idleButton.setToolTipText("어떠한 입력에도 반응하지 않고 대기합니다.");
         drawRectangleButton = new JButton(new ImageIcon("src/caupaint/source/icon/rectangle.png"));
         drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");

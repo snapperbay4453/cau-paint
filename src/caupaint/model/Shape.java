@@ -8,6 +8,8 @@ public class Shape {
     private Color color;
     private int degree;
     
+    private static String iconName = "shape";
+    
     /*
     ** 생성자
     */
@@ -28,6 +30,10 @@ public class Shape {
         this.size =  new Point(0, 0);
         this.color = new Color(0, 0, 0);
         this.degree = 0;
+    }
+    
+    public String getIconName() {
+        return "shape";
     }
     
     /*
@@ -57,7 +63,7 @@ public class Shape {
     public int getDegree() {
         return degree;
     }
-    
+
     public void setPosition(Point point) {
         position.setLocation(point);
     }

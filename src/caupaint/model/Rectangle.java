@@ -3,7 +3,7 @@ package caupaint.model;
 import java.awt.*;
 
 public class Rectangle extends Shape{
-   
+    
     public Rectangle(Point position, Point size, Color color, int degree) {
         super(position, size, color, degree);
     }
@@ -12,6 +12,10 @@ public class Rectangle extends Shape{
     }
     public Rectangle() {
         super();
+    }
+    
+    public String getIconName() {
+        return "rectangle";
     }
     
     /*

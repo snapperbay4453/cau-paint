@@ -1,7 +1,9 @@
 package caupaint.view;
 import caupaint.model.*;
 import caupaint.controller.*;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.ScrollPane;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -11,7 +13,9 @@ public class Sidebar extends JPanel {
     private Layer layer;
     private Controller controller;
     
-    private JList layerList;
+    private JLabel layerListLabel;
+    private ScrollPane scrollableLayerListPane;
+    private JList<Shape> layerList;
     
     private LayerListSelectionListener layerListSelectionListener;
 
@@ -22,10 +26,20 @@ public class Sidebar extends JPanel {
         this.layer = layer;
         this.controller = controller;
         
+        layerListLabel = new JLabel();
+        scrollableLayerListPane = new ScrollPane();
         layerList = new JList();
-        layerList.setListData(controller.getLayerArrayListToVector());
-        this.add(layerList);
-        this.setPreferredSize(new Dimension(240,500));
+        
+        layerListLabel.setText("현재 도형");
+        
+        scrollableLayerListPane.setPreferredSize(new Dimension(200,550));
+        refreshLayerListData(); // layerList에 Vector 형식 데이터 입력
+        layerList.setCellRenderer(new LayerListRenderer());
+        
+        this.add(layerListLabel, BorderLayout.NORTH);
+        scrollableLayerListPane.add(layerList, BorderLayout.CENTER);
+        this.add(scrollableLayerListPane);
+        this.setPreferredSize(new Dimension(240,550));
         
         layerListSelectionListener = new LayerListSelectionListener();
         layerList.addListSelectionListener(layerListSelectionListener);
@@ -35,7 +49,8 @@ public class Sidebar extends JPanel {
         return layerList.getSelectedIndex();
     }
     public void refreshLayerListData() {
-        layerList.setListData(layer.getVector());
+        layerList.setListData(controller.getLayerArrayListToVector());
+        layerListLabel.setText("현재 도형 (" + layer.getVector().size() + "개)");
     }
     
     /*
