@@ -58,7 +58,7 @@ public class Sidebar extends JPanel {
     */
     class LayerListSelectionListener implements ListSelectionListener{
         public void valueChanged(ListSelectionEvent e){
-            if (layerList.getSelectedIndex() != -1) JOptionPane.showMessageDialog(null, "선택된 Shape : " + layerList.getSelectedIndex(), "정보", JOptionPane.INFORMATION_MESSAGE);
+            
         }
     }
 }

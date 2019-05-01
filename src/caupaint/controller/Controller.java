@@ -33,8 +33,8 @@ public class Controller{
     public void modifyShape(Point position) {
         layer.modifyShapeSizeAbsolute(position);
     }
-    public void deleteLastShape() {
-        layer.deleteLastShape();
+    public void deleteShape(int index) {
+        layer.deleteShape(index);
     }
     public void clearLayer() {
         layer.clear();
@@ -68,5 +68,50 @@ public class Controller{
         variable.finalizeTempShape();
     }
     
+    /*
+    ** Canvas 관련 메소드
+    */
+    public void CanvasMousePressed(Point mousePosition) {
+        switch(variable.getFunctionType()) {
+            case IDLE:
+                break;
+            case DRAW:
+                setPointStart(mousePosition);
+                setPointEnd(mousePosition);
+                makeTempShape();
+                break;
+            case MOVE:
+                break;
+            default:
+                break;
+        }
+    }
+    public void CanvasMouseReleased(Point mousePosition) {
+        switch(variable.getFunctionType()) {
+            case IDLE:
+                break;
+            case DRAW:
+                finalizeTempShape();
+                break;
+            case MOVE:
+                break;
+            default:
+                break;
+        }
+    }
+    public void CanvasMouseDragged(Point mousePosition) {
+        switch(variable.getFunctionType()) {
+            case IDLE:
+                break;
+            case DRAW:
+                setPointEnd(mousePosition);
+                refreshTempShape();
+                break;
+            case MOVE:
+                break;
+            default:
+                break;
+        }
+    }
     
 }

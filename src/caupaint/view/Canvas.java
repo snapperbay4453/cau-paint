@@ -65,21 +65,17 @@ public class Canvas extends JPanel {
         
     class CanvasMouseAdapter extends MouseAdapter{
         public void mousePressed(MouseEvent e) {
-            controller.setPointStart(new Point(e.getX(), e.getY()));
-            controller.setPointEnd(new Point(e.getX(), e.getY()));
-            controller.makeTempShape();
+            controller.CanvasMousePressed(new Point(e.getX(), e.getY()));
         }
         public void mouseReleased(MouseEvent e) {
-            controller.finalizeTempShape();
+            controller.CanvasMouseReleased(new Point(e.getX(), e.getY()));
         }
         public void mouseClicked(MouseEvent e) {}
         public void mouseEntered(MouseEvent e) {}
         public void mouseExited(MouseEvent e) {}
         public void mouseMoved(MouseEvent e) {}
         public void mouseDragged(MouseEvent e) {
-            controller.setPointEnd(new Point(e.getX(), e.getY()));
-            controller.refreshTempShape();
-            
+            controller.CanvasMouseDragged(new Point(e.getX(), e.getY()));
         }
     }
 

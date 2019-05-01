@@ -26,7 +26,9 @@ public class View implements LayerObserver, VariableObserver{
     private JButton idleButton;
     private JButton drawRectangleButton;
     private JButton drawOvalButton;
-    private JButton deleteLastShapeButton;
+    private JButton moveShapeButton;
+    private JButton resizeShapeButton;
+    private JButton deleteShapeButton;
     private JButton clearButton;
     private JButton chooseColorButton;
 
@@ -70,9 +72,13 @@ public class View implements LayerObserver, VariableObserver{
         drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");
         drawOvalButton = new JButton(new ImageIcon("src/caupaint/source/icon/oval.png"));
         drawOvalButton.setToolTipText("마우스로 드래그하여 타원을 그립니다.");
-        deleteLastShapeButton = new JButton(new ImageIcon("src/caupaint/source/icon/undo.png"));
-        deleteLastShapeButton.setToolTipText("마지막으로 추가한 도형을 삭제합니다.");
-        clearButton = new JButton(new ImageIcon("src/caupaint/source/icon/delete.png"));
+        moveShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/move.png"));
+        moveShapeButton.setToolTipText("선택한 도형을 이동합니다.");
+        resizeShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/resize.png"));
+        resizeShapeButton.setToolTipText("선택한 도형의 크기를 변경합니다.");
+        deleteShapeButton = new JButton(new ImageIcon("src/caupaint/source/icon/delete.png"));
+        deleteShapeButton.setToolTipText("선택한 도형을 삭제합니다.");
+        clearButton = new JButton(new ImageIcon("src/caupaint/source/icon/clear.png"));
         clearButton.setToolTipText("모든 도형을 삭제합니다.");
         chooseColorButton = new JButton(new ImageIcon("src/caupaint/source/icon/bgcolor.png"));
         chooseColorButton.setToolTipText("색상을 설정합니다.");
@@ -83,11 +89,13 @@ public class View implements LayerObserver, VariableObserver{
         
         // 버튼을 툴바에 추가함
         toolBar.add(idleButton);
-        toolBar.addSeparator();
         toolBar.add(drawRectangleButton);
         toolBar.add(drawOvalButton);
+        //toolBar.add(moveShapeButton);
+        //toolBar.add(resizeShapeButton);
         toolBar.addSeparator();
-        toolBar.add(deleteLastShapeButton);
+        toolBar.add(deleteShapeButton);
+        toolBar.addSeparator();
         toolBar.add(clearButton);
         toolBar.addSeparator();
         toolBar.add(new JLabel("색상 "));
@@ -100,7 +108,9 @@ public class View implements LayerObserver, VariableObserver{
         idleButton.addActionListener(new ButtonClickedActionListener());
         drawRectangleButton.addActionListener(new ButtonClickedActionListener());
         drawOvalButton.addActionListener(new ButtonClickedActionListener());
-        deleteLastShapeButton.addActionListener(new ButtonClickedActionListener());
+        moveShapeButton.addActionListener(new ButtonClickedActionListener());
+        resizeShapeButton.addActionListener(new ButtonClickedActionListener());
+        deleteShapeButton.addActionListener(new ButtonClickedActionListener());
         clearButton.addActionListener(new ButtonClickedActionListener());
         chooseColorButton.addActionListener(new ButtonClickedActionListener());
         
@@ -126,16 +136,27 @@ public class View implements LayerObserver, VariableObserver{
     }
     class ButtonClickedActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            if (event.getSource() == idleButton) canvas.deactivateCanvasMouseAdapter();
+            if (event.getSource() == idleButton){
+                variable.setFunctionType(FunctionType.IDLE);
+                canvas.deactivateCanvasMouseAdapter();
+            }
             else if (event.getSource() == drawRectangleButton){
+                variable.setFunctionType(FunctionType.DRAW);
                 variable.setShapeType(ShapeType.RECTANGLE);
                 canvas.activateCanvasMouseAdapter();
             }
             else if (event.getSource() == drawOvalButton){
+                variable.setFunctionType(FunctionType.DRAW);
                 variable.setShapeType(ShapeType.OVAL);
                 canvas.activateCanvasMouseAdapter();
             }
-            else if (event.getSource() == deleteLastShapeButton) controller.deleteLastShape();
+            else if (event.getSource() == moveShapeButton){
+                variable.setFunctionType(FunctionType.MOVE);
+            }
+            else if (event.getSource() == resizeShapeButton){
+                variable.setFunctionType(FunctionType.RESIZE);
+            }
+            else if (event.getSource() == deleteShapeButton) controller.deleteShape(sidebar.getLayerListSelectedIndex());
             else if (event.getSource() == clearButton) controller.clearLayer();
             else if (event.getSource() == chooseColorButton) controller.chooseColor();
         }

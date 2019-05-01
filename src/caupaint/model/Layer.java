@@ -36,12 +36,15 @@ public class Layer implements LayerSubject{
         lastShape.setSize(new Point((int)point.getX() - lastShape.getPositionX(), (int)point.getY() - lastShape.getPositionY()));
         notifyLayerObservers();
     }
-    public void deleteShape(int index) {
+    public void deleteShape(int index) throws ArrayIndexOutOfBoundsException {
         try {
-            layerArrayList.remove(index);
-            notifyLayerObservers();
+            if (index == -1) throw new ArrayIndexOutOfBoundsException(); // 도형이 없을 경우 예외 호출
+            if (JOptionPane.showConfirmDialog(null, "현재 도형을 삭제합니다.", "도형 삭제", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                layerArrayList.remove(index);
+                notifyLayerObservers();
+            }
         } catch (ArrayIndexOutOfBoundsException exp) {
-            JOptionPane.showMessageDialog(null, "삭제할 사각형이 없습니다", "오류!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
     public void deleteLastShape() {

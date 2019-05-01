@@ -13,6 +13,7 @@ public class Variable implements VariableSubject{
     
     Controller controller;
     
+    private FunctionType functionType;
     private ShapeType shapeType;
     private Point pointStart;
     private Point pointEnd;
@@ -27,6 +28,7 @@ public class Variable implements VariableSubject{
     public Variable(Controller controller) {
         this.controller = controller;
         
+        functionType = FunctionType.IDLE;
         shapeType = ShapeType.RECTANGLE;
         pointStart = new Point(0,0);
         pointEnd = new Point(0,0);
@@ -70,6 +72,9 @@ public class Variable implements VariableSubject{
     /*
     ** getter, setter
     */
+    public FunctionType getFunctionType() {
+        return functionType;
+    }
     public ShapeType getShapeType() {
         return shapeType;
     }
@@ -84,6 +89,10 @@ public class Variable implements VariableSubject{
     }
     public Shape getTempShape() {
         return tempShape;
+    }
+    public void setFunctionType(FunctionType functionType) {
+        this.functionType = functionType;
+        notifyVariableObservers();
     }
     public void setShapeType(ShapeType shapeType) {
         this.shapeType = shapeType;
