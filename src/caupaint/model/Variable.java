@@ -20,7 +20,7 @@ public class Variable implements VariableSubject{
     private Point pointChange;
     private Color color;
     private int lastSelectedLayerIndex;
-    private ShapeLayer tempShapeLayer; // Layer에 추가하기 전 임시로 shape를 저장
+    // private ShapeLayer tempShapeLayer; // Layer에 추가하기 전 임시로 shape를 저장
     
     private ArrayList<VariableObserver> VariableObserverArrayList = new ArrayList<VariableObserver>(); // Variable을 구독하는 옵저버들을 저장하는 ArrayList
     
@@ -37,7 +37,7 @@ public class Variable implements VariableSubject{
         pointChange = new Point(0,0);
         color = new Color(0, 0, 0);
         lastSelectedLayerIndex = -1;
-        tempShapeLayer = null;
+        // tempShapeLayer = null;
     }
     
     /*
@@ -52,6 +52,7 @@ public class Variable implements VariableSubject{
     /*
     ** tempShape 관련 메소드
     */
+    /*
     public void makeTempShapeLayer() {
         switch (shapeType){
             case RECTANGLE:
@@ -74,6 +75,7 @@ public class Variable implements VariableSubject{
         controller.addShapeLayer(tempShapeLayer);
         tempShapeLayer = null;
     }
+    */
     
     /*
     ** getter, setter
@@ -96,9 +98,9 @@ public class Variable implements VariableSubject{
     public int getLastSelectedLayerIndex() {
         return lastSelectedLayerIndex;
     }
-    public ShapeLayer getTempShapeLayer() {
-        return tempShapeLayer;
-    }
+    //public ShapeLayer getTempShapeLayer() {
+    //    return tempShapeLayer;
+    //}
     public void setFunctionType(FunctionType functionType) {
         this.functionType = functionType;
         notifyVariableObservers();

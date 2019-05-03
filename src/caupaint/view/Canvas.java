@@ -39,10 +39,11 @@ public class Canvas extends JPanel {
                 layerContainer.getShapeLayer(i).draw(g);
             }
         }
+        /*
         if (controller.getTempShapeLayer() != null) {
             controller.getTempShapeLayer().draw(g);
         }
-        
+        */
     }
         
     class CanvasMouseAdapter extends MouseAdapter{

@@ -25,7 +25,7 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
     public Component getListCellRendererComponent(JList<? extends ShapeLayer> list, ShapeLayer shapeLayer, int index, boolean isSelected, boolean cellHasFocus) {
         indexLabel.setText(Integer.toString(index));
         iconLabel.setIcon(new ImageIcon("src/caupaint/source/icon/" + shapeLayer.getIconName() + ".png"));
-        sizeLabel.setText((int)shapeLayer.getWidth() + " X " + (int)shapeLayer.getHeight());
+        // sizeLabel.setText((int)shapeLayer.getWidth() + " X " + (int)shapeLayer.getHeight());
         
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         

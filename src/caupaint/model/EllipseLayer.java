@@ -5,12 +5,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import static java.lang.Math.*;
 
-public class EllipseLayer extends ShapeLayer{
-   
-    static final String iconName = "oval";
+public class EllipseLayer extends PlaneBasedShapeLayer{
     
-    public EllipseLayer(Point position, Point size, Color color, int degree) {
-        super(position, size, color, degree);
+    public EllipseLayer(Point position, Point size, Color color, int radianAngle) {
+        super(position, size, color, radianAngle);
         setShape(new Ellipse2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public EllipseLayer(Point position, Point size) {
@@ -22,6 +20,9 @@ public class EllipseLayer extends ShapeLayer{
         setShape(new Ellipse2D.Double(0, 0, 0, 0));
     }
     
+    public void create(Point recentMousePosition, Point currentMousePosition) {
+        scale(recentMousePosition, currentMousePosition);
+    }
     public void translate(double tx, double ty) {
         AffineTransform affineTransform = new AffineTransform();
         affineTransform.translate(tx, ty);
@@ -57,7 +58,7 @@ public class EllipseLayer extends ShapeLayer{
         setHeight(path2d.getBounds2D().getMaxY() - path2d.getBounds2D().getMinY()); 
     }
     public void rotate(Point currentMousePosition, Point recentMousePosition){
-        setDegree(getDegree()
+        setRadianAngle(getRadianAngle()
                     - (Math.atan2
                          (currentMousePosition.getY() - (getY() + getHeight() * 0.5), currentMousePosition.getX() - (getX() + getWidth() * 0.5))
                      - Math.atan2
@@ -102,8 +103,10 @@ public class EllipseLayer extends ShapeLayer{
     */
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
+        AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g.setColor(getColor());
-        g2d.rotate(getDegree(), getX() + getWidth() * 0.5, getY() + getHeight() * 0.5);
+        g2d.rotate(getRadianAngle(), getX() + getWidth() * 0.5, getY() + getHeight() * 0.5);
         g.fillOval((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+        g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함
     }
 }

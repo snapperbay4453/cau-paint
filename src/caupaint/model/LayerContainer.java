@@ -29,6 +29,11 @@ public class LayerContainer implements LayerContainerSubject{
         layerArrayList.add(shapeLayer);
         notifyLayerContainerObservers();
     }
+    public void createShapeLayer(Point currentMousePosition) {
+        layerArrayList.get(layerArrayList.size() - 1).create(recentMousePosition, currentMousePosition);
+        recentMousePosition = currentMousePosition;
+        notifyLayerContainerObservers();
+    }
     public void moveShapeLayer(int index, Point currentMousePosition) throws IndexOutOfBoundsException{
         try {
             if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출

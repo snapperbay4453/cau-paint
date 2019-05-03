@@ -8,7 +8,7 @@ public class Enum {
     };
     
     public enum ShapeType {
-        RECTANGLE, ELLIPSE
+        RECTANGLE, ELLIPSE, LINE
     };
     
 }

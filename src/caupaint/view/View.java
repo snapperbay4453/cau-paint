@@ -26,6 +26,7 @@ public class View implements LayerContainerObserver, VariableObserver{
     private JButton idleButton;
     private JButton drawRectangleButton;
     private JButton drawEllipseButton;
+    private JButton drawLineButton;
     private JButton moveShapeButton;
     private JButton resizeShapeButton;
     private JButton rotateShapeButton;
@@ -73,6 +74,8 @@ public class View implements LayerContainerObserver, VariableObserver{
         drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");
         drawEllipseButton = new JButton(new ImageIcon("src/caupaint/source/icon/ellipse.png"));
         drawEllipseButton.setToolTipText("마우스로 드래그하여 타원을 그립니다.");
+        drawLineButton = new JButton(new ImageIcon("src/caupaint/source/icon/line.png"));
+        drawLineButton.setToolTipText("마우스로 드래그하여 직선을 그립니다.");
         moveShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/move.png"));
         moveShapeButton.setToolTipText("선택한 도형을 이동합니다.");
         resizeShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/resize.png"));
@@ -94,6 +97,7 @@ public class View implements LayerContainerObserver, VariableObserver{
         toolBar.add(idleButton);
         toolBar.add(drawRectangleButton);
         toolBar.add(drawEllipseButton);
+        toolBar.add(drawLineButton);
         toolBar.add(moveShapeButton);
         toolBar.add(resizeShapeButton);
         toolBar.add(rotateShapeButton);
@@ -112,6 +116,7 @@ public class View implements LayerContainerObserver, VariableObserver{
         idleButton.addActionListener(new ButtonClickedActionListener());
         drawRectangleButton.addActionListener(new ButtonClickedActionListener());
         drawEllipseButton.addActionListener(new ButtonClickedActionListener());
+        drawLineButton.addActionListener(new ButtonClickedActionListener());
         moveShapeButton.addActionListener(new ButtonClickedActionListener());
         resizeShapeButton.addActionListener(new ButtonClickedActionListener());
         rotateShapeButton.addActionListener(new ButtonClickedActionListener());
@@ -151,6 +156,10 @@ public class View implements LayerContainerObserver, VariableObserver{
             else if (event.getSource() == drawEllipseButton){
                 variable.setFunctionType(FunctionType.DRAW);
                 variable.setShapeType(ShapeType.ELLIPSE);
+            }
+            else if (event.getSource() == drawLineButton){
+                variable.setFunctionType(FunctionType.DRAW);
+                variable.setShapeType(ShapeType.LINE);
             }
             else if (event.getSource() == moveShapeButton){
                 variable.setFunctionType(FunctionType.MOVE);
