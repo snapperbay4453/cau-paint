@@ -19,8 +19,8 @@ public class Variable implements VariableSubject{
     private Point pointEnd;
     private Point pointChange;
     private Color color;
-    private int lastSelectedIndex;
-    private Shape tempShape; // Layer에 추가하기 전 임시로 shape를 저장
+    private int lastSelectedLayerIndex;
+    private ShapeLayer tempShapeLayer; // Layer에 추가하기 전 임시로 shape를 저장
     
     private ArrayList<VariableObserver> VariableObserverArrayList = new ArrayList<VariableObserver>(); // Variable을 구독하는 옵저버들을 저장하는 ArrayList
     
@@ -36,8 +36,8 @@ public class Variable implements VariableSubject{
         pointEnd = new Point(0,0);
         pointChange = new Point(0,0);
         color = new Color(0, 0, 0);
-        lastSelectedIndex = -1;
-        tempShape = null;
+        lastSelectedLayerIndex = -1;
+        tempShapeLayer = null;
     }
     
     /*
@@ -52,25 +52,27 @@ public class Variable implements VariableSubject{
     /*
     ** tempShape 관련 메소드
     */
-    public void makeTempShape() {
+    public void makeTempShapeLayer() {
         switch (shapeType){
             case RECTANGLE:
-                tempShape = new Rectangle();
+                tempShapeLayer = new RectangleLayer();
                 break;
-            case OVAL:
-                tempShape = new Oval();
+            case ELLIPSE:
+                tempShapeLayer = new EllipseLayer();
                 break;
         }
-        tempShape.setColor(color);
+        tempShapeLayer.setColor(color);
     }
-    public void refreshTempShape() {
-        tempShape.setPosition(new Point(min((int)pointStart.getX(), (int)pointEnd.getX()), min((int)pointStart.getY(), (int)pointEnd.getY())));
-        tempShape.setSize(new Point(abs((int)pointStart.getX() - (int)pointEnd.getX()), abs((int)pointStart.getY() - (int)pointEnd.getY())));
+    public void refreshTempShapeLayer() {
+        tempShapeLayer.setX(min((int)pointStart.getX(), (int)pointEnd.getX()));
+        tempShapeLayer.setY(min((int)pointStart.getY(), (int)pointEnd.getY()));
+        tempShapeLayer.setWidth(abs((int)pointStart.getX() - (int)pointEnd.getX()));
+        tempShapeLayer.setHeight(abs((int)pointStart.getY() - (int)pointEnd.getY()));
         notifyVariableObservers();
     }
-    public void finalizeTempShape() {   
-        controller.addShape(tempShape);
-        tempShape = null;
+    public void finalizeTempShapeLayer() {   
+        controller.addShapeLayer(tempShapeLayer);
+        tempShapeLayer = null;
     }
     
     /*
@@ -91,11 +93,11 @@ public class Variable implements VariableSubject{
     public Color getColor() {
         return color;
     }
-    public int getLastSelectedIndex() {
-        return lastSelectedIndex;
+    public int getLastSelectedLayerIndex() {
+        return lastSelectedLayerIndex;
     }
-    public Shape getTempShape() {
-        return tempShape;
+    public ShapeLayer getTempShapeLayer() {
+        return tempShapeLayer;
     }
     public void setFunctionType(FunctionType functionType) {
         this.functionType = functionType;
@@ -114,8 +116,8 @@ public class Variable implements VariableSubject{
         notifyVariableObservers();
     }
     // setColor()는 chooseColor()로 대체
-    public void setLastSelectedIndex(int index) {
-        if (index != -1) lastSelectedIndex = index; // 선택 해제된 경우를 배제함
+    public void setLastSelectedLayerIndex(int index) {
+        if (index != -1) lastSelectedLayerIndex = index; // 선택 해제된 경우를 배제함
     }
     
     /*

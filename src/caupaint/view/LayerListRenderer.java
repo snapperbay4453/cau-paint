@@ -6,7 +6,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.*;
 
-public class LayerListRenderer extends JPanel implements ListCellRenderer<Shape> {
+public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeLayer> {
 
     private JLabel indexLabel;
     private JLabel iconLabel;
@@ -22,10 +22,10 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<Shape>
     
     }
     
-    public Component getListCellRendererComponent(JList<? extends Shape> list, Shape shape, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends ShapeLayer> list, ShapeLayer shapeLayer, int index, boolean isSelected, boolean cellHasFocus) {
         indexLabel.setText(Integer.toString(index));
-        iconLabel.setIcon(new ImageIcon("src/caupaint/source/icon/" + shape.getIconName() + ".png"));
-        sizeLabel.setText((int)shape.getSize().getX() + " X " + (int)shape.getSize().getY());
+        iconLabel.setIcon(new ImageIcon("src/caupaint/source/icon/" + shapeLayer.getIconName() + ".png"));
+        sizeLabel.setText((int)shapeLayer.getWidth() + " X " + (int)shapeLayer.getHeight());
         
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         

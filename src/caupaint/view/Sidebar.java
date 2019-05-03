@@ -10,20 +10,20 @@ import javax.swing.event.*;
 
 public class Sidebar extends JPanel {
     
-    private Layer layer;
+    private LayerContainer layerContainer;
     private Controller controller;
     
     private JLabel layerListLabel;
     private ScrollPane scrollableLayerListPane;
-    private JList<Shape> layerList;
+    private JList<ShapeLayer> layerList;
     
     private LayerListSelectionListener layerListSelectionListener;
 
     /*
     ** 생성자
     */
-    public Sidebar(Layer layer, Controller controller) {
-        this.layer = layer;
+    public Sidebar(LayerContainer layerContainer, Controller controller) {
+        this.layerContainer = layerContainer;
         this.controller = controller;
         
         layerListLabel = new JLabel();
@@ -33,7 +33,7 @@ public class Sidebar extends JPanel {
         layerListLabel.setText("현재 도형");
         
         scrollableLayerListPane.setPreferredSize(new Dimension(200,550));
-        refreshLayerListData(); // layerList에 Vector 형식 데이터 입력
+        refreshLayerList(); // layerList에 Vector 형식 데이터 입력
         layerList.setCellRenderer(new LayerListRenderer());
         
         this.add(layerListLabel, BorderLayout.NORTH);
@@ -48,9 +48,9 @@ public class Sidebar extends JPanel {
     public int getLayerListSelectedIndex() {
         return layerList.getSelectedIndex();
     }
-    public void refreshLayerListData() {
+    public void refreshLayerList() {
         layerList.setListData(controller.getLayerArrayListToVector());
-        layerListLabel.setText("현재 도형 (" + layer.getVector().size() + "개)");
+        layerListLabel.setText("현재 도형 (" + layerContainer.getVector().size() + "개)");
     }
     
     /*
@@ -58,7 +58,7 @@ public class Sidebar extends JPanel {
     */
     class LayerListSelectionListener implements ListSelectionListener{
         public void valueChanged(ListSelectionEvent e){
-            controller.setLastSelectedIndex(layerList.getSelectedIndex());
+            controller.setLastSelectedLayerIndex(layerList.getSelectedIndex());
         }
     }
 }

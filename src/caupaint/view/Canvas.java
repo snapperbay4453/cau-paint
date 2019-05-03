@@ -10,41 +10,22 @@ import java.awt.event.*;
 
 public class Canvas extends JPanel {
     
-    private Layer layer;
+    private LayerContainer layerContainer;
     private Controller controller;
     
     private MouseAdapter canvasMouseAdapter;
-    private boolean isCanvasMouseAdapterActivated;
     
     /*
     ** 생성자
     */
-    public Canvas(Layer layer, Controller controller) {
+    public Canvas(LayerContainer layerContainer, Controller controller) {
         this.setBackground(Color.white);
-        this.layer = layer;
+        this.layerContainer = layerContainer;
         this.controller = controller;
         
         canvasMouseAdapter = new CanvasMouseAdapter();
-        //isCanvasMouseAdapterActivated = false;
-        activateCanvasMouseAdapter();
-    }
-    
-    /*
-    ** 마우스 리스너 활성화/비활성화 메소드
-    */
-    public void activateCanvasMouseAdapter(){
-        if (isCanvasMouseAdapterActivated == false) {
-            this.addMouseListener(canvasMouseAdapter);
-            this.addMouseMotionListener(canvasMouseAdapter);
-            isCanvasMouseAdapterActivated = true;
-        }
-    }
-    public void deactivateCanvasMouseAdapter(){
-        if (isCanvasMouseAdapterActivated == true) {
-            this.removeMouseListener(canvasMouseAdapter);
-            this.removeMouseMotionListener(canvasMouseAdapter);
-            isCanvasMouseAdapterActivated = false;
-        }
+        this.addMouseListener(canvasMouseAdapter);
+        this.addMouseMotionListener(canvasMouseAdapter);
     }
     
     /*
@@ -53,13 +34,13 @@ public class Canvas extends JPanel {
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         
-        if (!layer.getArrayList().isEmpty()) {
-            for(int i = 0; i <= layer.getArrayList().size() - 1; i++){
-                layer.getShape(i).draw(g);
+        if (!layerContainer.getArrayList().isEmpty()) {
+            for(int i = 0; i <= layerContainer.getArrayList().size() - 1; i++){
+                layerContainer.getShapeLayer(i).draw(g);
             }
         }
-        if (controller.getTempShape() != null) {
-            controller.getTempShape().draw(g);
+        if (controller.getTempShapeLayer() != null) {
+            controller.getTempShapeLayer().draw(g);
         }
         
     }

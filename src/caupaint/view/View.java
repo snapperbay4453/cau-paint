@@ -9,9 +9,9 @@ import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class View implements LayerObserver, VariableObserver{
+public class View implements LayerContainerObserver, VariableObserver{
     
-    private Layer layer;
+    private LayerContainer layerContainer;
     private Variable variable;
     private Controller controller;
     
@@ -25,7 +25,7 @@ public class View implements LayerObserver, VariableObserver{
     
     private JButton idleButton;
     private JButton drawRectangleButton;
-    private JButton drawOvalButton;
+    private JButton drawEllipseButton;
     private JButton moveShapeButton;
     private JButton resizeShapeButton;
     private JButton deleteShapeButton;
@@ -37,12 +37,12 @@ public class View implements LayerObserver, VariableObserver{
     /*
     ** 생성자
     */
-    public View(Layer layer, Variable variable, Controller controller) {
-        this.layer = layer;
+    public View(LayerContainer layerContainer, Variable variable, Controller controller) {
+        this.layerContainer= layerContainer;
         this.variable = variable;
         this.controller = controller;
         
-        layer.registerLayerObserver(this); // LayerObserver를 구현하는 클래스에 옵저버로 등록
+        layerContainer.registerLayerContainerObserver(this); // LayerContainerObserver를 구현하는 클래스에 옵저버로 등록
         variable.registerVariableObserver(this); // VariableObserver를 구현하는 클래스에 옵저버로 등록        
     }
     
@@ -52,8 +52,8 @@ public class View implements LayerObserver, VariableObserver{
     public void createView() {
         // 프레임 및 기본 구성요소 생성
         frame = new JFrame("View");
-        canvas = new Canvas(layer, controller);
-        sidebar = new Sidebar(layer, controller);
+        canvas = new Canvas(layerContainer, controller);
+        sidebar = new Sidebar(layerContainer, controller);
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //메뉴바 생성
@@ -70,8 +70,8 @@ public class View implements LayerObserver, VariableObserver{
         idleButton.setToolTipText("어떠한 입력에도 반응하지 않고 대기합니다.");
         drawRectangleButton = new JButton(new ImageIcon("src/caupaint/source/icon/rectangle.png"));
         drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");
-        drawOvalButton = new JButton(new ImageIcon("src/caupaint/source/icon/oval.png"));
-        drawOvalButton.setToolTipText("마우스로 드래그하여 타원을 그립니다.");
+        drawEllipseButton = new JButton(new ImageIcon("src/caupaint/source/icon/ellipse.png"));
+        drawEllipseButton.setToolTipText("마우스로 드래그하여 타원을 그립니다.");
         moveShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/move.png"));
         moveShapeButton.setToolTipText("선택한 도형을 이동합니다.");
         resizeShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/resize.png"));
@@ -90,9 +90,9 @@ public class View implements LayerObserver, VariableObserver{
         // 버튼을 툴바에 추가함
         toolBar.add(idleButton);
         toolBar.add(drawRectangleButton);
-        toolBar.add(drawOvalButton);
+        toolBar.add(drawEllipseButton);
         toolBar.add(moveShapeButton);
-        //toolBar.add(resizeShapeButton);
+        toolBar.add(resizeShapeButton);
         toolBar.addSeparator();
         toolBar.add(deleteShapeButton);
         toolBar.addSeparator();
@@ -107,7 +107,7 @@ public class View implements LayerObserver, VariableObserver{
         // 버튼을 리스너에 등록함
         idleButton.addActionListener(new ButtonClickedActionListener());
         drawRectangleButton.addActionListener(new ButtonClickedActionListener());
-        drawOvalButton.addActionListener(new ButtonClickedActionListener());
+        drawEllipseButton.addActionListener(new ButtonClickedActionListener());
         moveShapeButton.addActionListener(new ButtonClickedActionListener());
         resizeShapeButton.addActionListener(new ButtonClickedActionListener());
         deleteShapeButton.addActionListener(new ButtonClickedActionListener());
@@ -138,17 +138,14 @@ public class View implements LayerObserver, VariableObserver{
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() == idleButton){
                 variable.setFunctionType(FunctionType.IDLE);
-                //canvas.deactivateCanvasMouseAdapter();
             }
             else if (event.getSource() == drawRectangleButton){
                 variable.setFunctionType(FunctionType.DRAW);
                 variable.setShapeType(ShapeType.RECTANGLE);
-                //canvas.activateCanvasMouseAdapter();
             }
-            else if (event.getSource() == drawOvalButton){
+            else if (event.getSource() == drawEllipseButton){
                 variable.setFunctionType(FunctionType.DRAW);
-                variable.setShapeType(ShapeType.OVAL);
-                //canvas.activateCanvasMouseAdapter();
+                variable.setShapeType(ShapeType.ELLIPSE);
             }
             else if (event.getSource() == moveShapeButton){
                 variable.setFunctionType(FunctionType.MOVE);
@@ -156,7 +153,7 @@ public class View implements LayerObserver, VariableObserver{
             else if (event.getSource() == resizeShapeButton){
                 variable.setFunctionType(FunctionType.RESIZE);
             }
-            else if (event.getSource() == deleteShapeButton) controller.deleteShape(sidebar.getLayerListSelectedIndex());
+            else if (event.getSource() == deleteShapeButton) controller.deleteShapeLayer(sidebar.getLayerListSelectedIndex());
             else if (event.getSource() == clearButton) controller.clearLayer();
             else if (event.getSource() == chooseColorButton) controller.chooseColor();
         }
@@ -165,8 +162,8 @@ public class View implements LayerObserver, VariableObserver{
    /*
     ** 옵저버 관련 메소드
     */
-    public void updateLayer() {
-        sidebar.refreshLayerListData();
+    public void updateLayerContainer() {
+        sidebar.refreshLayerList();
         frame.repaint();
     }
     public void updateVariable() {
