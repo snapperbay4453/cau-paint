@@ -11,4 +11,7 @@ public class Enum {
         RECTANGLE, ELLIPSE, LINE
     };
     
+    public enum BackgroundType {
+        EMPTY, FILL
+    };
 }

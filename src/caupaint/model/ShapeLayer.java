@@ -1,25 +1,30 @@
 
 package caupaint.model;
+import caupaint.model.Enum.*;
 import java.awt.*;
 
 abstract public class ShapeLayer {
     private Shape shape;
     private Color color;
+    private BackgroundType backgroundType;
     private double radianAngle;
     
     /*
     ** 생성자
     */
-    public ShapeLayer(Point point1, Point point2, Color color, double radianAngle) {
+    public ShapeLayer(Point point1, Point point2, Color color, BackgroundType backgroundType, double radianAngle) {
         this.color = color;
+        this.backgroundType = backgroundType;
         this.radianAngle = radianAngle;
     }
     public ShapeLayer(Point point1, Point point2) {
         this.color = new Color(0, 0, 0);
+        this.backgroundType = BackgroundType.EMPTY;
         this.radianAngle = 0;
     }
     public ShapeLayer() {
         this.color = new Color(0, 0, 0);
+        this.backgroundType = BackgroundType.EMPTY;
         this.radianAngle = 0;
     }
     
@@ -41,6 +46,9 @@ abstract public class ShapeLayer {
     public Color getColor() {
         return color;
     }
+    public BackgroundType getBackgroundType() {
+        return backgroundType;
+    }
     public double getRadianAngle() {
         return radianAngle;
     }
@@ -50,6 +58,9 @@ abstract public class ShapeLayer {
     }
     public void setColor(Color color) {
         this.color = color;
+    }
+    public void setBackgroundType (BackgroundType backgroundType) {
+        this.backgroundType = backgroundType;
     }
     public void setRadianAngle(double radianAngle) {
         this.radianAngle = radianAngle;

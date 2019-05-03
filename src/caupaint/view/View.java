@@ -6,6 +6,7 @@ import caupaint.model.Enum.*;
 import caupaint.observer.*;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -33,6 +34,8 @@ public class View implements LayerContainerObserver, VariableObserver{
     private JButton deleteShapeButton;
     private JButton clearButton;
     private JButton chooseColorButton;
+    private JButton emptyBackgroundTypeButton;
+    private JButton fillBackgroundTypeButton;
 
     private JToolBar toolBar;
     
@@ -89,6 +92,10 @@ public class View implements LayerContainerObserver, VariableObserver{
         chooseColorButton = new JButton(new ImageIcon("src/caupaint/source/icon/bgcolor.png"));
         chooseColorButton.setToolTipText("색상을 설정합니다.");
         chooseColorButton.setBackground(variable.getColor());
+        emptyBackgroundTypeButton = new JButton(new ImageIcon("src/caupaint/source/icon/background_empty.png"));
+        emptyBackgroundTypeButton.setToolTipText("도형의 배경이 비어있도록 설정합니다.");
+        fillBackgroundTypeButton = new JButton(new ImageIcon("src/caupaint/source/icon/background_fill.png"));
+        fillBackgroundTypeButton.setToolTipText("도형의 배경이 선택한 색상으로 채워지도록 설정합니다.");
         
         // 툴바 생성
         toolBar = new JToolBar();
@@ -108,6 +115,9 @@ public class View implements LayerContainerObserver, VariableObserver{
         toolBar.addSeparator();
         toolBar.add(new JLabel("색상 "));
         toolBar.add(chooseColorButton);
+        toolBar.addSeparator();
+        toolBar.add(emptyBackgroundTypeButton);
+        toolBar.add(fillBackgroundTypeButton);
         
         // 메뉴를 리스너에 등록함
         exitMenuItem.addActionListener(new MenuBarClickedActionListener());
@@ -123,6 +133,8 @@ public class View implements LayerContainerObserver, VariableObserver{
         deleteShapeButton.addActionListener(new ButtonClickedActionListener());
         clearButton.addActionListener(new ButtonClickedActionListener());
         chooseColorButton.addActionListener(new ButtonClickedActionListener());
+        emptyBackgroundTypeButton.addActionListener(new ButtonClickedActionListener());
+        fillBackgroundTypeButton.addActionListener(new ButtonClickedActionListener()); 
         
         // 레이아웃 지정
         frame.getContentPane().add(BorderLayout.NORTH, toolBar);
@@ -173,6 +185,8 @@ public class View implements LayerContainerObserver, VariableObserver{
             else if (event.getSource() == deleteShapeButton) controller.deleteShapeLayer(sidebar.getLayerListSelectedIndex());
             else if (event.getSource() == clearButton) controller.clearLayer();
             else if (event.getSource() == chooseColorButton) controller.chooseColor();
+            else if (event.getSource() == emptyBackgroundTypeButton) variable.setBackgroundType(BackgroundType.EMPTY);
+            else if (event.getSource() == fillBackgroundTypeButton) variable.setBackgroundType(BackgroundType.FILL);
         }
     }
 

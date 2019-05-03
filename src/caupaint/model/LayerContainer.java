@@ -1,5 +1,6 @@
 
 package caupaint.model;
+import caupaint.model.Enum.*;
 import caupaint.observer.*;
 import java.awt.Point;
 

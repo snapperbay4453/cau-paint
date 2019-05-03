@@ -56,9 +56,6 @@ public class Controller{
     public void chooseColor() {
         variable.chooseColor();
     }
-    //public ShapeLayer getTempShapeLayer() {
-    //    return variable.getTempShapeLayer();
-    //}
     public void setPointStart(Point point){
         variable.setPointStart(point);
     }
@@ -70,18 +67,6 @@ public class Controller{
     }
     
     /*
-    public void makeTempShapeLayer(){
-        variable.makeTempShapeLayer();
-    }
-    public void refreshTempShapeLayer(){
-        variable.refreshTempShapeLayer();
-    }
-    public void finalizeTempShapeLayer(){
-        variable.finalizeTempShapeLayer();
-    }
-    */
-    
-    /*
     ** Canvas 관련 메소드
     */
     public void CanvasMousePressed(Point mousePosition) {
@@ -89,18 +74,15 @@ public class Controller{
             case IDLE:
                 break;
             case DRAW:
-                //setPointStart(mousePosition);
-                //setPointEnd(mousePosition);
-                //makeTempShapeLayer();
                 switch(variable.getShapeType()) {
                     case RECTANGLE:
-                        addShapeLayer(new RectangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), 0));
+                        addShapeLayer(new RectangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                      case ELLIPSE:
-                        addShapeLayer(new EllipseLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), 0));
+                        addShapeLayer(new EllipseLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                      case LINE:
-                        addShapeLayer(new LineLayer(mousePosition, (new Point((int)mousePosition.getX() + 1, (int)mousePosition.getY()+ 1)), variable.getColor(), 0));
+                        addShapeLayer(new LineLayer(mousePosition, (new Point((int)mousePosition.getX() + 1, (int)mousePosition.getY()+ 1)), variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                 }
                 layerContainer.setRecentMousePosition(mousePosition);
@@ -123,15 +105,8 @@ public class Controller{
             case IDLE:
                 break;
             case DRAW:
-                //finalizeTempShapeLayer();
-                layerContainer.setRecentMousePosition(mousePosition);
-                break;
             case MOVE:
-                layerContainer.setRecentMousePosition(mousePosition);
-                break;
             case RESIZE:
-                layerContainer.setRecentMousePosition(mousePosition);
-                break;
             case ROTATE:
                 layerContainer.setRecentMousePosition(mousePosition);
                 break;
@@ -144,8 +119,6 @@ public class Controller{
             case IDLE:
                 break;
             case DRAW:
-                //setPointEnd(mousePosition);
-                //refreshTempShapeLayer();
                 createShapeLayer(mousePosition);
                 break;
             case MOVE:

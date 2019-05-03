@@ -15,6 +15,7 @@ public class Variable implements VariableSubject{
     
     private FunctionType functionType;
     private ShapeType shapeType;
+    private BackgroundType backgroundType;
     private Point pointStart;
     private Point pointEnd;
     private Point pointChange;
@@ -32,12 +33,12 @@ public class Variable implements VariableSubject{
         
         functionType = FunctionType.IDLE;
         shapeType = ShapeType.RECTANGLE;
+        backgroundType = BackgroundType.EMPTY;
         pointStart = new Point(0,0);
         pointEnd = new Point(0,0);
         pointChange = new Point(0,0);
         color = new Color(0, 0, 0);
         lastSelectedLayerIndex = -1;
-        // tempShapeLayer = null;
     }
     
     /*
@@ -50,34 +51,6 @@ public class Variable implements VariableSubject{
     }
     
     /*
-    ** tempShape 관련 메소드
-    */
-    /*
-    public void makeTempShapeLayer() {
-        switch (shapeType){
-            case RECTANGLE:
-                tempShapeLayer = new RectangleLayer();
-                break;
-            case ELLIPSE:
-                tempShapeLayer = new EllipseLayer();
-                break;
-        }
-        tempShapeLayer.setColor(color);
-    }
-    public void refreshTempShapeLayer() {
-        tempShapeLayer.setX(min((int)pointStart.getX(), (int)pointEnd.getX()));
-        tempShapeLayer.setY(min((int)pointStart.getY(), (int)pointEnd.getY()));
-        tempShapeLayer.setWidth(abs((int)pointStart.getX() - (int)pointEnd.getX()));
-        tempShapeLayer.setHeight(abs((int)pointStart.getY() - (int)pointEnd.getY()));
-        notifyVariableObservers();
-    }
-    public void finalizeTempShapeLayer() {   
-        controller.addShapeLayer(tempShapeLayer);
-        tempShapeLayer = null;
-    }
-    */
-    
-    /*
     ** getter, setter
     */
     public FunctionType getFunctionType() {
@@ -85,6 +58,9 @@ public class Variable implements VariableSubject{
     }
     public ShapeType getShapeType() {
         return shapeType;
+    }
+    public BackgroundType getBackgroundType() {
+        return backgroundType;
     }
     public Point getPointStart() {
         return pointStart;
@@ -98,15 +74,16 @@ public class Variable implements VariableSubject{
     public int getLastSelectedLayerIndex() {
         return lastSelectedLayerIndex;
     }
-    //public ShapeLayer getTempShapeLayer() {
-    //    return tempShapeLayer;
-    //}
     public void setFunctionType(FunctionType functionType) {
         this.functionType = functionType;
         notifyVariableObservers();
     }
     public void setShapeType(ShapeType shapeType) {
         this.shapeType = shapeType;
+        notifyVariableObservers();
+    }
+    public void setBackgroundType(BackgroundType backgroundType) {
+        this.backgroundType = backgroundType;
         notifyVariableObservers();
     }
     public void setPointStart(Point point) {

@@ -1,5 +1,6 @@
 
 package caupaint.model;
+import caupaint.model.Enum.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
@@ -8,8 +9,8 @@ import static java.lang.Math.*;
 
 public class RectangleLayer extends PlaneBasedShapeLayer{
 
-    public RectangleLayer(Point position, Point size, Color color, int radianAngle) {
-        super(position, size, color, radianAngle);
+    public RectangleLayer(Point position, Point size, Color color, BackgroundType backgroundType, int radianAngle) {
+        super(position, size, color, backgroundType, radianAngle);
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public RectangleLayer(Point position, Point size) {
@@ -114,7 +115,8 @@ public class RectangleLayer extends PlaneBasedShapeLayer{
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g.setColor(getColor());
         g2d.rotate(getRadianAngle(), getX() + getWidth() * 0.5, getY() + getHeight() * 0.5);
-        g.fillRect((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+        if (getBackgroundType() == BackgroundType.EMPTY) g.drawRect((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+        else if (getBackgroundType() == BackgroundType.FILL) g.fillRect((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
         g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함
     }
 }

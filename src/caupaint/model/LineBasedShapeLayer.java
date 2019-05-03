@@ -1,5 +1,6 @@
 
 package caupaint.model;
+import caupaint.model.Enum.*;
 import java.awt.*;
 
 abstract public class LineBasedShapeLayer extends ShapeLayer{
@@ -7,19 +8,22 @@ abstract public class LineBasedShapeLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public LineBasedShapeLayer(Point position, Point size, Color color, double radianAngle) {
-        super(position, size, color, radianAngle);
+    public LineBasedShapeLayer(Point position, Point size, Color color, BackgroundType backgroundType, double radianAngle) {
+        super(position, size, color, backgroundType, radianAngle);
         setColor(super.getColor());
+        setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
     }
     public LineBasedShapeLayer(Point position, Point size) {
         super(position, size);
         setColor(super.getColor());
+        setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
     }
     public LineBasedShapeLayer() {
         super();
         setColor(super.getColor());
+        setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
     }
     

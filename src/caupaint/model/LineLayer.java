@@ -1,12 +1,13 @@
 
 package caupaint.model;
+import caupaint.model.Enum.*;
 import java.awt.*;
 import java.awt.geom.*;
 
 public class LineLayer extends LineBasedShapeLayer{
     
-    public LineLayer(Point point1, Point point2, Color color, int degree) {
-        super(point1, point2, color, degree);
+    public LineLayer(Point point1, Point point2, Color color, BackgroundType backgroundType, int degree) {
+        super(point1, point2, color, backgroundType, degree);
         setShape(new Line2D.Double(point1.getX(), point1.getY(), point2.getX(), point2.getY()));
     }
     public LineLayer(Point point1, Point point2) {
