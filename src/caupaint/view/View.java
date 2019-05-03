@@ -28,6 +28,7 @@ public class View implements LayerContainerObserver, VariableObserver{
     private JButton drawEllipseButton;
     private JButton moveShapeButton;
     private JButton resizeShapeButton;
+    private JButton rotateShapeButton;
     private JButton deleteShapeButton;
     private JButton clearButton;
     private JButton chooseColorButton;
@@ -76,6 +77,8 @@ public class View implements LayerContainerObserver, VariableObserver{
         moveShapeButton.setToolTipText("선택한 도형을 이동합니다.");
         resizeShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/resize.png"));
         resizeShapeButton.setToolTipText("선택한 도형의 크기를 변경합니다.");
+        rotateShapeButton = new JButton(new ImageIcon("src/caupaint/source/icon/rotate.png"));
+        rotateShapeButton.setToolTipText("선택한 도형을 회전시킵니다.");
         deleteShapeButton = new JButton(new ImageIcon("src/caupaint/source/icon/delete.png"));
         deleteShapeButton.setToolTipText("선택한 도형을 삭제합니다.");
         clearButton = new JButton(new ImageIcon("src/caupaint/source/icon/clear.png"));
@@ -93,6 +96,7 @@ public class View implements LayerContainerObserver, VariableObserver{
         toolBar.add(drawEllipseButton);
         toolBar.add(moveShapeButton);
         toolBar.add(resizeShapeButton);
+        toolBar.add(rotateShapeButton);
         toolBar.addSeparator();
         toolBar.add(deleteShapeButton);
         toolBar.addSeparator();
@@ -110,6 +114,7 @@ public class View implements LayerContainerObserver, VariableObserver{
         drawEllipseButton.addActionListener(new ButtonClickedActionListener());
         moveShapeButton.addActionListener(new ButtonClickedActionListener());
         resizeShapeButton.addActionListener(new ButtonClickedActionListener());
+        rotateShapeButton.addActionListener(new ButtonClickedActionListener());
         deleteShapeButton.addActionListener(new ButtonClickedActionListener());
         clearButton.addActionListener(new ButtonClickedActionListener());
         chooseColorButton.addActionListener(new ButtonClickedActionListener());
@@ -152,6 +157,9 @@ public class View implements LayerContainerObserver, VariableObserver{
             }
             else if (event.getSource() == resizeShapeButton){
                 variable.setFunctionType(FunctionType.RESIZE);
+            }
+            else if (event.getSource() == rotateShapeButton){
+                variable.setFunctionType(FunctionType.ROTATE);
             }
             else if (event.getSource() == deleteShapeButton) controller.deleteShapeLayer(sidebar.getLayerListSelectedIndex());
             else if (event.getSource() == clearButton) controller.clearLayer();

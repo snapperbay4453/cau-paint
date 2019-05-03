@@ -33,6 +33,9 @@ public class Controller{
     public void resizeShapeLayer(int index, Point point) {
         layerContainer.resizeShapeLayer(index, point);
     }
+    public void rotateShapeLayer(int index, Point point) {
+        layerContainer.rotateShapeLayer(index, point);
+    }
     public void deleteShapeLayer(int index) {
         layerContainer.deleteShapeLayer(index);
     }
@@ -90,6 +93,9 @@ public class Controller{
             case RESIZE:
                 layerContainer.setRecentMousePosition(mousePosition);
                 break;
+            case ROTATE:
+                layerContainer.setRecentMousePosition(mousePosition);
+                break;
             default:
                 break;
         }
@@ -105,6 +111,9 @@ public class Controller{
                 layerContainer.setRecentMousePosition(mousePosition);
                 break;
             case RESIZE:
+                layerContainer.setRecentMousePosition(mousePosition);
+                break;
+            case ROTATE:
                 layerContainer.setRecentMousePosition(mousePosition);
                 break;
             default:
@@ -124,6 +133,9 @@ public class Controller{
                 break;
             case RESIZE:
                 resizeShapeLayer(variable.getLastSelectedLayerIndex(), mousePosition);
+                break;
+            case ROTATE:
+                rotateShapeLayer(variable.getLastSelectedLayerIndex(), mousePosition);
                 break;
             default:
                 break;

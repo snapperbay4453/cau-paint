@@ -40,9 +40,24 @@ public class LayerContainer implements LayerContainerSubject{
         }
     }
     public void resizeShapeLayer(int index, Point currentMousePosition) throws IndexOutOfBoundsException{
+        try {
+            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
         layerArrayList.get(index).scale(recentMousePosition, currentMousePosition);
         recentMousePosition = currentMousePosition;
         notifyLayerContainerObservers();
+        } catch (IndexOutOfBoundsException exp) {
+            JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public void rotateShapeLayer(int index, Point currentMousePosition) throws IndexOutOfBoundsException{
+        try {
+            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
+        layerArrayList.get(index).rotate(recentMousePosition, currentMousePosition);
+        recentMousePosition = currentMousePosition;
+        notifyLayerContainerObservers();
+        } catch (IndexOutOfBoundsException exp) {
+            JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
     }
     public void deleteShapeLayer(int index) throws ArrayIndexOutOfBoundsException {
         try {

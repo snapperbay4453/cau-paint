@@ -5,7 +5,7 @@ import java.awt.*;
 abstract public class ShapeLayer {
     private Shape shape;
     private Color color;
-    private int degree;
+    private double degree;
     
     private static String iconName = "shape";
     
@@ -27,6 +27,7 @@ abstract public class ShapeLayer {
     
     abstract public void translate(double tx, double ty);
     abstract public void scale(Point recentMousePosition, Point currentMousePosition);
+    abstract public void rotate(Point recentMousePosition, Point currentMousePosition);
     
     /*
     ** getter, setter
@@ -45,7 +46,7 @@ abstract public class ShapeLayer {
     public Color getColor() {
         return color;
     }
-    public int getDegree() {
+    public double getDegree() {
         return degree;
     }
 
@@ -59,7 +60,7 @@ abstract public class ShapeLayer {
     public void setColor(Color color) {
         this.color = color;
     }
-    public void setDegree(int degree) {
+    public void setDegree(double degree) {
         this.degree = degree;
     }
     

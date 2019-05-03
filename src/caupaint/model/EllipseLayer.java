@@ -3,6 +3,7 @@ package caupaint.model;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import static java.lang.Math.*;
 
 public class EllipseLayer extends ShapeLayer{
    
@@ -55,6 +56,15 @@ public class EllipseLayer extends ShapeLayer{
         setWidth(path2d.getBounds2D().getMaxX() - path2d.getBounds2D().getMinX());
         setHeight(path2d.getBounds2D().getMaxY() - path2d.getBounds2D().getMinY()); 
     }
+    public void rotate(Point currentMousePosition, Point recentMousePosition){
+        setDegree(getDegree()
+                    - (Math.atan2
+                         (currentMousePosition.getY() - (getY() + getHeight() * 0.5), currentMousePosition.getX() - (getX() + getWidth() * 0.5))
+                     - Math.atan2
+                          (recentMousePosition.getY() - (getY() + getHeight() * 0.5), recentMousePosition.getX() - (getX() + getWidth() * 0.5))
+                   )
+                );
+    }
     
     
     public double getX(){
@@ -91,8 +101,9 @@ public class EllipseLayer extends ShapeLayer{
     ** 그래픽 관련 메소드
     */
     public void draw(Graphics g) {
+        Graphics2D g2d = (Graphics2D)g;
         g.setColor(getColor());
+        g2d.rotate(getDegree(), getX() + getWidth() * 0.5, getY() + getHeight() * 0.5);
         g.fillOval((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
-        
     }
 }
