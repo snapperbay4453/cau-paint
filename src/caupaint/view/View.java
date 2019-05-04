@@ -69,12 +69,13 @@ public class View implements LayerContainerObserver, VariableObserver{
         canvasContainerScrollPane = new JScrollPane(canvas); // canvas가 스크롤이 가능하도록 함
 
         sidebar = new Sidebar(layerContainer, controller);
-	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         //메뉴바 생성
         menuBar = new JMenuBar();
         fileMenu = new JMenu("파일");
-        exitMenuItem = new JMenuItem("종료(구현하지 않음)");
+        exitMenuItem = new JMenuItem("종료");
         modifyMenu = new JMenu("편집");
         canvasSizeSettingMenuItem = new JMenuItem("캔버스 크기 설정");
         canvasBackgroundColorSettingMenuItem = new JMenuItem("캔버스 배경색 설정");
@@ -164,6 +165,9 @@ public class View implements LayerContainerObserver, VariableObserver{
         emptyBackgroundTypeButton.addActionListener(new ButtonClickedActionListener());
         fillBackgroundTypeButton.addActionListener(new ButtonClickedActionListener()); 
         
+        // 종료 기능을 리스너에 등록함
+        frame.addWindowListener(new WindowActionListener());
+        
         // 레이아웃 지정
         frame.getContentPane().add(toolBar, BorderLayout.NORTH);
         frame.getContentPane().add(sidebar, BorderLayout.EAST);
@@ -184,7 +188,7 @@ public class View implements LayerContainerObserver, VariableObserver{
     class MenuBarClickedActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() == exitMenuItem) {
-
+                controller.checkExit();
             }
             else if (event.getSource() == canvasSizeSettingMenuItem) {
                 controller.setCanvasSize();
@@ -233,6 +237,11 @@ public class View implements LayerContainerObserver, VariableObserver{
             else if (event.getSource() == chooseColorButton) controller.chooseColor();
             else if (event.getSource() == emptyBackgroundTypeButton) variable.setBackgroundType(BackgroundType.EMPTY);
             else if (event.getSource() == fillBackgroundTypeButton) variable.setBackgroundType(BackgroundType.FILL);
+        }
+    }
+    class WindowActionListener extends WindowAdapter {
+        public void windowClosing(WindowEvent e) {
+            controller.checkExit();
         }
     }
 
