@@ -1,7 +1,7 @@
 package caupaint.view;
 import caupaint.model.*;
 import caupaint.controller.*;
-import caupaint.observer.VariableObserver;
+import caupaint.observer.*;
 import java.awt.Dimension;
 
 import javax.swing.*;
@@ -9,7 +9,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.*;
 
-public class Canvas extends JPanel implements VariableObserver{
+public class Canvas extends JPanel implements LayerContainerObserver{
     
     private LayerContainer layerContainer;
     private Controller controller;
@@ -19,12 +19,12 @@ public class Canvas extends JPanel implements VariableObserver{
     /*
     ** 생성자
     */
-    public Canvas(LayerContainer layerContainer, Variable variable, Controller controller) {
+    public Canvas(LayerContainer layerContainer, Controller controller) {
         this.setBackground(controller.getCanvasBackgroundColor());
         this.layerContainer = layerContainer;
         this.controller = controller;
         
-        variable.registerVariableObserver(this); // VariableObserver를 구현하는 클래스에 옵저버로 등록
+        layerContainer.registerLayerContainerObserver(this); // LayerContainerObserver를 구현하는 클래스에 옵저버로 등록
         
         this.setPreferredSize(new Dimension((int)controller.getCanvasSize().getX(), (int)controller.getCanvasSize().getY()));
         
@@ -62,7 +62,7 @@ public class Canvas extends JPanel implements VariableObserver{
         }
     }
 
-    public void updateVariable() {
+    public void updateLayerContainer() {
         this.setPreferredSize(new Dimension((int)controller.getCanvasSize().getX(), (int)controller.getCanvasSize().getY()));
         this.setBackground(controller.getCanvasBackgroundColor());
         this.repaint();

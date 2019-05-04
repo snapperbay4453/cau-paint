@@ -2,8 +2,9 @@
 package caupaint.model;
 import caupaint.model.Enum.*;
 import java.awt.*;
+import java.io.Serializable;
 
-abstract public class ShapeLayer {
+abstract public class ShapeLayer implements Serializable{
     private Shape shape;
     private Color color;
     private BackgroundType backgroundType;

@@ -5,8 +5,10 @@ import caupaint.controller.*;
 import caupaint.model.Enum.*;
 import caupaint.observer.*;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.event.*;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 public class View implements LayerContainerObserver, VariableObserver{
@@ -23,6 +25,9 @@ public class View implements LayerContainerObserver, VariableObserver{
     
     private JMenuBar menuBar;
     private JMenu fileMenu;
+    private JMenuItem loadFromFileMenuItem;
+    private JMenuItem saveToFileMenuItem;
+    private JMenuItem saveAsToFileMenuItem;
     private JMenuItem exitMenuItem;
     private JMenu modifyMenu;
     private JMenuItem canvasSizeSettingMenuItem;
@@ -30,6 +35,8 @@ public class View implements LayerContainerObserver, VariableObserver{
                     
     
     private JButton idleButton;
+    private JButton loadFromFileButton;
+    private JButton saveToFileButton;
     private JButton drawLineButton;
     private JButton drawRectangleButton;
     private JButton drawEllipseButton;
@@ -64,7 +71,7 @@ public class View implements LayerContainerObserver, VariableObserver{
     public void createView() {
         // 프레임 및 기본 구성요소 생성
         frame = new JFrame("View");
-        canvas = new Canvas(layerContainer, variable, controller); // 도형이 그려지는 Panel
+        canvas = new Canvas(layerContainer, controller); // 도형이 그려지는 Panel
         canvasInnerContainerPanel = new JPanel();
         canvasContainerScrollPane = new JScrollPane(canvas); // canvas가 스크롤이 가능하도록 함
 
@@ -75,11 +82,19 @@ public class View implements LayerContainerObserver, VariableObserver{
         //메뉴바 생성
         menuBar = new JMenuBar();
         fileMenu = new JMenu("파일");
+        loadFromFileMenuItem = new JMenuItem("불러오기");
+        saveToFileMenuItem = new JMenuItem("저장");
+        saveAsToFileMenuItem = new JMenuItem("다른 이름으로 저장");
         exitMenuItem = new JMenuItem("종료");
         modifyMenu = new JMenu("편집");
         canvasSizeSettingMenuItem = new JMenuItem("캔버스 크기 설정");
         canvasBackgroundColorSettingMenuItem = new JMenuItem("캔버스 배경색 설정");
         
+        //메뉴바에 아이템을 추가함
+        fileMenu.add(loadFromFileMenuItem);
+        fileMenu.add(saveToFileMenuItem);
+        fileMenu.add(saveAsToFileMenuItem);
+        fileMenu.addSeparator();
         fileMenu.add(exitMenuItem);
         modifyMenu.add(canvasSizeSettingMenuItem);
         modifyMenu.addSeparator();
@@ -90,6 +105,10 @@ public class View implements LayerContainerObserver, VariableObserver{
         // 버튼 생성
         idleButton = new JButton(new ImageIcon("src/caupaint/source/icon/cursor.png"));   
         idleButton.setToolTipText("어떠한 입력에도 반응하지 않고 대기합니다.");
+        loadFromFileButton = new JButton(new ImageIcon("src/caupaint/source/icon/load.png"));
+        loadFromFileButton.setToolTipText("저장된 파일로부터 캔버스를 불러옵니다.");
+        saveToFileButton = new JButton(new ImageIcon("src/caupaint/source/icon/save.png"));
+        saveToFileButton.setToolTipText("캔버스를 파일로 저장합니다.");     
         drawLineButton = new JButton(new ImageIcon("src/caupaint/source/icon/line.png"));
         drawLineButton.setToolTipText("마우스로 드래그하여 직선을 그립니다.");
         drawRectangleButton = new JButton(new ImageIcon("src/caupaint/source/icon/rectangle.png"));
@@ -123,6 +142,8 @@ public class View implements LayerContainerObserver, VariableObserver{
         
         // 버튼을 툴바에 추가함
         toolBar.add(idleButton);
+        toolBar.add(loadFromFileButton);
+        toolBar.add(saveToFileButton);
         toolBar.addSeparator();
         toolBar.add(drawLineButton);
         toolBar.add(drawRectangleButton);
@@ -145,12 +166,17 @@ public class View implements LayerContainerObserver, VariableObserver{
         toolBar.add(fillBackgroundTypeButton);
         
         // 메뉴를 리스너에 등록함
+        loadFromFileMenuItem.addActionListener(new MenuBarClickedActionListener());
+        saveToFileMenuItem.addActionListener(new MenuBarClickedActionListener());
+        saveAsToFileMenuItem.addActionListener(new MenuBarClickedActionListener());
         exitMenuItem.addActionListener(new MenuBarClickedActionListener());
         canvasSizeSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
         canvasBackgroundColorSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
                 
         // 버튼을 리스너에 등록함
         idleButton.addActionListener(new ButtonClickedActionListener());
+        loadFromFileButton.addActionListener(new ButtonClickedActionListener());
+        saveToFileButton.addActionListener(new ButtonClickedActionListener());
         drawLineButton.addActionListener(new ButtonClickedActionListener());
         drawRectangleButton.addActionListener(new ButtonClickedActionListener());
         drawEllipseButton.addActionListener(new ButtonClickedActionListener());
@@ -176,10 +202,10 @@ public class View implements LayerContainerObserver, VariableObserver{
         frame.getContentPane().add(canvasContainerScrollPane, BorderLayout.CENTER);
         
         // 프레임 설정
-        frame.setTitle("CauPaint");
+        frame.setTitle(controller.generateViewTitle());
         frame.setSize(1280,720);
         frame.setJMenuBar(menuBar);
-        frame.setVisible(true);    
+        frame.setVisible(true);
     }
     
     /*
@@ -187,7 +213,30 @@ public class View implements LayerContainerObserver, VariableObserver{
     */
     class MenuBarClickedActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            if (event.getSource() == exitMenuItem) {
+            if (event.getSource() == loadFromFileMenuItem) {
+                try {
+                    controller.loadLayersFromFile(controller.getFilePathToOpen());
+                } catch (IOException ex) {
+                    Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else if (event.getSource() == saveToFileMenuItem) {
+                try {
+                    controller.saveLayersToFile(controller.getFilePathToSave());
+                } catch (IOException ex) {
+                    Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else if (event.getSource() == saveAsToFileMenuItem) {
+                try {
+                    controller.saveLayersToFile(controller.getNewFilePathToSave());
+                } catch (IOException ex) {
+                    Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else if (event.getSource() == exitMenuItem) {
                 controller.checkExit();
             }
             else if (event.getSource() == canvasSizeSettingMenuItem) {
@@ -202,6 +251,23 @@ public class View implements LayerContainerObserver, VariableObserver{
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() == idleButton){
                 variable.setFunctionType(FunctionType.IDLE);
+            }
+            else if (event.getSource() == loadFromFileButton){
+                try {
+                    controller.loadLayersFromFile(controller.getFilePathToOpen());
+                } catch (IOException ex) {
+                    Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+            else if (event.getSource() == saveToFileButton){
+                try {
+                    controller.saveLayersToFile(controller.getFilePathToSave());
+                } catch (IOException ex) {
+                    Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             else if (event.getSource() == drawLineButton){
                 variable.setFunctionType(FunctionType.DRAW);
@@ -249,12 +315,13 @@ public class View implements LayerContainerObserver, VariableObserver{
     ** 옵저버 관련 메소드
     */
     public void updateLayerContainer() {
+        canvasInnerContainerPanel.revalidate(); // canvasInnerContainerPanel 새로고침
         sidebar.refreshLayerList();
         frame.repaint();
     }
     public void updateVariable() {
         chooseColorButton.setBackground(variable.getColor()); // chooseColorButton의 배경색 새로고침
-        canvasInnerContainerPanel.revalidate(); // canvasInnerContainerPanel 새로고침
+        frame.setTitle(controller.generateViewTitle());
         frame.repaint();
     }
     

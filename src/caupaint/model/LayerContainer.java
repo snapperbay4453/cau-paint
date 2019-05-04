@@ -1,24 +1,30 @@
 
 package caupaint.model;
 import caupaint.observer.*;
+import java.awt.Color;
 import java.awt.Point;
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
 
-public class LayerContainer implements LayerContainerSubject{
+public class LayerContainer implements Serializable, LayerContainerSubject{
     
     private ArrayList<ShapeLayer> layerArrayList; // Shape를 저장하는 ArrayList
-    private Point recentMousePosition;
+    private Point canvasSize;
+    private Color canvasBackgroundColor;
+    transient private Point recentMousePosition;
     
-    private ArrayList<LayerContainerObserver> LayerContainerObserverArrayList = new ArrayList<LayerContainerObserver>(); // LayerContainer를 구독하는 옵저버들을 저장하는 ArrayList
+    transient private ArrayList<LayerContainerObserver> LayerContainerObserverArrayList = new ArrayList<LayerContainerObserver>(); // LayerContainer를 구독하는 옵저버들을 저장하는 ArrayList
 
     /*
     ** 생성자
     */
     public LayerContainer() {
         layerArrayList = new ArrayList<ShapeLayer>();
+        canvasSize = new Point(640, 480);
+        canvasBackgroundColor = Color.WHITE;
         recentMousePosition = new Point(0,0);
     }
     
@@ -102,6 +108,31 @@ public class LayerContainer implements LayerContainerSubject{
     }
     
     /*
+    ** Canvas 관련 메서드
+    */
+    public void showSetCanvasSizeDialogBox() {
+        int tempWidth;  int tempHeight;
+        try {
+            tempWidth = Integer.parseInt(JOptionPane.showInputDialog(null, "캔버스의 넓이를 입력하세요.", "넓이 입력", JOptionPane.QUESTION_MESSAGE));
+            if (tempWidth <= 0) throw new IllegalArgumentException();
+            tempHeight = Integer.parseInt(JOptionPane.showInputDialog(null, "캔버스의 높이를 입력하세요.", "높이 입력", JOptionPane.QUESTION_MESSAGE));
+            if (tempHeight <= 0) throw new IllegalArgumentException();
+            canvasSize = new Point(tempWidth, tempHeight);
+        } catch (NumberFormatException exp){
+            JOptionPane.showMessageDialog(null, "잘못된 값이 입력되었습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException exp){
+            JOptionPane.showMessageDialog(null, "크기는 0보다 큰 수만 지정할 수 있습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+        notifyLayerContainerObservers();
+    }
+    public void showSetCanvasBackgroundColorDialogBox() {
+        JColorChooser chooser=new JColorChooser();
+        canvasBackgroundColor = chooser.showDialog(null,"Color",Color.YELLOW);
+        notifyLayerContainerObservers();
+    }
+    
+    
+    /*
     ** getter, setter
     */
     public ArrayList<ShapeLayer> getArrayList() {
@@ -117,6 +148,12 @@ public class LayerContainer implements LayerContainerSubject{
     public ShapeLayer getShapeLayer(int index) {
         return layerArrayList.get(index);
     }
+    public Point getCanvasSize() {
+        return canvasSize;
+    }
+    public Color getCanvasBackgroundColor() {
+        return canvasBackgroundColor;
+    }
     public void setArrayList(ArrayList<ShapeLayer> layerArrayList) {
         this.layerArrayList = layerArrayList;
         notifyLayerContainerObservers();
@@ -125,9 +162,18 @@ public class LayerContainer implements LayerContainerSubject{
        layerArrayList.set(index, shapeLayer);
        notifyLayerContainerObservers();
     }
+    public void setCanvasSize(Point size) {
+        this.canvasSize = size;
+        notifyLayerContainerObservers();
+    }
+    public void setCanvasBackgroundColor(Color color) {
+        this.canvasBackgroundColor = color;
+        notifyLayerContainerObservers();
+    }
     public void setRecentMousePosition(Point point) {
         recentMousePosition = point;
     }
+
     
     /*
     ** 옵저버 관련 메소드
