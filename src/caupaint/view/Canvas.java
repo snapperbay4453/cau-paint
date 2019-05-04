@@ -2,6 +2,7 @@ package caupaint.view;
 import caupaint.model.*;
 import caupaint.controller.*;
 import java.awt.Color;
+import java.awt.Dimension;
 
 import javax.swing.*;
 import java.awt.Graphics;
@@ -22,6 +23,8 @@ public class Canvas extends JPanel {
         this.setBackground(Color.white);
         this.layerContainer = layerContainer;
         this.controller = controller;
+        
+        this.setPreferredSize(new Dimension(640, 480));
         
         canvasMouseAdapter = new CanvasMouseAdapter();
         this.addMouseListener(canvasMouseAdapter);

@@ -4,9 +4,8 @@ import caupaint.model.*;
 import caupaint.controller.*;
 import caupaint.model.Enum.*;
 import caupaint.observer.*;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -18,6 +17,8 @@ public class View implements LayerContainerObserver, VariableObserver{
     
     private JFrame frame;
     private Canvas canvas;
+    private JPanel canvasInnerContainerPanel;
+    private JScrollPane canvasContainerScrollPane;
     private Sidebar sidebar;
     
     private JMenuBar menuBar;
@@ -59,7 +60,10 @@ public class View implements LayerContainerObserver, VariableObserver{
     public void createView() {
         // 프레임 및 기본 구성요소 생성
         frame = new JFrame("View");
-        canvas = new Canvas(layerContainer, controller);
+        canvas = new Canvas(layerContainer, controller); // 도형이 그려지는 Panel
+        canvasInnerContainerPanel = new JPanel();
+        canvasContainerScrollPane = new JScrollPane(canvas); // canvas가 스크롤이 가능하도록 함
+
         sidebar = new Sidebar(layerContainer, controller);
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -108,11 +112,13 @@ public class View implements LayerContainerObserver, VariableObserver{
         
         // 버튼을 툴바에 추가함
         toolBar.add(idleButton);
+        toolBar.addSeparator();
         toolBar.add(drawLineButton);
         toolBar.add(drawRectangleButton);
         toolBar.add(drawEllipseButton);
         toolBar.add(drawTriangleButton);
         toolBar.add(drawRhombusButton);    
+        toolBar.addSeparator();
         toolBar.add(moveShapeButton);
         toolBar.add(resizeShapeButton);
         toolBar.add(rotateShapeButton);
@@ -147,9 +153,11 @@ public class View implements LayerContainerObserver, VariableObserver{
         fillBackgroundTypeButton.addActionListener(new ButtonClickedActionListener()); 
         
         // 레이아웃 지정
-        frame.getContentPane().add(BorderLayout.NORTH, toolBar);
-        frame.getContentPane().add(BorderLayout.EAST, sidebar);
-        frame.getContentPane().add(BorderLayout.CENTER, canvas);
+        frame.getContentPane().add(toolBar, BorderLayout.NORTH);
+        frame.getContentPane().add(sidebar, BorderLayout.EAST);
+        canvasInnerContainerPanel.add(canvas);
+        canvasContainerScrollPane.setViewportView(canvasInnerContainerPanel);
+        frame.getContentPane().add(canvasContainerScrollPane, BorderLayout.CENTER);
         
         // 프레임 설정
         frame.setTitle("CauPaint");

@@ -1,10 +1,9 @@
 package caupaint.view;
 import caupaint.model.*;
 import caupaint.controller.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.ScrollPane;
-import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -13,11 +12,14 @@ public class Sidebar extends JPanel {
     private LayerContainer layerContainer;
     private Controller controller;
     
-    private JLabel layerListLabel;
+    private GridBagLayout Gbag;
+    
     private JPanel sidebarToolBarPanel;
     private JButton moveSelectedLayerFrontButton;
     private JButton moveSelectedLayerBackButton;
-    private ScrollPane scrollableLayerListPane;
+    private JLabel layerListLabel;
+    private ScrollPane LayerListScrollPane;
+
     private JList<ShapeLayer> layerList;
     
     private LayerListSelectionListener layerListSelectionListener;
@@ -30,14 +32,21 @@ public class Sidebar extends JPanel {
         this.controller = controller;
         
         layerListLabel = new JLabel();
-        scrollableLayerListPane = new ScrollPane();
+        sidebarToolBarPanel = new JPanel(); 
+        LayerListScrollPane = new ScrollPane();
         layerList = new JList();
         
-        layerListLabel.setText("현재 도형");
-        refreshLayerList(); // layerList에 Vector 형식 데이터 입력
+        // 그리드백 레아아웃 초기 설정
+        Gbag = new GridBagLayout();
+        this.setLayout(Gbag);
         
-        // 툴바
-        sidebarToolBarPanel = new JPanel();  
+        layerListLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        refreshLayerList(); // layerList에 Vector 형식 데이터 입력
+        LayerListScrollPane.setMinimumSize(new Dimension(200, 300));
+        LayerListScrollPane.setPreferredSize(new Dimension(200,1000)); // LayerList의 크기 지정
+        layerList.setCellRenderer(new LayerListRenderer());
+        
+        // 툴바 설정
         moveSelectedLayerFrontButton = new JButton(new ImageIcon(new ImageIcon("src/caupaint/source/icon/up_arrow.png").getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)));   
         moveSelectedLayerFrontButton.setToolTipText("선택한 레이어를 한 칸 위로 올립니다.");
         moveSelectedLayerFrontButton.setPreferredSize(new Dimension(28, 28)); 
@@ -46,19 +55,18 @@ public class Sidebar extends JPanel {
         moveSelectedLayerBackButton.setPreferredSize(new Dimension(28, 28));
         sidebarToolBarPanel.add(moveSelectedLayerFrontButton);
         sidebarToolBarPanel.add(moveSelectedLayerBackButton);
-        
-        scrollableLayerListPane.setPreferredSize(new Dimension(200,550));
-        layerList.setCellRenderer(new LayerListRenderer());
-        
+
         // 리스너에 등록함
-        moveSelectedLayerFrontButton.addActionListener(new ButtonClickedActionListener());
+        moveSelectedLayerFrontButton.addActionListener((ActionListener) new ButtonClickedActionListener());
         moveSelectedLayerBackButton.addActionListener(new ButtonClickedActionListener());
-        
-        this.add(layerListLabel, BorderLayout.NORTH);
-        this.add(sidebarToolBarPanel, BorderLayout.NORTH);
-        scrollableLayerListPane.add(layerList, BorderLayout.CENTER);
-        this.add(scrollableLayerListPane);
-        this.setPreferredSize(new Dimension(240,550));
+
+        LayerListScrollPane.add(layerList);
+
+        this.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15)); // 안쪽 여백 설정
+
+        addGrid(layerListLabel, 0, 0);
+        addGrid(sidebarToolBarPanel, 1, 0);
+        addGrid(LayerListScrollPane, 2, GridBagConstraints.BOTH);
         
         layerListSelectionListener = new LayerListSelectionListener();
         layerList.addListSelectionListener(layerListSelectionListener);
@@ -86,4 +94,21 @@ public class Sidebar extends JPanel {
             else if (event.getSource() == moveSelectedLayerBackButton) controller.swapShapeLayer(layerList.getSelectedIndex(), layerList.getSelectedIndex() + 1);
         }
     }
+    
+    /*
+    ** 그리드 레이아웃 관련 메소드
+    */
+    private void addGrid(Component c, int gridy, int weighty) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = gridy;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0;
+        gbc.weighty = weighty;
+        Gbag.setConstraints(c, gbc);
+        add(c);
+    }
+    
 }

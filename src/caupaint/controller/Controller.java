@@ -121,6 +121,7 @@ public class Controller{
             case RESIZE:
             case ROTATE:
                 layerContainer.setRecentMousePosition(mousePosition);
+                // 아카이브
                 break;
             default:
                 break;
