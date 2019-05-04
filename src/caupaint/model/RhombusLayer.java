@@ -3,21 +3,22 @@ package caupaint.model;
 import caupaint.model.Enum.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 
-public class EllipseLayer extends PlaneBasedShapeLayer{
-    
-    public EllipseLayer(Point position, Point size, Color color, BackgroundType backgroundType, int radianAngle) {
+public class RhombusLayer extends PlaneBasedShapeLayer{
+
+    public RhombusLayer(Point position, Point size, Color color, BackgroundType backgroundType, int radianAngle) {
         super(position, size, color, backgroundType, radianAngle);
-        setShape(new Ellipse2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
+        setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
-    public EllipseLayer(Point position, Point size) {
+    public RhombusLayer(Point position, Point size) {
         super(position, size);
-        setShape(new Ellipse2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
+        setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
-    public EllipseLayer() {
+    public RhombusLayer() {
         super();
-        setShape(new Ellipse2D.Double(0, 0, 0, 0));
+        setShape(new Rectangle2D.Double(0, 0, 0, 0));
     }
     
     public void create(Point recentMousePosition, Point currentMousePosition) {
@@ -43,13 +44,13 @@ public class EllipseLayer extends PlaneBasedShapeLayer{
             affineTransform.scale(((getWidth() * 0.5) + tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + ty)/(getHeight() * 0.5));
         }
         else if (currentMousePosition.getX() < (tempX + tempWidth * 0.5) && currentMousePosition.getY() >= (tempY + tempHeight * 0.5)) { // 2사분면
-            affineTransform.scale(((getWidth() * 0.5) - tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + ty)/(getHeight() * 0.5));
+            affineTransform.scale(((getWidth() * 0.5) + -tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + ty)/(getHeight() * 0.5));
         }
         else if (currentMousePosition.getX() < (tempX + tempWidth * 0.5) && currentMousePosition.getY() < (tempY + tempHeight * 0.5)) { // 3사분면
-            affineTransform.scale(((getWidth() * 0.5) - tx)/(getWidth() * 0.5), ((getHeight() * 0.5) - ty)/(getHeight() * 0.5));
+            affineTransform.scale(((getWidth() * 0.5) + -tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + -ty)/(getHeight() * 0.5));
         }
         else if (currentMousePosition.getX()  >= (tempX + tempWidth * 0.5) && currentMousePosition.getY() < (tempY + tempHeight * 0.5)) { // 4사분면
-            affineTransform.scale(((getWidth() * 0.5) + tx)/(getWidth() * 0.5), ((getHeight() * 0.5) - ty)/(getHeight() * 0.5));
+            affineTransform.scale(((getWidth() * 0.5) + tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + -ty)/(getHeight() * 0.5));
         }
         Shape path2d = affineTransform.createTransformedShape(getShape());
         setX(tempX + (tempWidth - (path2d.getBounds2D().getMaxX() - path2d.getBounds2D().getMinX())) * 0.5);
@@ -58,6 +59,11 @@ public class EllipseLayer extends PlaneBasedShapeLayer{
         setHeight(path2d.getBounds2D().getMaxY() - path2d.getBounds2D().getMinY()); 
     }
     public void rotate(Point currentMousePosition, Point recentMousePosition){
+        AffineTransform affineTransform = new AffineTransform();
+        affineTransform.rotate((Math.atan2(currentMousePosition.getY() - (getY() + getHeight() * 0.5), currentMousePosition.getX() - (getX() + getWidth() * 0.5))
+                                - Math.atan2(recentMousePosition.getY() - (getY() + getHeight() * 0.5), recentMousePosition.getX() - (getX() + getWidth() * 0.5))),
+                getWidth() * 0.5, getHeight() * 0.5);
+        Shape path2d = affineTransform.createTransformedShape(getShape());
         setRadianAngle(getRadianAngle()
                     - (Math.atan2
                          (currentMousePosition.getY() - (getY() + getHeight() * 0.5), currentMousePosition.getX() - (getX() + getWidth() * 0.5))
@@ -67,35 +73,37 @@ public class EllipseLayer extends PlaneBasedShapeLayer{
                 );
     }
     
-    
     public double getX(){
-        return ((Ellipse2D)getShape()).getX();
+        return ((Rectangle2D)getShape()).getX();
     }
     public double getY(){
-        return ((Ellipse2D)getShape()).getY();
+        return ((Rectangle2D)getShape()).getY();
     }
     public double getWidth(){
-        return ((Ellipse2D)getShape()).getWidth();
+        return ((Rectangle2D)getShape()).getWidth();
     }
     public double getHeight(){
-        return ((Ellipse2D)getShape()).getHeight();
+        return ((Rectangle2D)getShape()).getHeight();
     }
     
     public String getIconName() {
-        return "ellipse";
+        return "rhombus";
     }
     
-        public void setX(double x){
-        ((Ellipse2D)getShape()).setFrame(x, getY(), getWidth(), getHeight());
+    public void setX(double x){
+        ((Rectangle2D)getShape()).setRect(x, getY(), getWidth(), getHeight());
     }
     public void setY(double y){
-        ((Ellipse2D)getShape()).setFrame(getX(), y, getWidth(), getHeight());
+        ((Rectangle2D)getShape()).setRect(getX(), y, getWidth(), getHeight());
     }
     public void setWidth(double width){
-        ((Ellipse2D)getShape()).setFrame(getX(), getY(), width, getHeight());
+        ((Rectangle2D)getShape()).setRect(getX(), getY(), width, getHeight());
     }
     public void setHeight(double height){
-        ((Ellipse2D)getShape()).setFrame(getX(), getY(), getWidth(), height);
+        ((Rectangle2D)getShape()).setRect(getX(), getY(), getWidth(), height);
+    }
+    public void setShape(Shape shape) {
+        super.setShape((Rectangle2D)shape);
     }
     
     /*
@@ -106,8 +114,8 @@ public class EllipseLayer extends PlaneBasedShapeLayer{
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g.setColor(getColor());
         g2d.rotate(getRadianAngle(), getX() + getWidth() * 0.5, getY() + getHeight() * 0.5);
-        if (getBackgroundType() == BackgroundType.EMPTY) g.drawOval((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
-        else if (getBackgroundType() == BackgroundType.FILL) g.fillOval((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+        if (getBackgroundType() == BackgroundType.EMPTY) g.drawPolygon(new int[] {(int)(this.getX() + this.getWidth() * 0.5), (int)(this.getX() + this.getWidth()), (int)(this.getX() + this.getWidth() * 0.5), (int)(this.getX())}, new int[] {(int)(this.getY()), (int)(this.getY() + this.getHeight() * 0.5), (int)(this.getY() + this.getHeight()), (int)(this.getY() + this.getHeight() * 0.5)}, 4);
+        else if (getBackgroundType() == BackgroundType.FILL) g.fillPolygon(new int[] {(int)(this.getX() + this.getWidth() * 0.5), (int)(this.getX() + this.getWidth()), (int)(this.getX() + this.getWidth() * 0.5), (int)(this.getX())}, new int[] {(int)(this.getY()), (int)(this.getY() + this.getHeight() * 0.5), (int)(this.getY() + this.getHeight()), (int)(this.getY() + this.getHeight() * 0.5)}, 4);
         g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함
     }
 }

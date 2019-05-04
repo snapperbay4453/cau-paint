@@ -45,13 +45,13 @@ public class RectangleLayer extends PlaneBasedShapeLayer{
             affineTransform.scale(((getWidth() * 0.5) + tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + ty)/(getHeight() * 0.5));
         }
         else if (currentMousePosition.getX() < (tempX + tempWidth * 0.5) && currentMousePosition.getY() >= (tempY + tempHeight * 0.5)) { // 2사분면
-            affineTransform.scale(((getWidth() * 0.5) + -tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + ty)/(getHeight() * 0.5));
+            affineTransform.scale(((getWidth() * 0.5) - tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + ty)/(getHeight() * 0.5));
         }
         else if (currentMousePosition.getX() < (tempX + tempWidth * 0.5) && currentMousePosition.getY() < (tempY + tempHeight * 0.5)) { // 3사분면
-            affineTransform.scale(((getWidth() * 0.5) + -tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + -ty)/(getHeight() * 0.5));
+            affineTransform.scale(((getWidth() * 0.5) - tx)/(getWidth() * 0.5), ((getHeight() * 0.5) - ty)/(getHeight() * 0.5));
         }
         else if (currentMousePosition.getX()  >= (tempX + tempWidth * 0.5) && currentMousePosition.getY() < (tempY + tempHeight * 0.5)) { // 4사분면
-            affineTransform.scale(((getWidth() * 0.5) + tx)/(getWidth() * 0.5), ((getHeight() * 0.5) + -ty)/(getHeight() * 0.5));
+            affineTransform.scale(((getWidth() * 0.5) + tx)/(getWidth() * 0.5), ((getHeight() * 0.5) - ty)/(getHeight() * 0.5));
         }
         Shape path2d = affineTransform.createTransformedShape(getShape());
         setX(tempX + (tempWidth - (path2d.getBounds2D().getMaxX() - path2d.getBounds2D().getMinX())) * 0.5);

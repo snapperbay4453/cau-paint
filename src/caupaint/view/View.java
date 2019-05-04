@@ -25,9 +25,11 @@ public class View implements LayerContainerObserver, VariableObserver{
     private JMenuItem exitMenuItem;
     
     private JButton idleButton;
+    private JButton drawLineButton;
     private JButton drawRectangleButton;
     private JButton drawEllipseButton;
-    private JButton drawLineButton;
+    private JButton drawTriangleButton;
+    private JButton drawRhombusButton;
     private JButton moveShapeButton;
     private JButton resizeShapeButton;
     private JButton rotateShapeButton;
@@ -73,12 +75,16 @@ public class View implements LayerContainerObserver, VariableObserver{
         // 버튼 생성
         idleButton = new JButton(new ImageIcon("src/caupaint/source/icon/cursor.png"));   
         idleButton.setToolTipText("어떠한 입력에도 반응하지 않고 대기합니다.");
+        drawLineButton = new JButton(new ImageIcon("src/caupaint/source/icon/line.png"));
+        drawLineButton.setToolTipText("마우스로 드래그하여 직선을 그립니다.");
         drawRectangleButton = new JButton(new ImageIcon("src/caupaint/source/icon/rectangle.png"));
         drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");
         drawEllipseButton = new JButton(new ImageIcon("src/caupaint/source/icon/ellipse.png"));
         drawEllipseButton.setToolTipText("마우스로 드래그하여 타원을 그립니다.");
-        drawLineButton = new JButton(new ImageIcon("src/caupaint/source/icon/line.png"));
-        drawLineButton.setToolTipText("마우스로 드래그하여 직선을 그립니다.");
+        drawTriangleButton = new JButton(new ImageIcon("src/caupaint/source/icon/triangle.png"));
+        drawTriangleButton.setToolTipText("마우스로 드래그하여 삼각형을 그립니다.");
+        drawRhombusButton = new JButton(new ImageIcon("src/caupaint/source/icon/rhombus.png"));
+        drawRhombusButton.setToolTipText("마우스로 드래그하여 마름모를 그립니다.");
         moveShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/move.png"));
         moveShapeButton.setToolTipText("선택한 도형을 이동합니다.");
         resizeShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/resize.png"));
@@ -102,9 +108,11 @@ public class View implements LayerContainerObserver, VariableObserver{
         
         // 버튼을 툴바에 추가함
         toolBar.add(idleButton);
+        toolBar.add(drawLineButton);
         toolBar.add(drawRectangleButton);
         toolBar.add(drawEllipseButton);
-        toolBar.add(drawLineButton);
+        toolBar.add(drawTriangleButton);
+        toolBar.add(drawRhombusButton);    
         toolBar.add(moveShapeButton);
         toolBar.add(resizeShapeButton);
         toolBar.add(rotateShapeButton);
@@ -124,9 +132,11 @@ public class View implements LayerContainerObserver, VariableObserver{
         
         // 버튼을 리스너에 등록함
         idleButton.addActionListener(new ButtonClickedActionListener());
+        drawLineButton.addActionListener(new ButtonClickedActionListener());
         drawRectangleButton.addActionListener(new ButtonClickedActionListener());
         drawEllipseButton.addActionListener(new ButtonClickedActionListener());
-        drawLineButton.addActionListener(new ButtonClickedActionListener());
+        drawTriangleButton.addActionListener(new ButtonClickedActionListener());
+        drawRhombusButton.addActionListener(new ButtonClickedActionListener());
         moveShapeButton.addActionListener(new ButtonClickedActionListener());
         resizeShapeButton.addActionListener(new ButtonClickedActionListener());
         rotateShapeButton.addActionListener(new ButtonClickedActionListener());
@@ -161,6 +171,10 @@ public class View implements LayerContainerObserver, VariableObserver{
             if (event.getSource() == idleButton){
                 variable.setFunctionType(FunctionType.IDLE);
             }
+            else if (event.getSource() == drawLineButton){
+                variable.setFunctionType(FunctionType.DRAW);
+                variable.setShapeType(ShapeType.LINE);
+            }
             else if (event.getSource() == drawRectangleButton){
                 variable.setFunctionType(FunctionType.DRAW);
                 variable.setShapeType(ShapeType.RECTANGLE);
@@ -169,9 +183,13 @@ public class View implements LayerContainerObserver, VariableObserver{
                 variable.setFunctionType(FunctionType.DRAW);
                 variable.setShapeType(ShapeType.ELLIPSE);
             }
-            else if (event.getSource() == drawLineButton){
+            else if (event.getSource() == drawTriangleButton){
                 variable.setFunctionType(FunctionType.DRAW);
-                variable.setShapeType(ShapeType.LINE);
+                variable.setShapeType(ShapeType.TRIANGLE);
+            }
+            else if (event.getSource() == drawRhombusButton){
+                variable.setFunctionType(FunctionType.DRAW);
+                variable.setShapeType(ShapeType.RHOMBUS);
             }
             else if (event.getSource() == moveShapeButton){
                 variable.setFunctionType(FunctionType.MOVE);

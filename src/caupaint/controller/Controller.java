@@ -75,14 +75,20 @@ public class Controller{
                 break;
             case DRAW:
                 switch(variable.getShapeType()) {
+                     case LINE:
+                        addShapeLayer(new LineLayer(mousePosition, (new Point((int)mousePosition.getX() + 1, (int)mousePosition.getY()+ 1)), variable.getColor(), variable.getBackgroundType(), 0));
+                        break;
                     case RECTANGLE:
                         addShapeLayer(new RectangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                      case ELLIPSE:
                         addShapeLayer(new EllipseLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
                         break;
-                     case LINE:
-                        addShapeLayer(new LineLayer(mousePosition, (new Point((int)mousePosition.getX() + 1, (int)mousePosition.getY()+ 1)), variable.getColor(), variable.getBackgroundType(), 0));
+                     case TRIANGLE:
+                        addShapeLayer(new TriangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
+                        break;
+                     case RHOMBUS:
+                        addShapeLayer(new RhombusLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                 }
                 layerContainer.setRecentMousePosition(mousePosition);
