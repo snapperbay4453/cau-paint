@@ -5,6 +5,7 @@ import static caupaint.model.Enum.*;
 import caupaint.view.*;
 import java.awt.Point;
 import java.util.Vector;
+import javax.swing.*;
 
 public class Controller{
     
@@ -39,6 +40,11 @@ public class Controller{
     }
     public void rotateShapeLayer(int index, Point point) {
         layerContainer.rotateShapeLayer(index, point);
+    }
+    public void swapShapeLayer(int sourceIndex, int destinationIndex) {
+        if (sourceIndex <= 0 && destinationIndex <= 0) JOptionPane.showMessageDialog(null, "첫 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
+        else if (sourceIndex >= layerContainer.getArrayList().size() - 1 && destinationIndex >= layerContainer.getArrayList().size() - 1) JOptionPane.showMessageDialog(null, "마지막 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
+        else layerContainer.swapShapeLayer(sourceIndex, destinationIndex);
     }
     public void deleteShapeLayer(int index) {
         layerContainer.deleteShapeLayer(index);

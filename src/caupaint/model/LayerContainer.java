@@ -65,6 +65,17 @@ public class LayerContainer implements LayerContainerSubject{
             JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
+    public void swapShapeLayer(int sourceIndex, int destinationIndex) throws IndexOutOfBoundsException{ // 두 레이어의 index를 서로 바꿈
+        try {
+            if (sourceIndex == -1 || destinationIndex == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
+            ShapeLayer tempShapeLayer = layerArrayList.get(sourceIndex); // sourceIndex의 레이어 정보를 임시로 저장
+            layerArrayList.set(sourceIndex, layerArrayList.get(destinationIndex)); // sourceIndex에 destinationIndex의 레이어 정보를 저장
+            layerArrayList.set(destinationIndex, tempShapeLayer); // destinationIndex에 임시로 저장했던 sourceIndex의 레이어 정보를 저장
+            notifyLayerContainerObservers();
+        } catch (IndexOutOfBoundsException exp) {
+            JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     public void deleteShapeLayer(int index) throws ArrayIndexOutOfBoundsException {
         try {
             if (layerArrayList.isEmpty()){ // 삭제할 도형이 없을 경우 예외 호출

@@ -3,18 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/LineBasedShapeLayer.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/EllipseLayer.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/view/Canvas.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/Variable.java</file>
             <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/Enum.java</file>
             <file>file:/C:/GitProjects/CauPaint/src/caupaint/controller/Controller.java</file>
             <file>file:/C:/GitProjects/CauPaint/src/caupaint/view/View.java</file>
             <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/LayerContainer.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/CauPaint.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/view/Sidebar.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/EllipseLayer.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/view/Canvas.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/Variable.java</file>
             <file>file:/C:/GitProjects/CauPaint/src/caupaint/view/LayerListRenderer.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/ShapeLayer.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/LineLayer.java</file>
             <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/RectangleLayer.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/ShapeLayer.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/PlaneBasedShapeLayer.java</file>
         </group>
     </open-files>
 </project-private>
