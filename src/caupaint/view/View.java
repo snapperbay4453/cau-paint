@@ -24,6 +24,10 @@ public class View implements LayerContainerObserver, VariableObserver{
     private JMenuBar menuBar;
     private JMenu fileMenu;
     private JMenuItem exitMenuItem;
+    private JMenu modifyMenu;
+    private JMenuItem canvasSizeSettingMenuItem;
+    private JMenuItem canvasBackgroundColorSettingMenuItem;
+                    
     
     private JButton idleButton;
     private JButton drawLineButton;
@@ -60,7 +64,7 @@ public class View implements LayerContainerObserver, VariableObserver{
     public void createView() {
         // 프레임 및 기본 구성요소 생성
         frame = new JFrame("View");
-        canvas = new Canvas(layerContainer, controller); // 도형이 그려지는 Panel
+        canvas = new Canvas(layerContainer, variable, controller); // 도형이 그려지는 Panel
         canvasInnerContainerPanel = new JPanel();
         canvasContainerScrollPane = new JScrollPane(canvas); // canvas가 스크롤이 가능하도록 함
 
@@ -71,10 +75,16 @@ public class View implements LayerContainerObserver, VariableObserver{
         menuBar = new JMenuBar();
         fileMenu = new JMenu("파일");
         exitMenuItem = new JMenuItem("종료(구현하지 않음)");
+        modifyMenu = new JMenu("편집");
+        canvasSizeSettingMenuItem = new JMenuItem("캔버스 크기 설정");
+        canvasBackgroundColorSettingMenuItem = new JMenuItem("캔버스 배경색 설정");
         
-        fileMenu.addSeparator();
         fileMenu.add(exitMenuItem);
+        modifyMenu.add(canvasSizeSettingMenuItem);
+        modifyMenu.addSeparator();
+        modifyMenu.add(canvasBackgroundColorSettingMenuItem);
         menuBar.add(fileMenu);
+        menuBar.add(modifyMenu);
         
         // 버튼 생성
         idleButton = new JButton(new ImageIcon("src/caupaint/source/icon/cursor.png"));   
@@ -135,7 +145,9 @@ public class View implements LayerContainerObserver, VariableObserver{
         
         // 메뉴를 리스너에 등록함
         exitMenuItem.addActionListener(new MenuBarClickedActionListener());
-        
+        canvasSizeSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
+        canvasBackgroundColorSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
+                
         // 버튼을 리스너에 등록함
         idleButton.addActionListener(new ButtonClickedActionListener());
         drawLineButton.addActionListener(new ButtonClickedActionListener());
@@ -171,7 +183,15 @@ public class View implements LayerContainerObserver, VariableObserver{
     */
     class MenuBarClickedActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            if (event.getSource() == exitMenuItem) {};
+            if (event.getSource() == exitMenuItem) {
+
+            }
+            else if (event.getSource() == canvasSizeSettingMenuItem) {
+                controller.setCanvasSize();
+            }
+            else if (event.getSource() == canvasBackgroundColorSettingMenuItem) {
+                controller.setCanvasBackgroundColor();
+            }
         }
     }
     class ButtonClickedActionListener implements ActionListener {
@@ -224,7 +244,8 @@ public class View implements LayerContainerObserver, VariableObserver{
         frame.repaint();
     }
     public void updateVariable() {
-        chooseColorButton.setBackground(variable.getColor());
+        chooseColorButton.setBackground(variable.getColor()); // chooseColorButton의 배경색 새로고침
+        canvasInnerContainerPanel.revalidate(); // canvasInnerContainerPanel 새로고침
         frame.repaint();
     }
     

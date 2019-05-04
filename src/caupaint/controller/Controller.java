@@ -1,8 +1,8 @@
 
 package caupaint.controller;
 import caupaint.model.*;
-import static caupaint.model.Enum.*;
 import caupaint.view.*;
+import java.awt.Color;
 import java.awt.Point;
 import java.util.Vector;
 import javax.swing.*;
@@ -61,6 +61,19 @@ public class Controller{
     */
     public void chooseColor() {
         variable.chooseColor();
+    }
+    public void setCanvasSize(){
+        variable.setCanvasSize();
+    }
+    public void setCanvasBackgroundColor(){
+        variable.setCanvasBackgroundColor();
+    }
+    
+    public Point getCanvasSize(){
+        return variable.getCanvasSize();
+    }
+    public Color getCanvasBackgroundColor(){
+        return variable.getCanvasBackgroundColor();
     }
     public void setPointStart(Point point){
         variable.setPointStart(point);
@@ -121,7 +134,6 @@ public class Controller{
             case RESIZE:
             case ROTATE:
                 layerContainer.setRecentMousePosition(mousePosition);
-                // 아카이브
                 break;
             default:
                 break;
@@ -148,4 +160,7 @@ public class Controller{
         }
     }
     
+    /*
+    ** 설정 관련 메소드
+    */
 }

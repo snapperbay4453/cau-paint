@@ -1,7 +1,7 @@
 package caupaint.view;
 import caupaint.model.*;
 import caupaint.controller.*;
-import java.awt.Color;
+import caupaint.observer.VariableObserver;
 import java.awt.Dimension;
 
 import javax.swing.*;
@@ -9,7 +9,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.*;
 
-public class Canvas extends JPanel {
+public class Canvas extends JPanel implements VariableObserver{
     
     private LayerContainer layerContainer;
     private Controller controller;
@@ -19,12 +19,14 @@ public class Canvas extends JPanel {
     /*
     ** 생성자
     */
-    public Canvas(LayerContainer layerContainer, Controller controller) {
-        this.setBackground(Color.white);
+    public Canvas(LayerContainer layerContainer, Variable variable, Controller controller) {
+        this.setBackground(controller.getCanvasBackgroundColor());
         this.layerContainer = layerContainer;
         this.controller = controller;
         
-        this.setPreferredSize(new Dimension(640, 480));
+        variable.registerVariableObserver(this); // VariableObserver를 구현하는 클래스에 옵저버로 등록
+        
+        this.setPreferredSize(new Dimension((int)controller.getCanvasSize().getX(), (int)controller.getCanvasSize().getY()));
         
         canvasMouseAdapter = new CanvasMouseAdapter();
         this.addMouseListener(canvasMouseAdapter);
@@ -42,11 +44,6 @@ public class Canvas extends JPanel {
                 layerContainer.getShapeLayer(i).draw(g);
             }
         }
-        /*
-        if (controller.getTempShapeLayer() != null) {
-            controller.getTempShapeLayer().draw(g);
-        }
-        */
     }
         
     class CanvasMouseAdapter extends MouseAdapter{
@@ -65,4 +62,10 @@ public class Canvas extends JPanel {
         }
     }
 
+    public void updateVariable() {
+        this.setPreferredSize(new Dimension((int)controller.getCanvasSize().getX(), (int)controller.getCanvasSize().getY()));
+        this.setBackground(controller.getCanvasBackgroundColor());
+        this.repaint();
+    }
+    
 }

@@ -77,7 +77,7 @@ public class Sidebar extends JPanel {
     }
     public void refreshLayerList() {
         layerList.setListData(controller.getLayerArrayListToVector());
-        layerListLabel.setText("현재 도형 (" + layerContainer.getVector().size() + "개)");
+        layerListLabel.setText("총 " + layerContainer.getVector().size() + "개의 레이어");
     }
     
     /*

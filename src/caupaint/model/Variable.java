@@ -3,9 +3,9 @@ package caupaint.model;
 import caupaint.model.Enum.*;
 import caupaint.controller.*;
 import caupaint.observer.*;
+import caupaint.view.*;
 
 import java.awt.*;
-import static java.lang.Math.*;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -16,12 +16,13 @@ public class Variable implements VariableSubject{
     private FunctionType functionType;
     private ShapeType shapeType;
     private BackgroundType backgroundType;
+    private Point canvasSize;
+    private Color canvasBackgroundColor;
     private Point pointStart;
     private Point pointEnd;
     private Point pointChange;
     private Color color;
     private int lastSelectedLayerIndex;
-    // private ShapeLayer tempShapeLayer; // Layer에 추가하기 전 임시로 shape를 저장
     
     private ArrayList<VariableObserver> VariableObserverArrayList = new ArrayList<VariableObserver>(); // Variable을 구독하는 옵저버들을 저장하는 ArrayList
     
@@ -34,6 +35,8 @@ public class Variable implements VariableSubject{
         functionType = FunctionType.IDLE;
         shapeType = ShapeType.RECTANGLE;
         backgroundType = BackgroundType.EMPTY;
+        canvasSize = new Point(640, 480);
+        canvasBackgroundColor = Color.WHITE;
         pointStart = new Point(0,0);
         pointEnd = new Point(0,0);
         pointChange = new Point(0,0);
@@ -49,6 +52,26 @@ public class Variable implements VariableSubject{
         color = chooser.showDialog(null,"Color",Color.YELLOW);
         notifyVariableObservers();
     }
+    public void setCanvasSize() {
+        int tempWidth;  int tempHeight;
+        try {
+            tempWidth = Integer.parseInt(JOptionPane.showInputDialog(null, "캔버스의 넓이를 입력하세요.", "넓이 입력", JOptionPane.QUESTION_MESSAGE));
+            if (tempWidth <= 0) throw new IllegalArgumentException();
+            tempHeight = Integer.parseInt(JOptionPane.showInputDialog(null, "캔버스의 높이를 입력하세요.", "높이 입력", JOptionPane.QUESTION_MESSAGE));
+            if (tempHeight <= 0) throw new IllegalArgumentException();
+            canvasSize = new Point(tempWidth, tempHeight);
+        } catch (NumberFormatException exp){
+            JOptionPane.showMessageDialog(null, "잘못된 값이 입력되었습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException exp){
+            JOptionPane.showMessageDialog(null, "크기는 0보다 큰 수만 지정할 수 있습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+        notifyVariableObservers();
+    }
+    public void setCanvasBackgroundColor() {
+        JColorChooser chooser=new JColorChooser();
+        canvasBackgroundColor = chooser.showDialog(null,"Color",Color.YELLOW);
+        notifyVariableObservers();
+    }
     
     /*
     ** getter, setter
@@ -61,6 +84,12 @@ public class Variable implements VariableSubject{
     }
     public BackgroundType getBackgroundType() {
         return backgroundType;
+    }
+    public Point getCanvasSize() {
+        return canvasSize;
+    }
+    public Color getCanvasBackgroundColor() {
+        return canvasBackgroundColor;
     }
     public Point getPointStart() {
         return pointStart;

@@ -3,9 +3,7 @@ package caupaint.model;
 import caupaint.model.Enum.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import static java.lang.Math.*;
 
 public class TriangleLayer extends PlaneBasedShapeLayer{
 

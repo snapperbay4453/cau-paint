@@ -3,7 +3,6 @@ package caupaint.model;
 import caupaint.model.Enum.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 
 public class RhombusLayer extends PlaneBasedShapeLayer{
