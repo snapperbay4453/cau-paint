@@ -1,14 +1,18 @@
 
 package caupaint.model;
 import caupaint.model.Enum.*;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 public class RhombusLayer extends PlaneBasedShapeLayer{
-
-    public RhombusLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle, boolean isVisible) {
-        super(name, color, backgroundType, radianAngle, isVisible);
+    
+    /*
+    ** 생성자
+    */
+    public RhombusLayer(Point position, Point size, String name, Color color, BasicStroke stroke, BackgroundType backgroundType, int radianAngle, boolean isVisible) {
+        super(name, color, stroke, backgroundType, radianAngle, isVisible);
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public RhombusLayer(Point position, Point size) {
@@ -23,7 +27,10 @@ public class RhombusLayer extends PlaneBasedShapeLayer{
         super(source);
         setShape(new Rectangle2D.Double(source.getX(), source.getY(), source.getWidth(), source.getHeight()));
     }
-    
+
+    /*
+    ** 도형 변형 관련 메소드
+    */
     public void create(Point recentMousePosition, Point currentMousePosition) {
         scale(recentMousePosition, currentMousePosition);
     }
@@ -36,7 +43,6 @@ public class RhombusLayer extends PlaneBasedShapeLayer{
         setWidth(path2d.getBounds2D().getMaxX() - path2d.getBounds2D().getMinX());
         setHeight(path2d.getBounds2D().getMaxY() - path2d.getBounds2D().getMinY());
     }
-    
     public void scale(Point recentMousePosition, Point currentMousePosition) {
         double tx = currentMousePosition.getX() - recentMousePosition.getX();   double ty = currentMousePosition.getY() - recentMousePosition.getY();
         double tempX = getX();  double tempY = getY();
@@ -75,39 +81,21 @@ public class RhombusLayer extends PlaneBasedShapeLayer{
                    )
                 );
     }
+
+    /*
+    ** getter, setter
+    */
+    public double getX(){ return ((Rectangle2D)getShape()).getX(); }
+    public double getY(){ return ((Rectangle2D)getShape()).getY(); }
+    public double getWidth(){ return ((Rectangle2D)getShape()).getWidth(); }
+    public double getHeight(){ return ((Rectangle2D)getShape()).getHeight(); }
+    public ShapeType getRealShapeType() { return ShapeType.RHOMBUS; }
     
-    public double getX(){
-        return ((Rectangle2D)getShape()).getX();
-    }
-    public double getY(){
-        return ((Rectangle2D)getShape()).getY();
-    }
-    public double getWidth(){
-        return ((Rectangle2D)getShape()).getWidth();
-    }
-    public double getHeight(){
-        return ((Rectangle2D)getShape()).getHeight();
-    }
-    
-    public ShapeType getRealShapeType() {
-        return ShapeType.RHOMBUS;
-    }
-    
-    public void setX(double x){
-        ((Rectangle2D)getShape()).setRect(x, getY(), getWidth(), getHeight());
-    }
-    public void setY(double y){
-        ((Rectangle2D)getShape()).setRect(getX(), y, getWidth(), getHeight());
-    }
-    public void setWidth(double width){
-        ((Rectangle2D)getShape()).setRect(getX(), getY(), width, getHeight());
-    }
-    public void setHeight(double height){
-        ((Rectangle2D)getShape()).setRect(getX(), getY(), getWidth(), height);
-    }
-    public void setShape(Shape shape) {
-        super.setShape((Rectangle2D)shape);
-    }
+    public void setX(double x){ ((Rectangle2D)getShape()).setRect(x, getY(), getWidth(), getHeight()); }
+    public void setY(double y){ ((Rectangle2D)getShape()).setRect(getX(), y, getWidth(), getHeight()); }
+    public void setWidth(double width){ ((Rectangle2D)getShape()).setRect(getX(), getY(), width, getHeight()); }
+    public void setHeight(double height){ ((Rectangle2D)getShape()).setRect(getX(), getY(), getWidth(), height); }
+    public void setShape(Shape shape) { super.setShape((Rectangle2D)shape); }
     
     /*
     ** 그래픽 관련 메소드
@@ -116,6 +104,7 @@ public class RhombusLayer extends PlaneBasedShapeLayer{
         Graphics2D g2d = (Graphics2D)g;
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g.setColor(getColor());
+        g2d.setStroke(getStroke());
         g2d.rotate(getRadianAngle(), getX() + getWidth() * 0.5, getY() + getHeight() * 0.5);
         if (getBackgroundType() == BackgroundType.EMPTY) g.drawPolygon(new int[] {(int)(this.getX() + this.getWidth() * 0.5), (int)(this.getX() + this.getWidth()), (int)(this.getX() + this.getWidth() * 0.5), (int)(this.getX())}, new int[] {(int)(this.getY()), (int)(this.getY() + this.getHeight() * 0.5), (int)(this.getY() + this.getHeight()), (int)(this.getY() + this.getHeight() * 0.5)}, 4);
         else if (getBackgroundType() == BackgroundType.FILL) g.fillPolygon(new int[] {(int)(this.getX() + this.getWidth() * 0.5), (int)(this.getX() + this.getWidth()), (int)(this.getX() + this.getWidth() * 0.5), (int)(this.getX())}, new int[] {(int)(this.getY()), (int)(this.getY() + this.getHeight() * 0.5), (int)(this.getY() + this.getHeight()), (int)(this.getY() + this.getHeight() * 0.5)}, 4);

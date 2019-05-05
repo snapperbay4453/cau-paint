@@ -1,14 +1,18 @@
 
 package caupaint.model;
 import caupaint.model.Enum.*;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 
 public class EllipseLayer extends PlaneBasedShapeLayer{
     
-    public EllipseLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle, boolean isVisible) {
-        super(name, color, backgroundType, radianAngle, isVisible);
+    /*
+    ** 생성자
+    */
+    public EllipseLayer(Point position, Point size, String name, Color color, BasicStroke stroke, BackgroundType backgroundType, int radianAngle, boolean isVisible) {
+        super(name, color, stroke, backgroundType, radianAngle, isVisible);
         setShape(new Ellipse2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public EllipseLayer(Point position, Point size) {
@@ -24,6 +28,9 @@ public class EllipseLayer extends PlaneBasedShapeLayer{
         setShape(new Ellipse2D.Double(source.getX(), source.getY(), source.getWidth(), source.getHeight()));
     }
     
+    /*
+    ** 도형 변형 관련 메소드
+    */
     public void create(Point recentMousePosition, Point currentMousePosition) {
         scale(recentMousePosition, currentMousePosition);
     }
@@ -36,7 +43,6 @@ public class EllipseLayer extends PlaneBasedShapeLayer{
         setWidth(path2d.getBounds2D().getMaxX() - path2d.getBounds2D().getMinX());
         setHeight(path2d.getBounds2D().getMaxY() - path2d.getBounds2D().getMinY());
     }
-    
     public void scale(Point recentMousePosition, Point currentMousePosition) {
         double tx = currentMousePosition.getX() - recentMousePosition.getX();   double ty = currentMousePosition.getY() - recentMousePosition.getY();
         double tempX = getX();  double tempY = getY();
@@ -71,36 +77,19 @@ public class EllipseLayer extends PlaneBasedShapeLayer{
                 );
     }
     
+    /*
+    ** getter, setter
+    */
+    public double getX(){ return ((Ellipse2D)getShape()).getX(); }
+    public double getY(){ return ((Ellipse2D)getShape()).getY(); }
+    public double getWidth(){ return ((Ellipse2D)getShape()).getWidth(); }
+    public double getHeight(){ return ((Ellipse2D)getShape()).getHeight(); }
+    public ShapeType getRealShapeType() { return ShapeType.ELLIPSE; }
     
-    public double getX(){
-        return ((Ellipse2D)getShape()).getX();
-    }
-    public double getY(){
-        return ((Ellipse2D)getShape()).getY();
-    }
-    public double getWidth(){
-        return ((Ellipse2D)getShape()).getWidth();
-    }
-    public double getHeight(){
-        return ((Ellipse2D)getShape()).getHeight();
-    }
-    
-    public ShapeType getRealShapeType() {
-        return ShapeType.ELLIPSE;
-    }
-    
-        public void setX(double x){
-        ((Ellipse2D)getShape()).setFrame(x, getY(), getWidth(), getHeight());
-    }
-    public void setY(double y){
-        ((Ellipse2D)getShape()).setFrame(getX(), y, getWidth(), getHeight());
-    }
-    public void setWidth(double width){
-        ((Ellipse2D)getShape()).setFrame(getX(), getY(), width, getHeight());
-    }
-    public void setHeight(double height){
-        ((Ellipse2D)getShape()).setFrame(getX(), getY(), getWidth(), height);
-    }
+    public void setX(double x){ ((Ellipse2D)getShape()).setFrame(x, getY(), getWidth(), getHeight()); }
+    public void setY(double y){ ((Ellipse2D)getShape()).setFrame(getX(), y, getWidth(), getHeight()); }
+    public void setWidth(double width){ ((Ellipse2D)getShape()).setFrame(getX(), getY(), width, getHeight()); }
+    public void setHeight(double height){ ((Ellipse2D)getShape()).setFrame(getX(), getY(), getWidth(), height); }
     
     /*
     ** 그래픽 관련 메소드
@@ -109,6 +98,7 @@ public class EllipseLayer extends PlaneBasedShapeLayer{
         Graphics2D g2d = (Graphics2D)g;
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g.setColor(getColor());
+        g2d.setStroke(getStroke());
         g2d.rotate(getRadianAngle(), getX() + getWidth() * 0.5, getY() + getHeight() * 0.5);
         if (getBackgroundType() == BackgroundType.EMPTY) g.drawOval((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
         else if (getBackgroundType() == BackgroundType.FILL) g.fillOval((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());

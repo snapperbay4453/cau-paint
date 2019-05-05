@@ -1,6 +1,7 @@
 
 package caupaint.model;
 import caupaint.model.Enum.*;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -10,8 +11,11 @@ public class TriangleLayer extends PlaneBasedShapeLayer{
     private Point[] point = new Point[3];
     private Point centerPoint = new Point();
     
-    public TriangleLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle, boolean isVisible) {
-        super(name, color, backgroundType, radianAngle, isVisible);
+    /*
+    ** 생성자
+    */
+    public TriangleLayer(Point position, Point size, String name, Color color, BasicStroke stroke, BackgroundType backgroundType, int radianAngle, boolean isVisible) {
+        super(name, color, stroke, backgroundType, radianAngle, isVisible);
         setPoint(0, position);  setPoint(1, position);  setPoint(2, position);
         setCenterPoint(position);
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
@@ -31,6 +35,18 @@ public class TriangleLayer extends PlaneBasedShapeLayer{
         setShape(new Rectangle2D.Double(source.getX(), source.getY(), source.getWidth(), source.getHeight()));
     }
     
+    /*
+    ** 변수 관련 메소드
+    */
+    public void refreshPoints() { // point들의 값을 centerPoint와 width, height의 값에 맞추어 새로고침
+        setPoint(0, new Point((int)(getCenterPoint().getX()), (int)((getCenterPoint().getY() - getHeight() * 0.5))));        
+        setPoint(1, new Point((int)(getCenterPoint().getX() + getWidth() * 0.5), (int)((getCenterPoint().getY() + getHeight() * 0.5))));
+        setPoint(2, new Point((int)(getCenterPoint().getX() - getWidth() * 0.5), (int)((getCenterPoint().getY() + getHeight() * 0.5))));
+    }
+
+    /*
+    ** 도형 변형 관련 메소드
+    */
     public void create(Point recentMousePosition, Point currentMousePosition) {
         double tx = currentMousePosition.getX() - recentMousePosition.getX();   double ty = currentMousePosition.getY() - recentMousePosition.getY();
         setWidth(getWidth() + tx);
@@ -81,35 +97,19 @@ public class TriangleLayer extends PlaneBasedShapeLayer{
                 );
     }
     
-    public double getX(){
-        return ((Rectangle2D)getShape()).getX();
-    }
-    public double getY(){
-        return ((Rectangle2D)getShape()).getY();
-    }
-    public double getWidth(){
-        return ((Rectangle2D)getShape()).getWidth();
-    }
-    public double getHeight(){
-        return ((Rectangle2D)getShape()).getHeight();
-    }
-    public Point getPoint(int index) {
-        return point[index];
-    }
-    public Point getCenterPoint() {
-        return centerPoint; 
-    }
+    /*
+    ** getter, setter
+    */
+    public double getX(){ return ((Rectangle2D)getShape()).getX(); }
+    public double getY(){ return ((Rectangle2D)getShape()).getY(); }
+    public double getWidth(){ return ((Rectangle2D)getShape()).getWidth(); }
+    public double getHeight(){ return ((Rectangle2D)getShape()).getHeight(); }
+    public Point getPoint(int index) { return point[index]; }
+    public Point getCenterPoint() { return centerPoint; }
+    public ShapeType getRealShapeType() { return ShapeType.TRIANGLE; }
     
-    public ShapeType getRealShapeType() {
-        return ShapeType.TRIANGLE;
-    }
-    
-    public void setX(double x){
-        ((Rectangle2D)getShape()).setRect(x, getY(), getWidth(), getHeight());
-    }
-    public void setY(double y){
-        ((Rectangle2D)getShape()).setRect(getX(), y, getWidth(), getHeight());
-    }
+    public void setX(double x){ ((Rectangle2D)getShape()).setRect(x, getY(), getWidth(), getHeight()); }
+    public void setY(double y){ ((Rectangle2D)getShape()).setRect(getX(), y, getWidth(), getHeight()); }
     public void setWidth(double x){
         ((Rectangle2D)getShape()).setRect(getX(), getY(), x, getHeight());
         setPoint(0, new Point((int)(getCenterPoint().getX()), (int)((getCenterPoint().getY() - getHeight() * 0.5))));        
@@ -128,20 +128,9 @@ public class TriangleLayer extends PlaneBasedShapeLayer{
     public void setHeight(){
     //    ((Rectangle2D)getShape()).setRect(getX(), getY(), getWidth(), getPoint(1).getY() - getPoint(0).getY()); // 높이 자동처리
     }
-    public void setPoint(int index, Point point) {
-        this.point[index] = point; 
-    }
-    public void setCenterPoint(Point point) {
-        this.centerPoint = point; 
-    }
-    public void refreshPoints() { // point들의 값을 centerPoint와 width, height의 값에 맞추어 새로고침
-        setPoint(0, new Point((int)(getCenterPoint().getX()), (int)((getCenterPoint().getY() - getHeight() * 0.5))));        
-        setPoint(1, new Point((int)(getCenterPoint().getX() + getWidth() * 0.5), (int)((getCenterPoint().getY() + getHeight() * 0.5))));
-        setPoint(2, new Point((int)(getCenterPoint().getX() - getWidth() * 0.5), (int)((getCenterPoint().getY() + getHeight() * 0.5))));
-    }
-    public void setShape(Shape shape) {
-        super.setShape((Rectangle2D)shape);
-    }
+    public void setPoint(int index, Point point) { this.point[index] = point; }
+    public void setCenterPoint(Point point) { this.centerPoint = point; }
+    public void setShape(Shape shape) { super.setShape((Rectangle2D)shape); }
     
     /*
     ** 그래픽 관련 메소드
@@ -150,6 +139,7 @@ public class TriangleLayer extends PlaneBasedShapeLayer{
         Graphics2D g2d = (Graphics2D)g;
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g.setColor(getColor());
+        g2d.setStroke(getStroke());
         //g2d.rotate(getRadianAngle(), getCenterPoint().getX(), getCenterPoint().getY()); // centerPoint를 중심으로 한 회전
         g2d.rotate(getRadianAngle(), getCenterPoint().getX(), (getPoint(0).getY() / 3) + (getPoint(1).getY() / 3 * 2)); // 중점을 중심으로 한 회전
         if (getBackgroundType() == BackgroundType.EMPTY) g.drawPolygon(new int[] {(int)point[0].getX(), (int)point[1].getX(), (int)point[2].getX()}, new int[] {(int)point[0].getY(), (int)point[1].getY(), (int)point[2].getY()}, 3);

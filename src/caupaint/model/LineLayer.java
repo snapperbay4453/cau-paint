@@ -1,13 +1,17 @@
 
 package caupaint.model;
 import caupaint.model.Enum.*;
+
 import java.awt.*;
 import java.awt.geom.*;
 
 public class LineLayer extends LineBasedShapeLayer{
-    
-    public LineLayer(Point point1, Point point2, String name, Color color, BackgroundType backgroundType, int degree, boolean isVisible) {
-        super(name, color, backgroundType, degree, isVisible);
+
+    /*
+    ** 생성자
+    */
+    public LineLayer(Point point1, Point point2, String name, Color color, BasicStroke stroke, BackgroundType backgroundType, int degree, boolean isVisible) {
+        super(name, color, stroke, backgroundType, degree, isVisible);
         setShape(new Line2D.Double(point1.getX(), point1.getY(), point2.getX(), point2.getY()));
     }
     public LineLayer(Point point1, Point  point2) {
@@ -23,13 +27,15 @@ public class LineLayer extends LineBasedShapeLayer{
         setShape(new Rectangle2D.Double(source.getX1(), source.getY1(), source.getX2(), source.getY2()));
     }
     
+    /*
+    ** 도형 변형 관련 메소드
+    */
     public void translate(double tx, double ty) {
         setX1(getX1() + tx);
         setY1(getY1() + ty);
         setX2(getX2() + tx);
         setY2(getY2() + ty);
     }
-    
     public void create(Point recentMousePosition, Point currentMousePosition) {
         setX2(currentMousePosition.getX());
         setY2(currentMousePosition.getY());
@@ -119,36 +125,19 @@ public class LineLayer extends LineBasedShapeLayer{
                 );
     }
     
+    /*
+    ** getter, setter
+    */
+    public double getX1(){ return ((Line2D)getShape()).getX1(); }
+    public double getY1(){ return ((Line2D)getShape()).getY1(); }
+    public double getX2(){ return ((Line2D)getShape()).getX2(); }
+    public double getY2(){ return ((Line2D)getShape()).getY2(); }
+    public ShapeType getRealShapeType() { return ShapeType.LINE; }
     
-    public double getX1(){
-        return ((Line2D)getShape()).getX1();
-    }
-    public double getY1(){
-        return ((Line2D)getShape()).getY1();
-    }
-    public double getX2(){
-        return ((Line2D)getShape()).getX2();
-    }
-    public double getY2(){
-        return ((Line2D)getShape()).getY2();
-    }
-    
-    public ShapeType getRealShapeType() {
-        return ShapeType.LINE;
-    }
-    
-    public void setX1(double x){
-        ((Line2D)getShape()).setLine(x, getY1(), getX2(), getY2());
-    }
-    public void setY1(double y){
-        ((Line2D)getShape()).setLine(getX1(), y, getX2(), getY2());
-    }
-    public void setX2(double x){
-        ((Line2D)getShape()).setLine(getX1(), getY1(), x, getY2());
-    }
-    public void setY2(double y){
-        ((Line2D)getShape()).setLine(getX1(), getY1(), getX2(), y);
-    }
+    public void setX1(double x){ ((Line2D)getShape()).setLine(x, getY1(), getX2(), getY2()); }
+    public void setY1(double y){ ((Line2D)getShape()).setLine(getX1(), y, getX2(), getY2()); }
+    public void setX2(double x){ ((Line2D)getShape()).setLine(getX1(), getY1(), x, getY2()); }
+    public void setY2(double y){ ((Line2D)getShape()).setLine(getX1(), getY1(), getX2(), y); }
     
     /*
     ** 그래픽 관련 메소드
@@ -157,6 +146,7 @@ public class LineLayer extends LineBasedShapeLayer{
         Graphics2D g2d = (Graphics2D)g;
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g.setColor(getColor());
+        g2d.setStroke(getStroke());
         g2d.rotate(getRadianAngle(), (getX1() + getX2()) * 0.5, (getY1() + getY2()) * 0.5);
         g.drawLine((int)getX1(), (int)getY1(), (int)getX2(), (int)getY2());
         g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함

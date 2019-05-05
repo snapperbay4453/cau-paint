@@ -1,6 +1,7 @@
 
 package caupaint.model;
 import caupaint.model.Enum.*;
+
 import java.awt.*;
 
 abstract public class PlaneBasedShapeLayer extends ShapeLayer{
@@ -8,10 +9,11 @@ abstract public class PlaneBasedShapeLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public PlaneBasedShapeLayer(String name, Color color, BackgroundType backgroundType, double radianAngle, boolean isVisible) {
-        super(name, color, backgroundType, radianAngle, isVisible);
+    public PlaneBasedShapeLayer(String name, Color color, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) {
+        super(name, color, stroke, backgroundType, radianAngle, isVisible);
         setName(super.getName());
         setColor(super.getColor());
+        setStroke(super.getStroke());
         setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
         setIsVisible(super.getIsVisible());
@@ -20,6 +22,7 @@ abstract public class PlaneBasedShapeLayer extends ShapeLayer{
         super();
         setName(super.getName());
         setColor(super.getColor());
+        setStroke(super.getStroke());
         setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
         setIsVisible(super.getIsVisible());
@@ -28,11 +31,15 @@ abstract public class PlaneBasedShapeLayer extends ShapeLayer{
         super(source);
         setName(super.getName());
         setColor(super.getColor());
+        setStroke(super.getStroke());
         setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
         setIsVisible(super.getIsVisible());
     }
-    
+
+    /*
+    ** 도형 변형 관련 메소드
+    */
     abstract public void create(Point recentMousePosition, Point currentMousePosition);
     abstract public void translate(double tx, double ty);
     abstract public void scale(Point recentMousePosition, Point currentMousePosition);
@@ -56,7 +63,5 @@ abstract public class PlaneBasedShapeLayer extends ShapeLayer{
     /*
     ** 그래픽 관련 메소드
     */
-    public void draw(Graphics g) {
-
-    }
+    abstract public void draw(Graphics g);
 }
