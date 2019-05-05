@@ -3,7 +3,6 @@ package caupaint.model;
 import caupaint.model.Enum.*;
 import caupaint.controller.*;
 import caupaint.observer.*;
-import caupaint.view.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ public class Variable implements VariableSubject{
     private Point pointEnd;
     private Point pointChange;
     private Color color;
+    private int selectedLayerIndex;
     private int lastSelectedLayerIndex;
     private String filePath;
     
@@ -31,15 +31,16 @@ public class Variable implements VariableSubject{
     public Variable(Controller controller) {
         this.controller = controller;
         
-        functionType = FunctionType.IDLE;
-        shapeType = ShapeType.RECTANGLE;
-        backgroundType = BackgroundType.EMPTY;
-        pointStart = new Point(0,0);
-        pointEnd = new Point(0,0);
-        pointChange = new Point(0,0);
-        color = new Color(0, 0, 0);
-        lastSelectedLayerIndex = -1;
-        filePath = null;
+        functionType = Constant.defaultFunctionType;
+        shapeType = Constant.defaultShapeType;
+        backgroundType = Constant.defaultBackgroundType;
+        pointStart = Constant.defaultPointStart;
+        pointEnd = Constant.defaultPointEnd;
+        pointChange = Constant.defaultPointChange;
+        color = Constant.defaultColor;
+        selectedLayerIndex = Constant.defaultSelectedLayerIndex;
+        lastSelectedLayerIndex = Constant.defaultSelectedLayerIndex;
+        filePath = Constant.defaultFilePath;
     }
     
     /*
@@ -74,6 +75,9 @@ public class Variable implements VariableSubject{
     public Color getColor() {
         return color;
     }
+    public int getSelectedLayerIndex() {
+        return selectedLayerIndex;
+    }
     public int getLastSelectedLayerIndex() {
         return lastSelectedLayerIndex;
     }
@@ -102,7 +106,8 @@ public class Variable implements VariableSubject{
         notifyVariableObservers();
     }
     // setColor()는 chooseColor()로 대체
-    public void setLastSelectedLayerIndex(int index) {
+    public void setSelectedLayerIndex(int index) {
+        selectedLayerIndex = index;
         if (index != -1) lastSelectedLayerIndex = index; // 선택 해제된 경우를 배제함
     }
     public void setFilePath(String filePath) {

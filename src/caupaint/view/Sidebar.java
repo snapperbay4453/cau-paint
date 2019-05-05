@@ -45,27 +45,27 @@ public class Sidebar extends JPanel {
         
         layerListLabel.setHorizontalAlignment(SwingConstants.CENTER);
         refreshLayerList(); // layerList에 Vector 형식 데이터 입력
-        LayerListScrollPane.setMinimumSize(new Dimension(300, 300));
-        LayerListScrollPane.setPreferredSize(new Dimension(300,1000)); // LayerList의 크기 지정
+        LayerListScrollPane.setMinimumSize(Constant.defaultLayerListScrollPaneSize);
+        LayerListScrollPane.setPreferredSize(Constant.defaultLayerListScrollPaneSize); // LayerList의 크기 지정
 
         layerList.setCellRenderer(new LayerListRenderer());
         
         // 툴바 설정
-        moveSelectedLayerFrontButton = new JButton(new ImageIcon(new ImageIcon("src/caupaint/source/icon/up_arrow.png").getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)));   
+        moveSelectedLayerFrontButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "up_arrow.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));   
         moveSelectedLayerFrontButton.setToolTipText("선택한 레이어를 한 칸 위로 올립니다.");
-        moveSelectedLayerFrontButton.setPreferredSize(new Dimension(28, 28)); 
-        moveSelectedLayerBackButton = new JButton(new ImageIcon(new ImageIcon("src/caupaint/source/icon/down_arrow.png").getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)));
+        moveSelectedLayerFrontButton.setPreferredSize(Constant.defaultToolBarButtonSize); 
+        moveSelectedLayerBackButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "down_arrow.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
         moveSelectedLayerBackButton.setToolTipText("선택한 레이어를 한 칸 아래로 내립니다.");   
-        moveSelectedLayerBackButton.setPreferredSize(new Dimension(28, 28));
-        renameSelectedLayerButton = new JButton(new ImageIcon(new ImageIcon("src/caupaint/source/icon/rename.png").getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)));
+        moveSelectedLayerBackButton.setPreferredSize(Constant.defaultToolBarButtonSize);
+        renameSelectedLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rename.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
         renameSelectedLayerButton.setToolTipText("선택한 레이어의 이름을 변경합니다."); 
-        renameSelectedLayerButton.setPreferredSize(new Dimension(28, 28));
-        copySelectedLayerButton = new JButton(new ImageIcon(new ImageIcon("src/caupaint/source/icon/copy.png").getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)));
+        renameSelectedLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
+        copySelectedLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "copy.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
         copySelectedLayerButton.setToolTipText("선택한 레이어를 복제합니다.");
-        copySelectedLayerButton.setPreferredSize(new Dimension(28, 28));
-        deleteSelectedLayerButton = new JButton(new ImageIcon(new ImageIcon("src/caupaint/source/icon/delete.png").getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)));
+        copySelectedLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
+        deleteSelectedLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "delete.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
         deleteSelectedLayerButton.setToolTipText("선택한 레이어를 삭제합니다.");
-        deleteSelectedLayerButton.setPreferredSize(new Dimension(28, 28));
+        deleteSelectedLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
         sidebarToolBarPanel.add(moveSelectedLayerFrontButton);
         sidebarToolBarPanel.add(moveSelectedLayerBackButton);
         sidebarToolBarPanel.add(renameSelectedLayerButton);
@@ -105,7 +105,7 @@ public class Sidebar extends JPanel {
     */
     class LayerListSelectionListener implements ListSelectionListener{
         public void valueChanged(ListSelectionEvent e){
-            controller.setLastSelectedLayerIndex(layerList.getSelectedIndex());
+            controller.setSelectedLayerIndex(layerList.getSelectedIndex());
         }
     }
     class ButtonClickedActionListener implements ActionListener {

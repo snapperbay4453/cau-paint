@@ -26,22 +26,22 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
         indexLabel.setText(Integer.toString(index));
         switch(shapeLayer.getRealShapeType()) {
             case LINE:
-                iconLabel.setIcon(new ImageIcon("src/caupaint/source/icon/line.png"));
+                iconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "line.png"));
                 break;
             case RECTANGLE:
-                iconLabel.setIcon(new ImageIcon("src/caupaint/source/icon/rectangle.png"));
+                iconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rectangle.png"));
                 break;
             case ELLIPSE:
-                iconLabel.setIcon(new ImageIcon("src/caupaint/source/icon/ellipse.png"));
+                iconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "ellipse.png"));
                 break;
             case TRIANGLE:
-                iconLabel.setIcon(new ImageIcon("src/caupaint/source/icon/triangle.png"));
+                iconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "triangle.png"));
                 break;
             case RHOMBUS:
-                iconLabel.setIcon(new ImageIcon("src/caupaint/source/icon/rhombus.png"));
+                iconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rhombus.png"));
                 break;
             default:
-                iconLabel.setIcon(new ImageIcon("src/caupaint/source/icon/shape.png"));
+                iconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "shape.png"));
                 break;
         }
         

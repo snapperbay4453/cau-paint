@@ -23,8 +23,8 @@ public class LayerContainer implements Serializable, LayerContainerSubject{
     */
     public LayerContainer() {
         layerArrayList = new ArrayList<ShapeLayer>();
-        canvasSize = new Point(640, 480);
-        canvasBackgroundColor = Color.WHITE;
+        canvasSize = Constant.defaultCanvasSize;
+        canvasBackgroundColor = Constant.defaultCanvasBackgroundColor;
         recentMousePosition = new Point(0,0);
     }
     
@@ -122,7 +122,7 @@ public class LayerContainer implements Serializable, LayerContainerSubject{
             }
 
             layerArrayList.add(index + 1, tempShapeLayer);
-            layerArrayList.get(index + 1).setName(layerArrayList.get(index).getName() + " - 사본");
+            layerArrayList.get(index + 1).setName(layerArrayList.get(index).getName() + Constant.defaultCopiedFileSuffix);
             notifyLayerContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
             JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
@@ -143,7 +143,7 @@ public class LayerContainer implements Serializable, LayerContainerSubject{
             JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void clear() {
+    public void clearShapeLayers() {
         if (layerArrayList.isEmpty()){ // 삭제할 도형이 없을 경우 예외 호출
             JOptionPane.showMessageDialog(null, "삭제할 도형이 없습니다.", "오류", JOptionPane.ERROR_MESSAGE);
             return;
@@ -177,7 +177,11 @@ public class LayerContainer implements Serializable, LayerContainerSubject{
         canvasBackgroundColor = chooser.showDialog(null,"Color",Color.YELLOW);
         notifyLayerContainerObservers();
     }
-    
+    public void clearCanvas() {
+        canvasSize = Constant.defaultCanvasSize;
+        canvasBackgroundColor = Constant.defaultCanvasBackgroundColor;
+        notifyLayerContainerObservers();
+    }
     
     /*
     ** getter, setter

@@ -5,7 +5,6 @@ import caupaint.model.*;
 import caupaint.view.*;
 import java.awt.Color;
 import java.awt.Point;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,15 +12,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Vector;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 
 public class Controller{
     
     private LayerContainer layerContainer;
     private Variable variable;
     private View view;
-    
-    final static String filenameExtension = ".caupaint"; // 저장되는 파일이 가지는 확장자
     
     /*
     ** 생성자
@@ -54,6 +50,13 @@ public class Controller{
     public void rotateShapeLayer(int index, Point point) {
         layerContainer.rotateShapeLayer(index, point);
     }
+    public void changeShapeLayerBackground(int index) {
+        if (variable.getSelectedLayerIndex() != -1) {
+            layerContainer.getArrayList().get(index).setBackgroundType(variable.getBackgroundType()); // 도형의 배경 채우기 옵션 설정
+            layerContainer.getArrayList().get(index).setColor(variable.getColor()); // 도형의 color 변경
+        }
+        else return;
+    }
     public void swapShapeLayer(int sourceIndex, int destinationIndex) {
         if (sourceIndex <= 0 && destinationIndex <= 0) JOptionPane.showMessageDialog(null, "첫 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
         else if (sourceIndex >= layerContainer.getArrayList().size() - 1 && destinationIndex >= layerContainer.getArrayList().size() - 1) JOptionPane.showMessageDialog(null, "마지막 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
@@ -66,8 +69,14 @@ public class Controller{
         layerContainer.deleteShapeLayer(index);
     }
     public void clearLayer() {
-        layerContainer.clear();
+        layerContainer.clearShapeLayers();
     }
+    public void createNewCanvas() {
+        layerContainer.clearShapeLayers();
+        variable.setFilePath(Constant.defaultFilePath);
+        layerContainer.clearCanvas();
+    }
+    
     public Vector<ShapeLayer> getLayerArrayListToVector(){ // 사이드바에 Layer의 정보를 표시하기 위해 ArrayList를 Vector로 바꿔 반환하는 함수
         return layerContainer.getVector();
     }
@@ -82,6 +91,9 @@ public class Controller{
         if (variable.getFilePath() == null) return ("제목 없음 - CauPaint");
         else return(variable.getFilePath() + " - CauPaint");
     }
+    public int getSelectedLayerIndex() {
+        return variable.getSelectedLayerIndex();
+    }
     public String getLoadedFilePath(){
         return variable.getFilePath();
     }
@@ -91,13 +103,13 @@ public class Controller{
     public void setPointEnd(Point point){
         variable.setPointEnd(point);
     }
-    public void setLastSelectedLayerIndex(int index) {
-        variable.setLastSelectedLayerIndex(index);
+    public void setSelectedLayerIndex(int index) {
+        variable.setSelectedLayerIndex(index);
     }
     public void setFilePath(String filePath){
         variable.setFilePath(filePath);
     }
-    
+
     /*
     ** Canvas 관련 메소드
     */
@@ -229,7 +241,7 @@ public class Controller{
         if (variable.getFilePath() != null) return variable.getFilePath(); // variable에 이미 기존의 파일 경로가 저장되어 있을 경우, 기존의 경로를 반환함
         else {
             JFileChooser jFileChooser = new JFileChooser();
-            if(jFileChooser.showSaveDialog(null) == 0) return jFileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
+            if(jFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) return jFileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
             else return null; // 대화상자를 불러온 후 파일 저장 위치 확인에 실패한 경우
         }
     }
@@ -246,13 +258,13 @@ public class Controller{
         
         ObjectOutputStream os;
         try {
-            if (filePath.endsWith(filenameExtension)) os = new ObjectOutputStream(new FileOutputStream(filePath)); // 확장자가 이미 filePath에 포함되어 있기 때문에 filenameExtension을 붙이지 않음
-            else os = new ObjectOutputStream(new FileOutputStream(filePath + filenameExtension)); // filePath에 확장자가 포함되어 있지 않기 때문에 filenameExtension을 붙임
+            if (filePath.endsWith(Constant.defaultFilenameExtension)) os = new ObjectOutputStream(new FileOutputStream(filePath)); // 확장자가 이미 filePath에 포함되어 있기 때문에 filenameExtension을 붙이지 않음
+            else os = new ObjectOutputStream(new FileOutputStream(filePath + Constant.defaultFilenameExtension)); // filePath에 확장자가 포함되어 있지 않기 때문에 filenameExtension을 붙임
             os.writeObject(layerContainer);
             JOptionPane.showMessageDialog(null, "파일을 저장하였습니다.", "저장 완료", JOptionPane.INFORMATION_MESSAGE);
             os.close();
-            if (filePath.endsWith(filenameExtension)) variable.setFilePath(filePath);
-            else variable.setFilePath(filePath + filenameExtension);
+            if (filePath.endsWith(Constant.defaultFilenameExtension)) variable.setFilePath(filePath);
+            else variable.setFilePath(filePath + Constant.defaultFilenameExtension);
             view.updateLayerContainer();
         } catch (IOException exp) {
             JOptionPane.showMessageDialog(null, "파일 저장에 실패하였습니다.", "저장 실패", JOptionPane.ERROR_MESSAGE);

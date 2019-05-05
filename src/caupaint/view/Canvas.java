@@ -26,7 +26,7 @@ public class Canvas extends JPanel implements LayerContainerObserver{
         
         layerContainer.registerLayerContainerObserver(this); // LayerContainerObserver를 구현하는 클래스에 옵저버로 등록
         
-        this.setPreferredSize(new Dimension((int)controller.getCanvasSize().getX(), (int)controller.getCanvasSize().getY()));
+        this.setPreferredSize(new Dimension((int)controller.getCanvasSize().getX(), (int)controller.getCanvasSize().getY())); // Controller를 통해 LayerContainer에 저장된 Canvas 크기 정보를 불러옴
         
         canvasMouseAdapter = new CanvasMouseAdapter();
         this.addMouseListener(canvasMouseAdapter);

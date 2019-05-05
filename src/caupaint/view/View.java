@@ -5,8 +5,10 @@ import caupaint.controller.*;
 import caupaint.model.Enum.*;
 import caupaint.observer.*;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -25,6 +27,7 @@ public class View implements LayerContainerObserver, VariableObserver{
     
     private JMenuBar menuBar;
     private JMenu fileMenu;
+    private JMenuItem createNewCanvasMenuItem;
     private JMenuItem loadFromFileMenuItem;
     private JMenuItem saveToFileMenuItem;
     private JMenuItem saveAsToFileMenuItem;
@@ -32,9 +35,8 @@ public class View implements LayerContainerObserver, VariableObserver{
     private JMenu modifyMenu;
     private JMenuItem canvasSizeSettingMenuItem;
     private JMenuItem canvasBackgroundColorSettingMenuItem;
-                    
     
-    private JButton idleButton;
+    private JButton createNewCanvasButton;
     private JButton loadFromFileButton;
     private JButton saveToFileButton;
     private JButton drawLineButton;
@@ -42,6 +44,7 @@ public class View implements LayerContainerObserver, VariableObserver{
     private JButton drawEllipseButton;
     private JButton drawTriangleButton;
     private JButton drawRhombusButton;
+    private JButton idleButton;
     private JButton moveShapeButton;
     private JButton resizeShapeButton;
     private JButton rotateShapeButton;
@@ -49,7 +52,11 @@ public class View implements LayerContainerObserver, VariableObserver{
     private JButton chooseColorButton;
     private JButton emptyBackgroundTypeButton;
     private JButton fillBackgroundTypeButton;
-
+    private ArrayList<JButton> shapeButtonsArrayList; // 도형 관련 버튼들을 모은 ArrayList
+    private ArrayList<JButton> functionButtonsArrayList; // 기능 관련 버튼들을 모두 ArrayList
+    private ArrayList<JButton> backgroundTypeButtonsArrayList; // 배경 타입 관련 버튼들을 모두 ArrayList
+    
+    
     private JToolBar toolBar;
     
     /*
@@ -73,117 +80,155 @@ public class View implements LayerContainerObserver, VariableObserver{
         canvas = new Canvas(layerContainer, controller); // 도형이 그려지는 Panel
         canvasInnerContainerPanel = new JPanel();
         canvasContainerScrollPane = new JScrollPane(canvas); // canvas가 스크롤이 가능하도록 함
-
         sidebar = new Sidebar(layerContainer, controller);
 	// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         //메뉴바 생성
         menuBar = new JMenuBar();
+        //메뉴바에 메뉴를 추가함
         fileMenu = new JMenu("파일");
-        loadFromFileMenuItem = new JMenuItem("불러오기");
-        saveToFileMenuItem = new JMenuItem("저장");
-        saveAsToFileMenuItem = new JMenuItem("다른 이름으로 저장");
-        exitMenuItem = new JMenuItem("종료");
-        modifyMenu = new JMenu("편집");
-        canvasSizeSettingMenuItem = new JMenuItem("캔버스 크기 설정");
-        canvasBackgroundColorSettingMenuItem = new JMenuItem("캔버스 배경색 설정");
-        
-        //메뉴바에 아이템을 추가함
-        fileMenu.add(loadFromFileMenuItem);
-        fileMenu.add(saveToFileMenuItem);
-        fileMenu.add(saveAsToFileMenuItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitMenuItem);
-        modifyMenu.add(canvasSizeSettingMenuItem);
-        modifyMenu.addSeparator();
-        modifyMenu.add(canvasBackgroundColorSettingMenuItem);
         menuBar.add(fileMenu);
+        modifyMenu = new JMenu("편집");
         menuBar.add(modifyMenu);
-        
-        // 버튼 생성
-        idleButton = new JButton(new ImageIcon("src/caupaint/source/icon/cursor.png"));   
-        idleButton.setToolTipText("어떠한 입력에도 반응하지 않고 대기합니다.");
-        loadFromFileButton = new JButton(new ImageIcon("src/caupaint/source/icon/load.png"));
-        loadFromFileButton.setToolTipText("저장된 파일로부터 캔버스를 불러옵니다.");
-        saveToFileButton = new JButton(new ImageIcon("src/caupaint/source/icon/save.png"));
-        saveToFileButton.setToolTipText("캔버스를 파일로 저장합니다.");     
-        drawLineButton = new JButton(new ImageIcon("src/caupaint/source/icon/line.png"));
-        drawLineButton.setToolTipText("마우스로 드래그하여 직선을 그립니다.");
-        drawRectangleButton = new JButton(new ImageIcon("src/caupaint/source/icon/rectangle.png"));
-        drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");
-        drawEllipseButton = new JButton(new ImageIcon("src/caupaint/source/icon/ellipse.png"));
-        drawEllipseButton.setToolTipText("마우스로 드래그하여 타원을 그립니다.");
-        drawTriangleButton = new JButton(new ImageIcon("src/caupaint/source/icon/triangle.png"));
-        drawTriangleButton.setToolTipText("마우스로 드래그하여 삼각형을 그립니다.");
-        drawRhombusButton = new JButton(new ImageIcon("src/caupaint/source/icon/rhombus.png"));
-        drawRhombusButton.setToolTipText("마우스로 드래그하여 마름모를 그립니다.");
-        moveShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/move.png"));
-        moveShapeButton.setToolTipText("선택한 도형을 이동합니다.");
-        resizeShapeButton =  new JButton(new ImageIcon("src/caupaint/source/icon/resize.png"));
-        resizeShapeButton.setToolTipText("선택한 도형의 크기를 변경합니다.");
-        rotateShapeButton = new JButton(new ImageIcon("src/caupaint/source/icon/rotate.png"));
-        rotateShapeButton.setToolTipText("선택한 도형을 회전시킵니다.");
-        clearButton = new JButton(new ImageIcon("src/caupaint/source/icon/clear.png"));
-        clearButton.setToolTipText("캔버스를 초기화합니다.");
-        chooseColorButton = new JButton(new ImageIcon("src/caupaint/source/icon/bgcolor.png"));
-        chooseColorButton.setToolTipText("색상을 설정합니다.");
-        chooseColorButton.setBackground(variable.getColor());
-        emptyBackgroundTypeButton = new JButton(new ImageIcon("src/caupaint/source/icon/background_empty.png"));
-        emptyBackgroundTypeButton.setToolTipText("도형의 배경이 비어있도록 설정합니다.");
-        fillBackgroundTypeButton = new JButton(new ImageIcon("src/caupaint/source/icon/background_fill.png"));
-        fillBackgroundTypeButton.setToolTipText("도형의 배경이 선택한 색상으로 채워지도록 설정합니다.");
-        
+        //메뉴바에 아이템을 추가함, 아이템을 리스너에 등록함
+        createNewCanvasMenuItem = new JMenuItem("새 캔버스");
+        fileMenu.add(createNewCanvasMenuItem);
+        createNewCanvasMenuItem.addActionListener(new MenuBarClickedActionListener());
+        loadFromFileMenuItem = new JMenuItem("불러오기");
+        fileMenu.add(loadFromFileMenuItem);
+        loadFromFileMenuItem.addActionListener(new MenuBarClickedActionListener());
+        saveToFileMenuItem = new JMenuItem("저장");
+        fileMenu.add(saveToFileMenuItem);
+        saveToFileMenuItem.addActionListener(new MenuBarClickedActionListener());
+        saveAsToFileMenuItem = new JMenuItem("다른 이름으로 저장");
+        fileMenu.add(saveAsToFileMenuItem);
+        saveAsToFileMenuItem.addActionListener(new MenuBarClickedActionListener());
+                fileMenu.addSeparator();
+        exitMenuItem = new JMenuItem("종료");
+        fileMenu.add(exitMenuItem);
+        exitMenuItem.addActionListener(new MenuBarClickedActionListener());
+        canvasSizeSettingMenuItem = new JMenuItem("캔버스 크기 설정");
+        modifyMenu.add(canvasSizeSettingMenuItem);
+        canvasSizeSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
+                modifyMenu.addSeparator();
+        canvasBackgroundColorSettingMenuItem = new JMenuItem("캔버스 배경색 설정");
+        modifyMenu.add(canvasBackgroundColorSettingMenuItem);
+        canvasBackgroundColorSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
+
+
         // 툴바 생성
         toolBar = new JToolBar();
         
-        // 버튼을 툴바에 추가함
-        toolBar.add(idleButton);
-        toolBar.add(loadFromFileButton);
-        toolBar.add(saveToFileButton);
-        toolBar.addSeparator();
-        toolBar.add(drawLineButton);
-        toolBar.add(drawRectangleButton);
-        toolBar.add(drawEllipseButton);
-        toolBar.add(drawTriangleButton);
-        toolBar.add(drawRhombusButton);    
-        toolBar.addSeparator();
-        toolBar.add(moveShapeButton);
-        toolBar.add(resizeShapeButton);
-        toolBar.add(rotateShapeButton);
-        toolBar.addSeparator();
-        toolBar.add(clearButton);
-        toolBar.addSeparator();
-        toolBar.add(new JLabel("색상 "));
-        toolBar.add(chooseColorButton);
-        toolBar.addSeparator();
-        toolBar.add(emptyBackgroundTypeButton);
-        toolBar.add(fillBackgroundTypeButton);
+        shapeButtonsArrayList = new ArrayList<JButton>(); // 도형 관련 버튼들을 모은 ArrayList
+        functionButtonsArrayList = new ArrayList<JButton>(); // 기능 관련 버튼들을 모두 ArrayList
+        backgroundTypeButtonsArrayList = new ArrayList<JButton>(); // 배경 타입 관련 버튼들을 모두 ArrayList
         
-        // 메뉴를 리스너에 등록함
-        loadFromFileMenuItem.addActionListener(new MenuBarClickedActionListener());
-        saveToFileMenuItem.addActionListener(new MenuBarClickedActionListener());
-        saveAsToFileMenuItem.addActionListener(new MenuBarClickedActionListener());
-        exitMenuItem.addActionListener(new MenuBarClickedActionListener());
-        canvasSizeSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
-        canvasBackgroundColorSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
-                
-        // 버튼을 리스너에 등록함
-        idleButton.addActionListener(new ButtonClickedActionListener());
+        // 버튼 생성, 툴바에 추가 및 리스너에 등록
+        createNewCanvasButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "new.png"));   
+        createNewCanvasButton.setToolTipText("새 캔버스를 엽니다.");
+        toolBar.add(createNewCanvasButton);
+        createNewCanvasButton.addActionListener(new ButtonClickedActionListener());
+        
+        loadFromFileButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "load.png"));
+        loadFromFileButton.setToolTipText("저장된 파일로부터 캔버스를 불러옵니다.");
+        toolBar.add(loadFromFileButton);
         loadFromFileButton.addActionListener(new ButtonClickedActionListener());
+        
+        saveToFileButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "save.png"));
+        saveToFileButton.setToolTipText("캔버스를 파일로 저장합니다.");     
+        toolBar.add(saveToFileButton);
         saveToFileButton.addActionListener(new ButtonClickedActionListener());
+        
+                toolBar.addSeparator();    
+                
+        drawLineButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "line.png"));
+        drawLineButton.setToolTipText("마우스로 드래그하여 직선을 그립니다.");
+        toolBar.add(drawLineButton);
+        shapeButtonsArrayList.add(drawLineButton);
         drawLineButton.addActionListener(new ButtonClickedActionListener());
+        
+        drawRectangleButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "rectangle.png"));
+        drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");
+        toolBar.add(drawRectangleButton);
+        shapeButtonsArrayList.add(drawRectangleButton);
         drawRectangleButton.addActionListener(new ButtonClickedActionListener());
+        
+        drawEllipseButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "ellipse.png"));
+        drawEllipseButton.setToolTipText("마우스로 드래그하여 타원을 그립니다.");
+        toolBar.add(drawEllipseButton);
+        shapeButtonsArrayList.add(drawEllipseButton);
         drawEllipseButton.addActionListener(new ButtonClickedActionListener());
+        
+        drawTriangleButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "triangle.png"));
+        drawTriangleButton.setToolTipText("마우스로 드래그하여 삼각형을 그립니다.");
+        toolBar.add(drawTriangleButton);
+        shapeButtonsArrayList.add(drawTriangleButton);
         drawTriangleButton.addActionListener(new ButtonClickedActionListener());
+        
+        drawRhombusButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "rhombus.png"));
+        drawRhombusButton.setToolTipText("마우스로 드래그하여 마름모를 그립니다.");
+        toolBar.add(drawRhombusButton); 
+        shapeButtonsArrayList.add(drawRhombusButton);
         drawRhombusButton.addActionListener(new ButtonClickedActionListener());
+        
+                toolBar.addSeparator();
+        
+        idleButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "cursor.png"));   
+        idleButton.setToolTipText("어떠한 입력에도 반응하지 않고 대기합니다.");
+        toolBar.add(idleButton);
+        functionButtonsArrayList.add(idleButton);
+        idleButton.addActionListener(new ButtonClickedActionListener());     
+                
+        moveShapeButton =  new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "move.png"));
+        moveShapeButton.setToolTipText("선택한 도형을 이동합니다.");
+        toolBar.add(moveShapeButton);
+        functionButtonsArrayList.add(moveShapeButton);
         moveShapeButton.addActionListener(new ButtonClickedActionListener());
+        
+        resizeShapeButton =  new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "resize.png"));
+        resizeShapeButton.setToolTipText("선택한 도형의 크기를 변경합니다.");
+        toolBar.add(resizeShapeButton);
+        functionButtonsArrayList.add(resizeShapeButton);
         resizeShapeButton.addActionListener(new ButtonClickedActionListener());
+        
+        rotateShapeButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "rotate.png"));
+        rotateShapeButton.setToolTipText("선택한 도형을 회전시킵니다.");
+        toolBar.add(rotateShapeButton);
+        functionButtonsArrayList.add(rotateShapeButton);
         rotateShapeButton.addActionListener(new ButtonClickedActionListener());
+        
+                toolBar.addSeparator();
+                
+        clearButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "clear.png"));
+        clearButton.setToolTipText("캔버스를 초기화합니다.");
+        toolBar.add(clearButton);
         clearButton.addActionListener(new ButtonClickedActionListener());
+        
+                toolBar.addSeparator();
+                
+        toolBar.add(new JLabel("색상 "));
+        chooseColorButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "bgcolor.png"));
+        chooseColorButton.setToolTipText("색상을 설정합니다.");
+        chooseColorButton.setBackground(variable.getColor());
+        toolBar.add(chooseColorButton);
         chooseColorButton.addActionListener(new ButtonClickedActionListener());
+        
+                toolBar.addSeparator();
+                
+        emptyBackgroundTypeButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "background_empty.png"));
+        emptyBackgroundTypeButton.setToolTipText("도형의 배경이 비어있도록 설정합니다.");
+        toolBar.add(emptyBackgroundTypeButton);
+        backgroundTypeButtonsArrayList.add(emptyBackgroundTypeButton);
         emptyBackgroundTypeButton.addActionListener(new ButtonClickedActionListener());
+        
+        fillBackgroundTypeButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "background_fill.png"));
+        fillBackgroundTypeButton.setToolTipText("도형의 배경이 선택한 색상으로 채워지도록 설정합니다.");
+        toolBar.add(fillBackgroundTypeButton);
+        backgroundTypeButtonsArrayList.add(fillBackgroundTypeButton);
         fillBackgroundTypeButton.addActionListener(new ButtonClickedActionListener()); 
+
+        setBackgroundOnlySelectedButton(); // 초기 선택값을 버튼에 적용함
         
         // 종료 기능을 리스너에 등록함
         frame.addWindowListener(new WindowActionListener());
@@ -197,7 +242,7 @@ public class View implements LayerContainerObserver, VariableObserver{
         
         // 프레임 설정
         frame.setTitle(controller.generateViewTitle());
-        frame.setSize(1280,720);
+        frame.setSize(Constant.defaultWindowSize);
         frame.setJMenuBar(menuBar);
         frame.setVisible(true);
     }
@@ -205,8 +250,12 @@ public class View implements LayerContainerObserver, VariableObserver{
     /*
     ** 리스너 관련 메소드
     */
+
     class MenuBarClickedActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
+            if (event.getSource() == createNewCanvasMenuItem) {
+                controller.createNewCanvas();
+            }
             if (event.getSource() == loadFromFileMenuItem) {
                 try {
                     controller.loadLayersFromFile(controller.getFilePathToOpen());
@@ -243,8 +292,8 @@ public class View implements LayerContainerObserver, VariableObserver{
     }
     class ButtonClickedActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            if (event.getSource() == idleButton){
-                variable.setFunctionType(FunctionType.IDLE);
+            if (event.getSource() == createNewCanvasButton){
+                controller.createNewCanvas();
             }
             else if (event.getSource() == loadFromFileButton){
                 try {
@@ -254,7 +303,6 @@ public class View implements LayerContainerObserver, VariableObserver{
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
             else if (event.getSource() == saveToFileButton){
                 try {
@@ -283,6 +331,9 @@ public class View implements LayerContainerObserver, VariableObserver{
                 variable.setFunctionType(FunctionType.DRAW);
                 variable.setShapeType(ShapeType.RHOMBUS);
             }
+            else if (event.getSource() == idleButton){
+                variable.setFunctionType(FunctionType.IDLE);
+            }
             else if (event.getSource() == moveShapeButton){
                 variable.setFunctionType(FunctionType.MOVE);
             }
@@ -294,8 +345,14 @@ public class View implements LayerContainerObserver, VariableObserver{
             }
             else if (event.getSource() == clearButton) controller.clearLayer();
             else if (event.getSource() == chooseColorButton) controller.chooseColor();
-            else if (event.getSource() == emptyBackgroundTypeButton) variable.setBackgroundType(BackgroundType.EMPTY);
-            else if (event.getSource() == fillBackgroundTypeButton) variable.setBackgroundType(BackgroundType.FILL);
+            else if (event.getSource() == emptyBackgroundTypeButton) {
+                variable.setBackgroundType(BackgroundType.EMPTY);
+                controller.changeShapeLayerBackground(controller.getSelectedLayerIndex());
+            }
+            else if (event.getSource() == fillBackgroundTypeButton) {
+                variable.setBackgroundType(BackgroundType.FILL);
+                controller.changeShapeLayerBackground(controller.getSelectedLayerIndex());
+            }
         }
     }
     class WindowActionListener extends WindowAdapter {
@@ -303,7 +360,50 @@ public class View implements LayerContainerObserver, VariableObserver{
             controller.checkExit();
         }
     }
+    
+    /*
+    ** 버튼 배경색 지정 메소드
+    */
+    public void changeBackgroundOnlySelectedButton(ArrayList<JButton> buttonsArrayList, JButton selectedButton){
+        for (JButton button : buttonsArrayList) {
+           if(selectedButton != null && button.equals(selectedButton)) button.setBackground(Color.CYAN);
+           else button.setBackground(Color.WHITE);
+        }
+    }
 
+    public void setBackgroundOnlySelectedButton(){
+        switch(variable.getFunctionType()) {
+            case IDLE:
+                changeBackgroundOnlySelectedButton(functionButtonsArrayList, idleButton);   break;
+            case DRAW:
+                changeBackgroundOnlySelectedButton(functionButtonsArrayList, null);   break;
+            case MOVE:
+                changeBackgroundOnlySelectedButton(functionButtonsArrayList, moveShapeButton);   break;
+            case RESIZE:
+                changeBackgroundOnlySelectedButton(functionButtonsArrayList, resizeShapeButton);   break;
+            case ROTATE:
+                changeBackgroundOnlySelectedButton(functionButtonsArrayList, rotateShapeButton);   break;
+        }
+        if (variable.getFunctionType() == FunctionType.DRAW) switch(variable.getShapeType()) {
+            case LINE:
+                changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawLineButton);   break;
+            case RECTANGLE:
+                changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawRectangleButton);   break;
+            case ELLIPSE:
+                changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawEllipseButton);   break;
+            case TRIANGLE:
+                changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawTriangleButton);   break;
+            case RHOMBUS:
+                changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawRhombusButton);   break;
+        } else changeBackgroundOnlySelectedButton(shapeButtonsArrayList, null); // 그리기 모드가 아닐 경우
+        switch(variable.getBackgroundType()) {
+            case EMPTY:
+                changeBackgroundOnlySelectedButton(backgroundTypeButtonsArrayList, emptyBackgroundTypeButton);   break;
+            case FILL:
+                changeBackgroundOnlySelectedButton(backgroundTypeButtonsArrayList, fillBackgroundTypeButton);   break;
+        }
+    }
+    
    /*
     ** 옵저버 관련 메소드
     */
@@ -313,6 +413,7 @@ public class View implements LayerContainerObserver, VariableObserver{
         frame.repaint();
     }
     public void updateVariable() {
+        setBackgroundOnlySelectedButton();
         chooseColorButton.setBackground(variable.getColor()); // chooseColorButton의 배경색 새로고침
         frame.setTitle(controller.generateViewTitle());
         frame.repaint();
