@@ -15,6 +15,7 @@ public class Sidebar extends JPanel {
     private GridBagLayout Gbag;
     
     private JPanel sidebarToolBarPanel;
+    private JButton toggleSelectedLayerVisibleButton;
     private JButton moveSelectedLayerFrontButton;
     private JButton moveSelectedLayerBackButton;
     private JButton renameSelectedLayerButton;
@@ -25,8 +26,6 @@ public class Sidebar extends JPanel {
 
     private JList<ShapeLayer> layerList;
     
-    private LayerListSelectionListener layerListSelectionListener;
-
     /*
     ** 생성자
     */
@@ -50,35 +49,44 @@ public class Sidebar extends JPanel {
 
         layerList.setCellRenderer(new LayerListRenderer());
         
-        // 툴바 설정
+        // 툴바에 아이콘을 추가하고 리스너에 등록함
+        toggleSelectedLayerVisibleButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "invisible.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));   
+        toggleSelectedLayerVisibleButton.setToolTipText("선택한 레이어를 가리거나 다시 보입니다.");
+        toggleSelectedLayerVisibleButton.setPreferredSize(Constant.defaultToolBarButtonSize); 
+        sidebarToolBarPanel.add(toggleSelectedLayerVisibleButton);
+        toggleSelectedLayerVisibleButton.addActionListener((ActionListener) new ButtonClickedActionListener());
+        
         moveSelectedLayerFrontButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "up_arrow.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));   
         moveSelectedLayerFrontButton.setToolTipText("선택한 레이어를 한 칸 위로 올립니다.");
         moveSelectedLayerFrontButton.setPreferredSize(Constant.defaultToolBarButtonSize); 
+        sidebarToolBarPanel.add(moveSelectedLayerFrontButton);
+        moveSelectedLayerFrontButton.addActionListener((ActionListener) new ButtonClickedActionListener());
+        
         moveSelectedLayerBackButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "down_arrow.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
         moveSelectedLayerBackButton.setToolTipText("선택한 레이어를 한 칸 아래로 내립니다.");   
         moveSelectedLayerBackButton.setPreferredSize(Constant.defaultToolBarButtonSize);
+        sidebarToolBarPanel.add(moveSelectedLayerBackButton);
+        moveSelectedLayerBackButton.addActionListener(new ButtonClickedActionListener());
+        
         renameSelectedLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rename.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
         renameSelectedLayerButton.setToolTipText("선택한 레이어의 이름을 변경합니다."); 
         renameSelectedLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
+        sidebarToolBarPanel.add(renameSelectedLayerButton);
+        renameSelectedLayerButton.addActionListener(new ButtonClickedActionListener());
+        
         copySelectedLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "copy.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
         copySelectedLayerButton.setToolTipText("선택한 레이어를 복제합니다.");
         copySelectedLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
+        sidebarToolBarPanel.add(copySelectedLayerButton);
+        copySelectedLayerButton.addActionListener(new ButtonClickedActionListener());
+        
         deleteSelectedLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "delete.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
         deleteSelectedLayerButton.setToolTipText("선택한 레이어를 삭제합니다.");
         deleteSelectedLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
-        sidebarToolBarPanel.add(moveSelectedLayerFrontButton);
-        sidebarToolBarPanel.add(moveSelectedLayerBackButton);
-        sidebarToolBarPanel.add(renameSelectedLayerButton);
-        sidebarToolBarPanel.add(copySelectedLayerButton);
         sidebarToolBarPanel.add(deleteSelectedLayerButton);
-        
-        // 리스너에 등록함
-        moveSelectedLayerFrontButton.addActionListener((ActionListener) new ButtonClickedActionListener());
-        moveSelectedLayerBackButton.addActionListener(new ButtonClickedActionListener());
-        renameSelectedLayerButton.addActionListener(new ButtonClickedActionListener());
-        copySelectedLayerButton.addActionListener(new ButtonClickedActionListener());
         deleteSelectedLayerButton.addActionListener(new ButtonClickedActionListener());
-                
+
+        
         LayerListScrollPane.add(layerList);
 
         //this.setBorder(BorderFactory.createEmptyBorder(35, 35, 35, 35)); // 안쪽 여백 설정
@@ -110,6 +118,7 @@ public class Sidebar extends JPanel {
     }
     class ButtonClickedActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
+            if (event.getSource() == toggleSelectedLayerVisibleButton) controller.toggleSelectedLayerVisible(layerList.getSelectedIndex());
             if (event.getSource() == moveSelectedLayerFrontButton) controller.swapShapeLayer(layerList.getSelectedIndex(), layerList.getSelectedIndex() - 1);
             else if (event.getSource() == moveSelectedLayerBackButton) controller.swapShapeLayer(layerList.getSelectedIndex(), layerList.getSelectedIndex() + 1);
             else if (event.getSource() == renameSelectedLayerButton) controller.renameShapeLayer(layerList.getSelectedIndex());

@@ -6,8 +6,8 @@ import java.awt.geom.*;
 
 public class LineLayer extends LineBasedShapeLayer{
     
-    public LineLayer(Point point1, Point point2, String name, Color color, BackgroundType backgroundType, int degree) {
-        super(name, color, backgroundType, degree);
+    public LineLayer(Point point1, Point point2, String name, Color color, BackgroundType backgroundType, int degree, boolean isVisible) {
+        super(name, color, backgroundType, degree, isVisible);
         setShape(new Line2D.Double(point1.getX(), point1.getY(), point2.getX(), point2.getY()));
     }
     public LineLayer(Point point1, Point  point2) {

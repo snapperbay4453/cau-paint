@@ -7,8 +7,8 @@ import java.awt.geom.Rectangle2D;
 
 public class RectangleLayer extends PlaneBasedShapeLayer{
 
-    public RectangleLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle) {
-        super(name, color, backgroundType, radianAngle);
+    public RectangleLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle, boolean isVisible) {
+        super(name, color, backgroundType, radianAngle, isVisible);
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public RectangleLayer(Point position, Point size) {

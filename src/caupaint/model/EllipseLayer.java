@@ -7,8 +7,8 @@ import java.awt.geom.Ellipse2D;
 
 public class EllipseLayer extends PlaneBasedShapeLayer{
     
-    public EllipseLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle) {
-        super(name, color, backgroundType, radianAngle);
+    public EllipseLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle, boolean isVisible) {
+        super(name, color, backgroundType, radianAngle, isVisible);
         setShape(new Ellipse2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public EllipseLayer(Point position, Point size) {

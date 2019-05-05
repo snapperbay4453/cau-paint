@@ -8,12 +8,13 @@ abstract public class PlaneBasedShapeLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public PlaneBasedShapeLayer(String name, Color color, BackgroundType backgroundType, double radianAngle) {
-        super(name, color, backgroundType, radianAngle);
+    public PlaneBasedShapeLayer(String name, Color color, BackgroundType backgroundType, double radianAngle, boolean isVisible) {
+        super(name, color, backgroundType, radianAngle, isVisible);
         setName(super.getName());
         setColor(super.getColor());
         setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
+        setIsVisible(super.getIsVisible());
     }
     public PlaneBasedShapeLayer() {
         super();
@@ -21,6 +22,7 @@ abstract public class PlaneBasedShapeLayer extends ShapeLayer{
         setColor(super.getColor());
         setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
+        setIsVisible(super.getIsVisible());
     }
     public PlaneBasedShapeLayer(PlaneBasedShapeLayer source) { // 복제 생성자
         super(source);
@@ -28,6 +30,7 @@ abstract public class PlaneBasedShapeLayer extends ShapeLayer{
         setColor(super.getColor());
         setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
+        setIsVisible(super.getIsVisible());
     }
     
     abstract public void create(Point recentMousePosition, Point currentMousePosition);

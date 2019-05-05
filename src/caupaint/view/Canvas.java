@@ -41,7 +41,7 @@ public class Canvas extends JPanel implements LayerContainerObserver{
         
         if (!layerContainer.getArrayList().isEmpty()) {
             for(int i = 0; i <= layerContainer.getArrayList().size() - 1; i++){
-                layerContainer.getShapeLayer(i).draw(g);
+                if (layerContainer.getArrayList().get(i).getIsVisible() == true) layerContainer.getShapeLayer(i).draw(g); // isVisible 값이 true일 때만 도형을 나타냄
             }
         }
     }

@@ -10,27 +10,31 @@ public class ShapeLayer implements Serializable{
     private Color color;
     private BackgroundType backgroundType;
     private double radianAngle;
+    private boolean isVisible;
     
     /*
     ** 생성자
     */
-    public ShapeLayer(String name, Color color, BackgroundType backgroundType, double radianAngle) {
+    public ShapeLayer(String name, Color color, BackgroundType backgroundType, double radianAngle, boolean isVisible) {
         this.name = name;
         this.color = color;
         this.backgroundType = backgroundType;
         this.radianAngle = radianAngle;
+        this.isVisible = isVisible;
     }
     public ShapeLayer() {
         this.name = name;
         this.color = new Color(0, 0, 0);
         this.backgroundType = BackgroundType.EMPTY;
         this.radianAngle = 0;
+        this.isVisible = true;
     }
     public ShapeLayer(ShapeLayer source) { // 복제 생성자
         this.name = source.getName();
         this.color = source.getColor();
         this.backgroundType = source.getBackgroundType();
         this.radianAngle = source.getRadianAngle();
+        this.isVisible = source.isVisible;
     }
     
     public void create(Point recentMousePosition, Point currentMousePosition) {};
@@ -61,6 +65,9 @@ public class ShapeLayer implements Serializable{
     public double getRadianAngle() {
         return radianAngle;
     }
+    public boolean getIsVisible() {
+        return isVisible;
+    }
 
     public void setShape(Shape shape) {
         this.shape = shape;
@@ -76,6 +83,9 @@ public class ShapeLayer implements Serializable{
     }
     public void setRadianAngle(double radianAngle) {
         this.radianAngle = radianAngle;
+    }
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
     }
     
     /*

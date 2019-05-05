@@ -85,6 +85,15 @@ public class LayerContainer implements Serializable, LayerContainerSubject{
             JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
+    public void toggleSelectedLayerVisible(int index) throws IndexOutOfBoundsException{
+        try {
+            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
+        layerArrayList.get(index).setIsVisible( ! layerArrayList.get(index).getIsVisible()); // isVisible 토글
+        notifyLayerContainerObservers();
+        } catch (IndexOutOfBoundsException exp) {
+            JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     public void swapShapeLayer(int sourceIndex, int destinationIndex) throws IndexOutOfBoundsException{ // 두 레이어의 index를 서로 바꿈
         try {
             if (sourceIndex == -1 || destinationIndex == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출

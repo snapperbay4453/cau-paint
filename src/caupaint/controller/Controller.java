@@ -57,6 +57,9 @@ public class Controller{
         }
         else return;
     }
+    public void toggleSelectedLayerVisible(int index) {
+        layerContainer.toggleSelectedLayerVisible(index);
+    }
     public void swapShapeLayer(int sourceIndex, int destinationIndex) {
         if (sourceIndex <= 0 && destinationIndex <= 0) JOptionPane.showMessageDialog(null, "첫 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
         else if (sourceIndex >= layerContainer.getArrayList().size() - 1 && destinationIndex >= layerContainer.getArrayList().size() - 1) JOptionPane.showMessageDialog(null, "마지막 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
@@ -134,19 +137,19 @@ public class Controller{
             case DRAW:
                 switch(variable.getShapeType()) {
                      case LINE:
-                        addShapeLayer(new LineLayer(mousePosition, (new Point((int)mousePosition.getX() + 1, (int)mousePosition.getY()+ 1)), "새 직선", variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new LineLayer(mousePosition, (new Point((int)mousePosition.getX() + 1, (int)mousePosition.getY()+ 1)), "새 직선", variable.getColor(), variable.getBackgroundType(), 0, true));
                         break;
                     case RECTANGLE:
-                        addShapeLayer(new RectangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 직사각형", variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new RectangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 직사각형", variable.getColor(), variable.getBackgroundType(), 0, true));
                         break;
                      case ELLIPSE:
-                        addShapeLayer(new EllipseLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 타원", variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new EllipseLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 타원", variable.getColor(), variable.getBackgroundType(), 0, true));
                         break;
                      case TRIANGLE:
-                        addShapeLayer(new TriangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 삼각형", variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new TriangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 삼각형", variable.getColor(), variable.getBackgroundType(), 0, true));
                         break;
                      case RHOMBUS:
-                        addShapeLayer(new RhombusLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 마름모", variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new RhombusLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 마름모", variable.getColor(), variable.getBackgroundType(), 0, true));
                         break;
                 }
                 layerContainer.setRecentMousePosition(mousePosition);

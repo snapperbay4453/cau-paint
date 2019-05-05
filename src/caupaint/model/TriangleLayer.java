@@ -10,8 +10,8 @@ public class TriangleLayer extends PlaneBasedShapeLayer{
     private Point[] point = new Point[3];
     private Point centerPoint = new Point();
     
-    public TriangleLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle) {
-        super(name, color, backgroundType, radianAngle);
+    public TriangleLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle, boolean isVisible) {
+        super(name, color, backgroundType, radianAngle, isVisible);
         setPoint(0, position);  setPoint(1, position);  setPoint(2, position);
         setCenterPoint(position);
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
