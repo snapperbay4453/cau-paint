@@ -8,20 +8,23 @@ abstract public class LineBasedShapeLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public LineBasedShapeLayer(Point position, Point size, Color color, BackgroundType backgroundType, double radianAngle) {
-        super(position, size, color, backgroundType, radianAngle);
-        setColor(super.getColor());
-        setBackgroundType(super.getBackgroundType());
-        setRadianAngle(super.getRadianAngle());
-    }
-    public LineBasedShapeLayer(Point position, Point size) {
-        super(position, size);
+    public LineBasedShapeLayer(String name, Color color, BackgroundType backgroundType, double radianAngle) {
+        super(name, color, backgroundType, radianAngle);
+        setName(super.getName());
         setColor(super.getColor());
         setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
     }
     public LineBasedShapeLayer() {
         super();
+        setName(super.getName());
+        setColor(super.getColor());
+        setBackgroundType(super.getBackgroundType());
+        setRadianAngle(super.getRadianAngle());
+    }
+    public LineBasedShapeLayer(LineBasedShapeLayer source) { // 복제 생성자
+        super(source);
+        setName(super.getName());
         setColor(super.getColor());
         setBackgroundType(super.getBackgroundType());
         setRadianAngle(super.getRadianAngle());
@@ -31,6 +34,8 @@ abstract public class LineBasedShapeLayer extends ShapeLayer{
     abstract public void translate(double tx, double ty);
     abstract public void scale(Point recentMousePosition, Point currentMousePosition);
     abstract public void rotate(Point recentMousePosition, Point currentMousePosition);
+    
+    abstract public ShapeType getRealShapeType();
     
     /*
     ** getter, setter

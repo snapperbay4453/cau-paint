@@ -40,6 +40,21 @@ public class LayerContainer implements Serializable, LayerContainerSubject{
         recentMousePosition = currentMousePosition;
         notifyLayerContainerObservers();
     }
+    public void renameShapeLayer(int index) {
+        try {
+            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
+            String tempName = JOptionPane.showInputDialog(null, "새 이름을 입력하세요.", "이름 변경", JOptionPane.QUESTION_MESSAGE);
+            if (tempName.isEmpty()) { // 새로 입력한 이름이 비어 있으면
+                JOptionPane.showMessageDialog(null, "이름을 지정해야 합니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            layerArrayList.get(index).setName(tempName);
+            notifyLayerContainerObservers();
+        } catch (IndexOutOfBoundsException exp) {
+            JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
     public void moveShapeLayer(int index, Point currentMousePosition) throws IndexOutOfBoundsException{
         try {
             if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
@@ -76,6 +91,38 @@ public class LayerContainer implements Serializable, LayerContainerSubject{
             ShapeLayer tempShapeLayer = layerArrayList.get(sourceIndex); // sourceIndex의 레이어 정보를 임시로 저장
             layerArrayList.set(sourceIndex, layerArrayList.get(destinationIndex)); // sourceIndex에 destinationIndex의 레이어 정보를 저장
             layerArrayList.set(destinationIndex, tempShapeLayer); // destinationIndex에 임시로 저장했던 sourceIndex의 레이어 정보를 저장
+            notifyLayerContainerObservers();
+        } catch (IndexOutOfBoundsException exp) {
+            JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public void copyShapeLayer(int index) throws IndexOutOfBoundsException{ // 레이어를 복제함
+        try {
+            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
+            ShapeLayer tempShapeLayer;
+            switch(layerArrayList.get(index).getRealShapeType()) {
+                case LINE:
+                    tempShapeLayer = new LineLayer((LineLayer)layerArrayList.get(index));
+                    break;
+                case RECTANGLE:
+                    tempShapeLayer = new RectangleLayer((RectangleLayer)layerArrayList.get(index));
+                    break;
+                case ELLIPSE:
+                    tempShapeLayer = new EllipseLayer((EllipseLayer)layerArrayList.get(index));
+                    break;
+                case TRIANGLE:
+                    tempShapeLayer = new TriangleLayer((TriangleLayer)layerArrayList.get(index));
+                    break;
+                case RHOMBUS:
+                    tempShapeLayer = new RhombusLayer((RhombusLayer)layerArrayList.get(index));
+                    break;
+                default:
+                    tempShapeLayer = new ShapeLayer((ShapeLayer)layerArrayList.get(index));
+                    break;
+            }
+
+            layerArrayList.add(index + 1, tempShapeLayer);
+            layerArrayList.get(index + 1).setName(layerArrayList.get(index).getName() + " - 사본");
             notifyLayerContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
             JOptionPane.showMessageDialog(null, "도형이 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);

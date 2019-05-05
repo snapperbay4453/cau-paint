@@ -6,17 +6,21 @@ import java.awt.geom.*;
 
 public class LineLayer extends LineBasedShapeLayer{
     
-    public LineLayer(Point point1, Point point2, Color color, BackgroundType backgroundType, int degree) {
-        super(point1, point2, color, backgroundType, degree);
+    public LineLayer(Point point1, Point point2, String name, Color color, BackgroundType backgroundType, int degree) {
+        super(name, color, backgroundType, degree);
         setShape(new Line2D.Double(point1.getX(), point1.getY(), point2.getX(), point2.getY()));
     }
-    public LineLayer(Point point1, Point point2) {
-        super(point1, point2);
-        setShape(new Line2D.Double(point1.getX(), point1.getY(), point2.getX(), point2.getY()));
+    public LineLayer(Point point1, Point  point2) {
+        super();
+        setShape(new Line2D.Double(point1.getX(), point1.getY(),  point2.getX(),  point2.getY()));
     }
     public LineLayer() {
         super();
         setShape(new Line2D.Double(0, 0, 0, 0));
+    }
+    public LineLayer(LineLayer source) { // 복제 생성자
+        super(source);
+        setShape(new Rectangle2D.Double(source.getX1(), source.getY1(), source.getX2(), source.getY2()));
     }
     
     public void translate(double tx, double ty) {
@@ -129,8 +133,8 @@ public class LineLayer extends LineBasedShapeLayer{
         return ((Line2D)getShape()).getY2();
     }
     
-    public String getIconName() {
-        return "line";
+    public ShapeType getRealShapeType() {
+        return ShapeType.LINE;
     }
     
     public void setX1(double x){

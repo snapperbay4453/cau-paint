@@ -10,16 +10,14 @@ public class TriangleLayer extends PlaneBasedShapeLayer{
     private Point[] point = new Point[3];
     private Point centerPoint = new Point();
     
-    public TriangleLayer(Point position, Point size, Color color, BackgroundType backgroundType, int radianAngle) {
-        super(position, size, color, backgroundType, radianAngle);
+    public TriangleLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle) {
+        super(name, color, backgroundType, radianAngle);
         setPoint(0, position);  setPoint(1, position);  setPoint(2, position);
         setCenterPoint(position);
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public TriangleLayer(Point position, Point size) {
-        super(position, size);
-        setPoint(0, position);  setPoint(1, position);  setPoint(2, position);
-        setCenterPoint(position);
+        super();
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public TriangleLayer() {
@@ -27,6 +25,10 @@ public class TriangleLayer extends PlaneBasedShapeLayer{
         setPoint(0, new Point(0,0));  setPoint(1,new Point(0,0));  setPoint(2, new Point(0,0));
         setCenterPoint(new Point(0,0));
         setShape(new Rectangle2D.Double(0, 0, 0, 0));
+    }
+    public TriangleLayer(TriangleLayer source) { // 복제 생성자
+        super(source);
+        setShape(new Rectangle2D.Double(source.getX(), source.getY(), source.getWidth(), source.getHeight()));
     }
     
     public void create(Point recentMousePosition, Point currentMousePosition) {
@@ -98,8 +100,8 @@ public class TriangleLayer extends PlaneBasedShapeLayer{
         return centerPoint; 
     }
     
-    public String getIconName() {
-        return "triangle";
+    public ShapeType getRealShapeType() {
+        return ShapeType.TRIANGLE;
     }
     
     public void setX(double x){

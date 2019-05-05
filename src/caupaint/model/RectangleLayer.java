@@ -7,17 +7,21 @@ import java.awt.geom.Rectangle2D;
 
 public class RectangleLayer extends PlaneBasedShapeLayer{
 
-    public RectangleLayer(Point position, Point size, Color color, BackgroundType backgroundType, int radianAngle) {
-        super(position, size, color, backgroundType, radianAngle);
+    public RectangleLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle) {
+        super(name, color, backgroundType, radianAngle);
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public RectangleLayer(Point position, Point size) {
-        super(position, size);
+        super();
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public RectangleLayer() {
         super();
         setShape(new Rectangle2D.Double(0, 0, 0, 0));
+    }
+    public RectangleLayer(RectangleLayer source) { // 복제 생성자
+        super(source);
+        setShape(new Rectangle2D.Double(source.getX(), source.getY(), source.getWidth(), source.getHeight()));
     }
     
     public void create(Point recentMousePosition, Point currentMousePosition) {
@@ -71,7 +75,7 @@ public class RectangleLayer extends PlaneBasedShapeLayer{
                    )
                 );
     }
-    
+        
     public double getX(){
         return ((Rectangle2D)getShape()).getX();
     }
@@ -84,9 +88,8 @@ public class RectangleLayer extends PlaneBasedShapeLayer{
     public double getHeight(){
         return ((Rectangle2D)getShape()).getHeight();
     }
-    
-    public String getIconName() {
-        return "rectangle";
+    public ShapeType getRealShapeType() {
+        return ShapeType.RECTANGLE;
     }
     
     public void setX(double x){

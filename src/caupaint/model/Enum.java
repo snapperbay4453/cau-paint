@@ -8,7 +8,7 @@ public class Enum {
     };
     
     public enum ShapeType { // 도형의 종류를 나타냄
-        LINE, RECTANGLE, ELLIPSE, TRIANGLE, RHOMBUS
+        LINE, RECTANGLE, ELLIPSE, TRIANGLE, RHOMBUS, SHAPE
     };
     
     public enum BackgroundType { // 배경을 채우는 방법을 나타냄

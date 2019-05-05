@@ -45,7 +45,6 @@ public class View implements LayerContainerObserver, VariableObserver{
     private JButton moveShapeButton;
     private JButton resizeShapeButton;
     private JButton rotateShapeButton;
-    private JButton deleteShapeButton;
     private JButton clearButton;
     private JButton chooseColorButton;
     private JButton emptyBackgroundTypeButton;
@@ -125,10 +124,8 @@ public class View implements LayerContainerObserver, VariableObserver{
         resizeShapeButton.setToolTipText("선택한 도형의 크기를 변경합니다.");
         rotateShapeButton = new JButton(new ImageIcon("src/caupaint/source/icon/rotate.png"));
         rotateShapeButton.setToolTipText("선택한 도형을 회전시킵니다.");
-        deleteShapeButton = new JButton(new ImageIcon("src/caupaint/source/icon/delete.png"));
-        deleteShapeButton.setToolTipText("선택한 도형을 삭제합니다.");
         clearButton = new JButton(new ImageIcon("src/caupaint/source/icon/clear.png"));
-        clearButton.setToolTipText("모든 도형을 삭제합니다.");
+        clearButton.setToolTipText("캔버스를 초기화합니다.");
         chooseColorButton = new JButton(new ImageIcon("src/caupaint/source/icon/bgcolor.png"));
         chooseColorButton.setToolTipText("색상을 설정합니다.");
         chooseColorButton.setBackground(variable.getColor());
@@ -154,8 +151,6 @@ public class View implements LayerContainerObserver, VariableObserver{
         toolBar.add(moveShapeButton);
         toolBar.add(resizeShapeButton);
         toolBar.add(rotateShapeButton);
-        toolBar.addSeparator();
-        toolBar.add(deleteShapeButton);
         toolBar.addSeparator();
         toolBar.add(clearButton);
         toolBar.addSeparator();
@@ -185,7 +180,6 @@ public class View implements LayerContainerObserver, VariableObserver{
         moveShapeButton.addActionListener(new ButtonClickedActionListener());
         resizeShapeButton.addActionListener(new ButtonClickedActionListener());
         rotateShapeButton.addActionListener(new ButtonClickedActionListener());
-        deleteShapeButton.addActionListener(new ButtonClickedActionListener());
         clearButton.addActionListener(new ButtonClickedActionListener());
         chooseColorButton.addActionListener(new ButtonClickedActionListener());
         emptyBackgroundTypeButton.addActionListener(new ButtonClickedActionListener());
@@ -298,7 +292,6 @@ public class View implements LayerContainerObserver, VariableObserver{
             else if (event.getSource() == rotateShapeButton){
                 variable.setFunctionType(FunctionType.ROTATE);
             }
-            else if (event.getSource() == deleteShapeButton) controller.deleteShapeLayer(sidebar.getLayerListSelectedIndex());
             else if (event.getSource() == clearButton) controller.clearLayer();
             else if (event.getSource() == chooseColorButton) controller.chooseColor();
             else if (event.getSource() == emptyBackgroundTypeButton) variable.setBackgroundType(BackgroundType.EMPTY);

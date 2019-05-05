@@ -42,6 +42,9 @@ public class Controller{
     public void createShapeLayer(Point mousePosition) {
         layerContainer.createShapeLayer(mousePosition);
     }
+    public void renameShapeLayer(int index) {
+        layerContainer.renameShapeLayer(index);
+    }
     public void moveShapeLayer(int index, Point point) {
         layerContainer.moveShapeLayer(index, point);
     }
@@ -55,6 +58,9 @@ public class Controller{
         if (sourceIndex <= 0 && destinationIndex <= 0) JOptionPane.showMessageDialog(null, "첫 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
         else if (sourceIndex >= layerContainer.getArrayList().size() - 1 && destinationIndex >= layerContainer.getArrayList().size() - 1) JOptionPane.showMessageDialog(null, "마지막 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
         else layerContainer.swapShapeLayer(sourceIndex, destinationIndex);
+    }
+    public void copyShapeLayer(int index) {
+        layerContainer.copyShapeLayer(index);
     }
     public void deleteShapeLayer(int index) {
         layerContainer.deleteShapeLayer(index);
@@ -116,19 +122,19 @@ public class Controller{
             case DRAW:
                 switch(variable.getShapeType()) {
                      case LINE:
-                        addShapeLayer(new LineLayer(mousePosition, (new Point((int)mousePosition.getX() + 1, (int)mousePosition.getY()+ 1)), variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new LineLayer(mousePosition, (new Point((int)mousePosition.getX() + 1, (int)mousePosition.getY()+ 1)), "새 직선", variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                     case RECTANGLE:
-                        addShapeLayer(new RectangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new RectangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 직사각형", variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                      case ELLIPSE:
-                        addShapeLayer(new EllipseLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new EllipseLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 타원", variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                      case TRIANGLE:
-                        addShapeLayer(new TriangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new TriangleLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 삼각형", variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                      case RHOMBUS:
-                        addShapeLayer(new RhombusLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), variable.getColor(), variable.getBackgroundType(), 0));
+                        addShapeLayer(new RhombusLayer(new Point((int)mousePosition.getX(), (int)mousePosition.getY()), new Point(1,1), "새 마름모", variable.getColor(), variable.getBackgroundType(), 0));
                         break;
                 }
                 layerContainer.setRecentMousePosition(mousePosition);
@@ -229,10 +235,6 @@ public class Controller{
     }
     public String getNewFilePathToSave() { // 파일을 다른 이름으로 저장할 경로를 반환하는 메서드, variable에 경로가 저장되어 있는지는 관계 없음
         JFileChooser fileChooser = new JFileChooser();
-        //fileFilter = new CauPaintFileFilter(".docx", "Microsoft Word Documents");
-        //FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("JPEG file", "jpg", "jpeg");
-
-        //fileChooser.addChoosableFileFilter(fileFilter);
 
         if(fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) return fileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
         else return null; // 대화상자를 불러온 후 파일 저장 위치 확인에 실패한 경우
@@ -273,10 +275,4 @@ public class Controller{
         else System.exit(0); // 레이어가 비어있을 경우
     }
 
-    private static class FileNameExtensionFilter {
-
-        public FileNameExtensionFilter(String jpg__gif_Images, String jpg, String gif) {
-        }
-    }
-    
 }

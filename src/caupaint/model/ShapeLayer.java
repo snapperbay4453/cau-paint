@@ -4,8 +4,9 @@ import caupaint.model.Enum.*;
 import java.awt.*;
 import java.io.Serializable;
 
-abstract public class ShapeLayer implements Serializable{
+public class ShapeLayer implements Serializable{
     private Shape shape;
+    private String name;
     private Color color;
     private BackgroundType backgroundType;
     private double radianAngle;
@@ -13,36 +14,43 @@ abstract public class ShapeLayer implements Serializable{
     /*
     ** 생성자
     */
-    public ShapeLayer(Point point1, Point point2, Color color, BackgroundType backgroundType, double radianAngle) {
+    public ShapeLayer(String name, Color color, BackgroundType backgroundType, double radianAngle) {
+        this.name = name;
         this.color = color;
         this.backgroundType = backgroundType;
         this.radianAngle = radianAngle;
     }
-    public ShapeLayer(Point point1, Point point2) {
-        this.color = new Color(0, 0, 0);
-        this.backgroundType = BackgroundType.EMPTY;
-        this.radianAngle = 0;
-    }
     public ShapeLayer() {
+        this.name = name;
         this.color = new Color(0, 0, 0);
         this.backgroundType = BackgroundType.EMPTY;
         this.radianAngle = 0;
     }
+    public ShapeLayer(ShapeLayer source) { // 복제 생성자
+        this.name = source.getName();
+        this.color = source.getColor();
+        this.backgroundType = source.getBackgroundType();
+        this.radianAngle = source.getRadianAngle();
+    }
     
-    abstract public void create(Point recentMousePosition, Point currentMousePosition);
-    abstract public void translate(double tx, double ty);
-    abstract public void scale(Point recentMousePosition, Point currentMousePosition);
-    abstract public void rotate(Point recentMousePosition, Point currentMousePosition);
+    public void create(Point recentMousePosition, Point currentMousePosition) {};
+    public void translate(double tx, double ty) {};
+    public void scale(Point recentMousePosition, Point currentMousePosition) {};
+    public void rotate(Point recentMousePosition, Point currentMousePosition) {};
     
+    public ShapeType getRealShapeType() {
+        return ShapeType.SHAPE;
+    }
+        
     /*
     ** getter, setter
     */
-    public String getIconName() {
-        return "shape";
-    }
     
     public Shape getShape() {
         return shape;
+    }
+    public String getName() {
+        return name;
     }
     public Color getColor() {
         return color;
@@ -56,6 +64,9 @@ abstract public class ShapeLayer implements Serializable{
 
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+    public void setName(String string) {
+        this.name = string;
     }
     public void setColor(Color color) {
         this.color = color;

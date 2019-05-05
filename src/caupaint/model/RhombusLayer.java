@@ -7,17 +7,21 @@ import java.awt.geom.Rectangle2D;
 
 public class RhombusLayer extends PlaneBasedShapeLayer{
 
-    public RhombusLayer(Point position, Point size, Color color, BackgroundType backgroundType, int radianAngle) {
-        super(position, size, color, backgroundType, radianAngle);
+    public RhombusLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle) {
+        super(name, color, backgroundType, radianAngle);
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public RhombusLayer(Point position, Point size) {
-        super(position, size);
+        super();
         setShape(new Rectangle2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public RhombusLayer() {
         super();
         setShape(new Rectangle2D.Double(0, 0, 0, 0));
+    }
+    public RhombusLayer(RhombusLayer source) { // 복제 생성자
+        super(source);
+        setShape(new Rectangle2D.Double(source.getX(), source.getY(), source.getWidth(), source.getHeight()));
     }
     
     public void create(Point recentMousePosition, Point currentMousePosition) {
@@ -85,8 +89,8 @@ public class RhombusLayer extends PlaneBasedShapeLayer{
         return ((Rectangle2D)getShape()).getHeight();
     }
     
-    public String getIconName() {
-        return "rhombus";
+    public ShapeType getRealShapeType() {
+        return ShapeType.RHOMBUS;
     }
     
     public void setX(double x){

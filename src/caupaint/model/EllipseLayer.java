@@ -7,17 +7,21 @@ import java.awt.geom.Ellipse2D;
 
 public class EllipseLayer extends PlaneBasedShapeLayer{
     
-    public EllipseLayer(Point position, Point size, Color color, BackgroundType backgroundType, int radianAngle) {
-        super(position, size, color, backgroundType, radianAngle);
+    public EllipseLayer(Point position, Point size, String name, Color color, BackgroundType backgroundType, int radianAngle) {
+        super(name, color, backgroundType, radianAngle);
         setShape(new Ellipse2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public EllipseLayer(Point position, Point size) {
-        super(position, size);
+        super();
         setShape(new Ellipse2D.Double(position.getX(), position.getY(), size.getX(), size.getY()));
     }
     public EllipseLayer() {
         super();
         setShape(new Ellipse2D.Double(0, 0, 0, 0));
+    }
+    public EllipseLayer(EllipseLayer source) { // 복제 생성자
+        super(source);
+        setShape(new Ellipse2D.Double(source.getX(), source.getY(), source.getWidth(), source.getHeight()));
     }
     
     public void create(Point recentMousePosition, Point currentMousePosition) {
@@ -81,8 +85,8 @@ public class EllipseLayer extends PlaneBasedShapeLayer{
         return ((Ellipse2D)getShape()).getHeight();
     }
     
-    public String getIconName() {
-        return "ellipse";
+    public ShapeType getRealShapeType() {
+        return ShapeType.ELLIPSE;
     }
     
         public void setX(double x){
