@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/view/CanvasView.java</file>
             <file>file:/C:/GitProjects/CauPaint/src/caupaint/controller/Controller.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/CanvasContainer.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/Variable.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/TriangleLayer.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/EllipseLayer.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/LineLayer.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/RectangleLayer.java</file>
             <file>file:/C:/GitProjects/CauPaint/src/caupaint/view/LayerListRenderer.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/view/MainView.java</file>
+            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/RhombusLayer.java</file>
             <file>file:/C:/GitProjects/CauPaint/src/caupaint/view/SidebarView.java</file>
-            <file>file:/C:/GitProjects/CauPaint/src/caupaint/model/Constant.java</file>
         </group>
     </open-files>
 </project-private>

@@ -34,23 +34,17 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
         
         indexLabel.setText(Integer.toString(index));
         switch(shapeLayer.getRealShapeType()) { // 레이어의 도형 종류 표시
-            case LINE:
-                shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "line.png"));  break;
-            case RECTANGLE:
-                shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rectangle.png")); break;
-            case ELLIPSE:
-                shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "ellipse.png"));   break;
-            case TRIANGLE:
-                shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "triangle.png"));  break;
-            case RHOMBUS:
-                shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rhombus.png"));   break;
-            default:
-                shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "shape.png")); break;
+            case LINE:       shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "line.png"));      break;
+            case RECTANGLE:  shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rectangle.png")); break;
+            case ELLIPSE:    shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "ellipse.png"));   break;
+            case TRIANGLE:   shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "triangle.png"));  break;
+            case RHOMBUS:    shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rhombus.png"));   break;
+            default:         shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "shape.png"));     break;
         }
         
         nameLabel.setText(shapeLayer.getName());
-        nameLabel.setMaximumSize(new Dimension(215, 40));
-        nameLabel.setPreferredSize(new Dimension(215, 40));
+        nameLabel.setMaximumSize(new Dimension(190, 40));
+        nameLabel.setPreferredSize(new Dimension(190, 40));
         
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         if(isSelected) setBackground(list.getSelectionBackground()); // 선택된 리스트를 강조 표시함

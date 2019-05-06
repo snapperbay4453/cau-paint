@@ -15,6 +15,8 @@ public class Variable implements VariableSubject{
     private BackgroundType backgroundType;
     private Color color;
     private BasicStroke stroke;
+    private Point recentlyPressedMousePosition;
+    private Point recentlyDraggedMousePosition;
     private int selectedLayerIndex;
     private int lastSelectedLayerIndex;
     private String filePath;
@@ -30,6 +32,8 @@ public class Variable implements VariableSubject{
         backgroundType = Constant.defaultBackgroundType;
         color = Constant.defaultColor;
         stroke = Constant.defaultStroke;
+        recentlyPressedMousePosition = new Point(0, 0);
+        recentlyDraggedMousePosition = new Point(0, 0);
         selectedLayerIndex = Constant.defaultSelectedLayerIndex;
         lastSelectedLayerIndex = Constant.defaultSelectedLayerIndex;
         filePath = Constant.defaultFilePath;
@@ -61,6 +65,8 @@ public class Variable implements VariableSubject{
     public BackgroundType getBackgroundType() {  return backgroundType; }
     public Color getColor() {  return color;  }
     public BasicStroke getStroke() { return stroke;  }
+    public Point getRecentlyPressedMousePosition() { return recentlyPressedMousePosition;  }
+    public Point getRecentlyDraggedMousePosition() { return recentlyDraggedMousePosition;  }
     public int getSelectedLayerIndex() { return selectedLayerIndex; }
     public int getLastSelectedLayerIndex() { return lastSelectedLayerIndex; }
     public String getFilePath() { return filePath; }
@@ -82,6 +88,8 @@ public class Variable implements VariableSubject{
         this.stroke = new BasicStroke(getStroke().getLineWidth(), getStroke().getEndCap(), getStroke().getLineJoin(), getStroke().getMiterLimit(), dash, dashPhase);
         notifyVariableObservers();
     }
+    public void setRecentlyPressedMousePosition (Point point) { recentlyPressedMousePosition = point; }
+    public void setRecentlyDraggedMousePosition (Point point) { recentlyDraggedMousePosition = point; }
     public void setSelectedLayerIndex(int index) {
         selectedLayerIndex = index;
         if (index != -1) lastSelectedLayerIndex = index; // 선택 해제된 경우를 배제함

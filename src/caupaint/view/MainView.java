@@ -51,7 +51,6 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     private JButton moveShapeButton;
     private JButton resizeShapeButton;
     private JButton rotateShapeButton;
-    private JButton clearButton;
     private ArrayList<JButton> functionButtonsArrayList; // 기능 관련 버튼들을 모두 ArrayList
     private JButton chooseColorButton;
     private JButton emptyBackgroundTypeButton;
@@ -160,7 +159,7 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         
         loadFromFileButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "load.png"));
         loadFromFileButton.setToolTipText("저장된 파일로부터 캔버스를 불러옵니다.");
-        createNewCanvasButton.setActionCommand("loadFromFile");
+        loadFromFileButton.setActionCommand("loadFromFile");
         toolBar.add(loadFromFileButton);
         loadFromFileButton.addActionListener(new ButtonClickedActionListener());
         
@@ -236,14 +235,6 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         toolBar.add(rotateShapeButton);
         functionButtonsArrayList.add(rotateShapeButton);
         rotateShapeButton.addActionListener(new ButtonClickedActionListener());
-        
-                toolBar.addSeparator();
-                
-        clearButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "clear.png"));
-        clearButton.setToolTipText("캔버스를 초기화합니다.");
-        clearButton.setActionCommand("clear");
-        toolBar.add(clearButton);
-        clearButton.addActionListener(new ButtonClickedActionListener());
         
                 toolBar.addSeparator();
                 

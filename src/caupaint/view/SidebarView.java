@@ -25,6 +25,7 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
     private JButton renameSelectedLayerButton;
     private JButton copySelectedLayerButton;
     private JButton deleteSelectedLayerButton;
+    private JButton deleteAllLayerButton;
     private JLabel layerListLabel;
     private ScrollPane LayerListScrollPane;
 
@@ -65,7 +66,7 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
         // 그리드백에 배치함
         addGrid(layerListLabel, 0, 0);
         addGrid(sidebarToolBarPanel, 1, 0);
-        addGrid(LayerListScrollPane, 2, GridBagConstraints.BOTH);
+        addGrid(LayerListScrollPane, 2, 1);
         
         layerList.addListSelectionListener(new LayerListSelectionListener());
     }
@@ -119,6 +120,12 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
         sidebarToolBarPanel.add(deleteSelectedLayerButton);
         deleteSelectedLayerButton.addActionListener(new ButtonClickedActionListener());
         
+        deleteAllLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "clear.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
+        deleteAllLayerButton.setToolTipText("모든 레이어를 삭제합니다.");
+        deleteAllLayerButton.setActionCommand("deleteAllLayer");
+        deleteAllLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
+        sidebarToolBarPanel.add(deleteAllLayerButton);
+        deleteAllLayerButton.addActionListener(new ButtonClickedActionListener());
     }
     
     /*
@@ -144,7 +151,7 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
     */
     private void addGrid(Component c, int gridY, int weightY) { // 그리드백 레이아웃에 컴포넌트를 추가함
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
+        gbc.fill = GridBagConstraints.NONE;
         gbc.gridx = 0;
         gbc.gridy = gridY;
         gbc.gridwidth = 1;

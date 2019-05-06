@@ -3,13 +3,11 @@ package caupaint.controller;
 import caupaint.model.*;
 import caupaint.model.Enum.*;
 import caupaint.view.*;
-import java.awt.BasicStroke;
 
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
@@ -17,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -55,11 +52,6 @@ public class Controller{
         }
         else return;
     }
-    public void createNewCanvas() { // 캔버스와 레이어를 모두 초기화
-        canvasContainer.deleteAllLayers();
-        variable.setFilePath(Constant.defaultFilePath);
-        canvasContainer.clearCanvas();
-    }
     
     /*
     ** Variable 관련 메소드
@@ -77,7 +69,11 @@ public class Controller{
     public Color getCanvasBackgroundColor(){
         return canvasContainer.getCanvasBackgroundColor();
     }
-    
+    public void createNewCanvas() { // 캔버스와 레이어를 모두 초기화
+        canvasContainer.deleteAllLayers();
+        variable.setFilePath(Constant.defaultFilePath);
+        canvasContainer.clearCanvas();
+    }
     
     /*
     ** I/O 관련 메소드
@@ -121,19 +117,19 @@ public class Controller{
         if (variable.getFilePath() != null) return variable.getFilePath(); // variable에 이미 기존의 파일 경로가 저장되어 있을 경우, 기존의 경로를 반환함
         else {
             JFileChooser jFileChooser = new JFileChooser();
-            if(jFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) return jFileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
+            if(jFileChooser.showSaveDialog(null) == 0) return jFileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
             else return null; // 대화상자를 불러온 후 파일 저장 위치 확인에 실패한 경우
         }
     }
     public String getNewFilePathToSave() { // 파일을 다른 이름으로 저장할 경로를 반환하는 메서드, variable에 경로가 저장되어 있는지는 관계 없음
         JFileChooser fileChooser = new JFileChooser();
 
-        if(fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) return fileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
+        if(fileChooser.showSaveDialog(null) == 0) return fileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
         else return null; // 대화상자를 불러온 후 파일 저장 위치 확인에 실패한 경우
     }
     public void saveLayersToFile(String filePath) throws IOException {
         if (filePath == null) {
-            if (variable.getFilePath() == null) return; // variable
+            if (variable.getFilePath() == null) return; // 매개변수와 variable 모두 파일 경로가 지정되어 있지 않은 경우
         }
         
         ObjectOutputStream os;
@@ -148,6 +144,7 @@ public class Controller{
             mainView.updateCanvasContainer();
         } catch (IOException exp) {
             JOptionPane.showMessageDialog(null, "파일 저장에 실패하였습니다.", "저장 실패", JOptionPane.ERROR_MESSAGE);
+            exp.printStackTrace();
         }
     }
     
@@ -264,7 +261,6 @@ public class Controller{
         else if (event.getActionCommand() == "rotateShape"){
             variable.setFunctionType(FunctionType.ROTATE);
         }
-        else if (event.getActionCommand() == "clear") canvasContainer.deleteAllLayers();
         else if (event.getActionCommand() == "chooseColor") variable.chooseColor();
         else if (event.getActionCommand() == "emptyBackgroundType") {
             variable.setBackgroundType(BackgroundType.EMPTY);
@@ -311,69 +307,45 @@ public class Controller{
             case IDLE:
                 break;
             case DRAW:
-                switch(variable.getShapeType()) {
-                     case LINE:
-                        canvasContainer.addLayer(new LineLayer(event.getPoint(), (new Point((int)event.getX() + 1, (int)event.getY()+ 1)), "새 직선", variable.getColor(), variable.getStroke(), variable.getBackgroundType(), 0, true));
-                        break;
-                    case RECTANGLE:
-                        canvasContainer.addLayer(new RectangleLayer(event.getPoint(), new Point(1,1), "새 직사각형", variable.getColor(), variable.getStroke(), variable.getBackgroundType(), 0, true));
-                        break;
-                     case ELLIPSE:
-                        canvasContainer.addLayer(new EllipseLayer(event.getPoint(), new Point(1,1), "새 타원", variable.getColor(), variable.getStroke(), variable.getBackgroundType(), 0, true));
-                        break;
-                     case TRIANGLE:
-                        canvasContainer.addLayer(new TriangleLayer(event.getPoint(), new Point(1,1), "새 삼각형", variable.getColor(), variable.getStroke(), variable.getBackgroundType(), 0, true));
-                        break;
-                     case RHOMBUS:
-                        canvasContainer.addLayer(new RhombusLayer(event.getPoint(), new Point(1,1), "새 마름모", variable.getColor(), variable.getStroke(), variable.getBackgroundType(), 0, true));
-                        break;
-                }
-                canvasContainer.setRecentMousePosition(event.getPoint());
+                canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getColor(), variable.getStroke(), variable.getBackgroundType());
+                canvasContainer.initializeLayer(event.getPoint());
                 break;
             case MOVE:
             case RESIZE:
             case ROTATE:
-                canvasContainer.setRecentMousePosition(event.getPoint());
                 break;
             default:
                 break;
         }
+    variable.setRecentlyPressedMousePosition(event.getPoint());
+    variable.setRecentlyDraggedMousePosition(event.getPoint());
+    }
+    public void CanvasViewMouseDraggedEventHandler(MouseEvent event) {
+        switch(variable.getFunctionType()) {
+            case IDLE:      break;
+            case DRAW:      canvasContainer.keepInitializingLayer(variable.getRecentlyPressedMousePosition(), event.getPoint());                              break;
+            case MOVE:      canvasContainer.moveLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());    break;
+            case RESIZE:    canvasContainer.resizeLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());  break;
+            case ROTATE:    canvasContainer.rotateLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());  break;
+            default:        break;
+        }
+    variable.setRecentlyDraggedMousePosition(event.getPoint());
     }
     public void CanvasViewMouseReleasedEventHandler(MouseEvent event) {
         switch(variable.getFunctionType()) {
             case IDLE:
                 break;
             case DRAW:
+                canvasContainer.finishInitializingLayer();
+                break;
             case MOVE:
             case RESIZE:
             case ROTATE:
-                canvasContainer.setRecentMousePosition(event.getPoint());
                 break;
             default:
                 break;
         }
     }
-    public void CanvasViewMouseDraggedEventHandler(MouseEvent event) {
-        switch(variable.getFunctionType()) {
-            case IDLE:
-                break;
-            case DRAW:
-                canvasContainer.createLayer(event.getPoint());
-                break;
-            case MOVE:
-                canvasContainer.moveLayer(variable.getLastSelectedLayerIndex(), event.getPoint());
-                break;
-            case RESIZE:
-                canvasContainer.resizeLayer(variable.getLastSelectedLayerIndex(), event.getPoint());
-                break;
-            case ROTATE:
-                canvasContainer.rotateLayer(variable.getLastSelectedLayerIndex(), event.getPoint());
-                break;
-            default:
-                break;
-        }
-    }
-
     
     /*
     ** Sidebar 리스너 관련 메소드
@@ -391,6 +363,7 @@ public class Controller{
             else if (event.getActionCommand() == "renameSelectedLayer") canvasContainer.renameLayer(index);
             else if (event.getActionCommand() == "copySelectedLayer") canvasContainer.copyLayer(index);
             else if (event.getActionCommand() == "deleteSelectedLayer") canvasContainer.deleteLayer(index);
+            else if (event.getActionCommand() == "deleteAllLayer") canvasContainer.deleteAllLayers();
         }
     
 }
