@@ -25,6 +25,7 @@ public class Controller{
     
     private CanvasContainer canvasContainer;
     private Variable variable;
+    private CanvasView canvasView;
     private SidebarView sidebarView;
     private MainView mainView;
     
@@ -34,8 +35,9 @@ public class Controller{
     public Controller() {
         canvasContainer = new CanvasContainer();
         variable = new Variable(this);
+        canvasView = new CanvasView(canvasContainer, variable, this);
         sidebarView = new SidebarView(canvasContainer, variable, this);
-        mainView = new MainView(canvasContainer, variable, sidebarView, this);
+        mainView = new MainView(canvasContainer, variable, canvasView, sidebarView, this);
         mainView.createView();
     }
     

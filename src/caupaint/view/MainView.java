@@ -62,9 +62,10 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     /*
     ** 생성자
     */
-    public MainView(CanvasContainer canvasContainer, Variable variable, SidebarView sidebarView, Controller controller) {
+    public MainView(CanvasContainer canvasContainer, Variable variable, CanvasView canvasView, SidebarView sidebarView, Controller controller) {
         this.canvasContainer = canvasContainer;
         this.variable = variable;
+        this.canvasView = canvasView;
         this.sidebarView = sidebarView;
         this.controller = controller;
         
@@ -78,7 +79,6 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     public void createView() {
         // 프레임 및 기본 구성요소 생성
         frame = new JFrame("View");
-        canvasView = new CanvasView(canvasContainer, controller); // 도형이 그려지는 Panel
         canvasViewInnerContainerPanel = new JPanel();
         canvasViewContainerScrollPane = new JScrollPane(canvasView); // canvas가 스크롤이 가능하도록 함
 	// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

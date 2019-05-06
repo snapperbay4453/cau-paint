@@ -29,6 +29,7 @@ public class Constant {
     */
     final static public Point defaultCanvasSize = new Point(640, 480);
     final static public Color defaultCanvasBackgroundColor = Color.WHITE;
+    final static public BasicStroke defaultLayerSelectedLineBasicStroke = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{20, 20}, 40.0f);
 
     /*
     ** Variable 관련 상수

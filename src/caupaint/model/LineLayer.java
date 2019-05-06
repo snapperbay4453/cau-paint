@@ -109,6 +109,7 @@ public class LineLayer extends ShapeLayer{
     */
     @Override public ShapeType getRealShapeType() { return ShapeType.LINE; }
     
+    @Override
     public Rectangle getBoundingBox() { // 이 도형을 감싸는 사각형 반환
         double minX = vertexArrayList.get(0).getX();   double minY = vertexArrayList.get(0).getY();
         double maxX = vertexArrayList.get(0).getX();   double maxY = vertexArrayList.get(0).getY();

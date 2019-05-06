@@ -86,32 +86,6 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         setPosition(new Point((int)(getPosition().getX() + dx), (int)(getPosition().getY() + dy)));
     }
     public void scale(Point recentlyDraggedMousePosition, Point currentMousePosition) {
-        /*
-        double tx = currentMousePosition.getX() - recentlyDraggedMousePosition.getX();   double ty = currentMousePosition.getY() - recentlyDraggedMousePosition.getY();
-        double tempX = getPosition().getX();  double tempY = getPosition().getY();
-        double tempWidth = getSize().getX();  double tempHeight = getSize().getY();
-        AffineTransform affineTransform = new AffineTransform();
-        affineTransform.translate(-(getPosition().getX() + (getSize().getX()) * 0.5), -(getPosition().getY() + (getSize().getY() * 0.5))); // 도형을 (0,0)으로 이동
-        if (currentMousePosition.getX() >= (tempX + tempWidth * 0.5) && currentMousePosition.getY() >= (tempY + tempHeight * 0.5)) { // 1사분면
-            affineTransform.scale(((getSize().getX() * 0.5) + tx)/(getSize().getX() * 0.5), ((getSize().getY() * 0.5) + ty)/(getSize().getY() * 0.5));
-        }
-        else if (currentMousePosition.getX() < (tempX + tempWidth * 0.5) && currentMousePosition.getY() >= (tempY + tempHeight * 0.5)) { // 2사분면
-            affineTransform.scale(((getSize().getX() * 0.5) - tx)/(getSize().getX() * 0.5), ((getSize().getY() * 0.5) + ty)/(getSize().getY() * 0.5));
-        }
-        else if (currentMousePosition.getX() < (tempX + tempWidth * 0.5) && currentMousePosition.getY() < (tempY + tempHeight * 0.5)) { // 3사분면
-            affineTransform.scale(((getSize().getX() * 0.5) - tx)/(getSize().getX() * 0.5), ((getSize().getY() * 0.5) - ty)/(getSize().getY() * 0.5));
-        }
-        else if (currentMousePosition.getX()  >= (tempX + tempWidth * 0.5) && currentMousePosition.getY() < (tempY + tempHeight * 0.5)) { // 4사분면
-            affineTransform.scale(((getSize().getX() * 0.5) + tx)/(getSize().getX() * 0.5), ((getSize().getY() * 0.5) - ty)/(getSize().getY() * 0.5));
-        }
-        Shape path2d = affineTransform.createTransformedShape(getShape());
-        setX(tempX + (tempWidth - (path2d.getBounds2D().getMaxX() - path2d.getBounds2D().getMinX())) * 0.5);
-        setY(tempY + (tempHeight - (path2d.getBounds2D().getMaxY() - path2d.getBounds2D().getMinY())) * 0.5);
-        setWidth(path2d.getBounds2D().getMaxX() - path2d.getBounds2D().getMinX());
-        setHeight(path2d.getBounds2D().getMaxY() - path2d.getBounds2D().getMinY()); 
-*/
-        
-
         double dx = currentMousePosition.getX() - recentlyDraggedMousePosition.getX();   double dy = currentMousePosition.getY() - recentlyDraggedMousePosition.getY();
         if (isNearTopLeftCorner(currentMousePosition) == true) {
             setPosition(new Point((int)(getPosition().getX() + dx), (int)(getPosition().getY() + dy)));
@@ -190,6 +164,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     public double getRadianAngle() { return radianAngle; }
     public boolean getIsVisible() { return isVisible; }
     public ShapeType getRealShapeType() { return ShapeType.SHAPE; }
+    public Rectangle getBoundingBox() { return new Rectangle((int)position.getX() - 10, (int)position.getY() - 10, (int)size.getX() + 20, (int)size.getY() + 20); }
     
     public void setName(String name) { this.name = name; }
     public void setPosition(Point position) { this.position = position; }
