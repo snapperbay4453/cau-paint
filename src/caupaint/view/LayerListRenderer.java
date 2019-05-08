@@ -45,6 +45,7 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
         indexLabel.setText(Integer.toString(index));
         switch(shapeLayer.getRealShapeType()) { // 레이어의 도형 종류 표시
             case LINE:       shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "line.png"));      break;
+            case POLYLINE:   shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "polyline.png"));  break;
             case RECTANGLE:  shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rectangle.png")); break;
             case ELLIPSE:    shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "ellipse.png"));   break;
             case TRIANGLE:   shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "triangle.png"));  break;
@@ -56,7 +57,10 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
         nameLabel.setText(shapeLayer.getName());
         nameLabel.setMaximumSize(new Dimension(190, 20));
         nameLabel.setPreferredSize(new Dimension(190, 20));
-        if (shapeLayer.getRealShapeType() == ShapeType.TEXT) sizeLabel.setText(((TextLayer)shapeLayer).getFontName() + ", " + ((TextLayer)shapeLayer).getFontSize() + "pt"); // 텍스트일 경우 폰트 크기를 표시
+        if  ((shapeLayer.getRealShapeType() == ShapeType.POLYLINE) && (((PolylineLayer)shapeLayer).getIsFinishedInitializing() == false)) {
+            sizeLabel.setText((int)shapeLayer.getBoundingBox().getSize().getWidth() + " x " + (int)shapeLayer.getBoundingBox().getSize().getHeight() + " (그리는 중)"); // 현재 폴리선이 완전히 그려지지 않은 경우, 그리는 중이라고 표시함
+            }
+        else if (shapeLayer.getRealShapeType() == ShapeType.TEXT) sizeLabel.setText(((TextLayer)shapeLayer).getFontName() + ", " + ((TextLayer)shapeLayer).getFontSize() + "pt"); // 텍스트일 경우 폰트 크기를 표시
         else  sizeLabel.setText((int)shapeLayer.getBoundingBox().getSize().getWidth() + " x " + (int)shapeLayer.getBoundingBox().getSize().getHeight());
         sizeLabel.setMaximumSize(new Dimension(190, 20));
         sizeLabel.setPreferredSize(new Dimension(190, 20));

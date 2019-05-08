@@ -41,17 +41,19 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             ShapeLayer copiedShapeLayer;
             switch(shapeLayerArrayList.get(index).getRealShapeType()) { // Shape 객체의 실제 형식에 따라 다른 복제 생성자를 호출함
                 case LINE:
-                    copiedShapeLayer = new LineLayer((LineLayer)shapeLayerArrayList.get(index));    break;
+                    copiedShapeLayer = new LineLayer((LineLayer)shapeLayerArrayList.get(index));            break;
+                case POLYLINE:
+                    copiedShapeLayer = new PolylineLayer((PolylineLayer)shapeLayerArrayList.get(index));    break;
                 case RECTANGLE:
                     copiedShapeLayer = new RectangleLayer((RectangleLayer)shapeLayerArrayList.get(index));  break;
                 case ELLIPSE:
-                    copiedShapeLayer = new EllipseLayer((EllipseLayer)shapeLayerArrayList.get(index));  break;
+                    copiedShapeLayer = new EllipseLayer((EllipseLayer)shapeLayerArrayList.get(index));      break;
                 case TRIANGLE:
                     copiedShapeLayer = new TriangleLayer((TriangleLayer)shapeLayerArrayList.get(index));    break;
                 case RHOMBUS:
-                    copiedShapeLayer = new RhombusLayer((RhombusLayer)shapeLayerArrayList.get(index));  break;
+                    copiedShapeLayer = new RhombusLayer((RhombusLayer)shapeLayerArrayList.get(index));      break;
                 case TEXT:
-                    copiedShapeLayer = new TextLayer((TextLayer)shapeLayerArrayList.get(index));  break;  
+                    copiedShapeLayer = new TextLayer((TextLayer)shapeLayerArrayList.get(index));            break;  
                 default: return;
             }
             shapeLayerArrayList.add(index + 1, copiedShapeLayer);
@@ -112,6 +114,9 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         switch(shapetype) {
              case LINE:
                 shapeLayerArrayList.add(new LineLayer("새 직선", point, new Point(0, 0), color, stroke, backgroundType, 0, true));
+                break;
+             case POLYLINE:
+                shapeLayerArrayList.add(new PolylineLayer("새 폴리선", point, new Point(0, 0), color, stroke, backgroundType, 0, true));
                 break;
             case RECTANGLE:
                 shapeLayerArrayList.add(new RectangleLayer("새 직사각형", point, new Point(0, 0), color, stroke, backgroundType, 0, true));

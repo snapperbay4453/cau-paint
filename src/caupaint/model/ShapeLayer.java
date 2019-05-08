@@ -167,7 +167,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     public double getRadianAngle() { return radianAngle; }
     public boolean getIsVisible() { return isVisible; }
     public ShapeType getRealShapeType() { return ShapeType.SHAPE; }
-    public Rectangle getBoundingBox() { return new Rectangle((int)position.getX() - 10, (int)position.getY() - 10, (int)size.getX() + 20, (int)size.getY() + 20); }
+    public Rectangle getBoundingBox() { return new Rectangle((int)position.getX(), (int)position.getY(), (int)size.getX(), (int)size.getY()); }
     
     public void setName(String name) { this.name = name; }
     public void setPosition(Point position) { this.position = position; }

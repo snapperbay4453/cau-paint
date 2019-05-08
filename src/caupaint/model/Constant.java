@@ -22,7 +22,7 @@ public class Constant {
     final static public BasicStroke defaultLongDashedLineBasicStroke = new BasicStroke(5.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{50, 50}, 100.0f); // 긴파선
     final static public BasicStroke defaultDashSingleDottedLineBasicStroke = new BasicStroke(5.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{40, 11, 2, 11}, 100.0f); // 1점 쇄선
     final static public BasicStroke defaultDashDoubleDottedLineBasicStroke = new BasicStroke(5.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{40, 10, 2, 10, 2, 10}, 110.0f); // 2점 쇄선
-    final static public int nearPointRecognitionRangeRadius = 10;
+    final static public int nearPointRecognitionRangeRadius = 5; // 마우스가 특정 좌표의 근처에 있는지 판단하기 위한 반지름
     
     /*
     ** Canvas 관련 상수

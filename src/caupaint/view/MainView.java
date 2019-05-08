@@ -41,6 +41,7 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     private JButton loadFromFileButton;
     private JButton saveToFileButton;
     private JButton drawLineButton;
+    private JButton drawPolylineButton;
     private JButton drawRectangleButton;
     private JButton drawEllipseButton;
     private JButton drawTriangleButton;
@@ -180,6 +181,13 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         shapeButtonsArrayList.add(drawLineButton);
         drawLineButton.addActionListener(new ButtonClickedActionListener());
         
+        drawPolylineButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "polyline.png"));
+        drawPolylineButton.setToolTipText("마우스를 클릭하여 폴리선을 그립니다. 같은 곳을 두 번 클릭하여 폴리선을 완성합니다.");
+        drawPolylineButton.setActionCommand("drawPolyline");
+        toolBar.add(drawPolylineButton);
+        shapeButtonsArrayList.add(drawPolylineButton);
+        drawPolylineButton.addActionListener(new ButtonClickedActionListener());
+        
         drawRectangleButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "rectangle.png"));
         drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");
         drawRectangleButton.setActionCommand("drawRectangle");
@@ -303,8 +311,11 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         fontNameComboBox.setSize(30, 10);
         fontNameComboBox.setMaximumSize(new Dimension(100, 42));
         fontNameComboBox.setPreferredSize(new Dimension(100, 42));
-        fontNameComboBox.addItem("바탕");
+        fontNameComboBox.addItem("굴림");
         fontNameComboBox.addItem("궁서");
+        fontNameComboBox.addItem("돋움");
+        fontNameComboBox.addItem("맑은 고딕");
+        fontNameComboBox.addItem("바탕");
         fontNameComboBox.setActionCommand("fontName");
         toolBar.add(fontNameComboBox);
         fontNameComboBox.addItemListener(new FontNameComboBoxItemChangeActionListener());
@@ -370,6 +381,8 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         if (variable.getFunctionType() == FunctionType.DRAW) switch(variable.getShapeType()) {
             case LINE:
                 changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawLineButton);   break;
+            case POLYLINE:
+                changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawPolylineButton);   break;
             case RECTANGLE:
                 changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawRectangleButton);   break;
             case ELLIPSE:

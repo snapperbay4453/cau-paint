@@ -235,6 +235,10 @@ public class Controller{
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.LINE);
         }
+        else if (event.getActionCommand() == "drawPolyline"){
+            variable.setFunctionType(FunctionType.DRAW);
+            variable.setShapeType(ShapeType.POLYLINE);
+        }
         else if (event.getActionCommand() == "drawRectangle"){
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.RECTANGLE);
@@ -334,8 +338,28 @@ public class Controller{
             case IDLE:
                 break;
             case DRAW:
-                canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
-                canvasContainer.initializeLayer(event.getPoint());
+                switch(variable.getShapeType()) {
+                    case LINE:
+                    case RECTANGLE:
+                    case ELLIPSE:
+                    case TRIANGLE:
+                    case RHOMBUS:
+                    case TEXT:
+                        canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
+                        canvasContainer.initializeLayer(event.getPoint());
+                        break;
+                    case POLYLINE:
+                        if ((canvasContainer.getShapeLayerArrayList().isEmpty() == false) // 1. ShapeLayerArrayList가 비어있지 않고
+                                && (canvasContainer.getShapeLayerArrayList().get(canvasContainer.getShapeLayerArrayList().size() - 1).getRealShapeType() == ShapeType.POLYLINE) // 2. ShapeLayerArrayList의 가장 마지막 레이어가 Polyline 타입이고
+                                && (((PolylineLayer)(canvasContainer.getShapeLayerArrayList().get(canvasContainer.getShapeLayerArrayList().size() - 1))).getIsFinishedInitializing() == false )) { // 3. 그 레이어의 생성이 완료되었다고 표시되었을 시
+                            canvasContainer.initializeLayer(event.getPoint());
+                        }
+                        else {
+                            canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
+                            canvasContainer.initializeLayer(event.getPoint());
+                        }
+                        break;
+                }
                 break;
             case MOVE:
             case RESIZE:

@@ -34,6 +34,11 @@ public class LineLayer extends ShapeLayer{
     }
     public LineLayer(LineLayer source) { // 복제 생성자
         super(source);
+        vertexArrayList = new ArrayList<Point>();
+        for(int i = 0; i < source.vertexArrayList.size(); i++) {
+            vertexArrayList.add(new Point((int)source.vertexArrayList.get(i).getX(), (int)source.vertexArrayList.get(i).getY()));
+        }
+        
     }
     
     /*
