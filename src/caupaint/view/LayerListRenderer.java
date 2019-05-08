@@ -1,5 +1,6 @@
 package caupaint.view;
 import caupaint.model.*;
+import caupaint.model.Enum.ShapeType;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -12,17 +13,26 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
     private JLabel indexLabel;
     private JLabel shapeIconLabel;
     private JLabel nameLabel;
+    private JLabel sizeLabel;
+    private JPanel nameAndSizePanel;
     private JLabel isVisibleIconLabel;
     
     public LayerListRenderer() {
         indexLabel = new JLabel();
         shapeIconLabel = new JLabel();
+        nameAndSizePanel = new JPanel();
         nameLabel = new JLabel();
+        sizeLabel = new JLabel();
         isVisibleIconLabel = new JLabel();
+        
         this.add(isVisibleIconLabel, BorderLayout.WEST);
         this.add(indexLabel, BorderLayout.WEST);
         this.add(shapeIconLabel, BorderLayout.WEST);
-        this.add(nameLabel, BorderLayout.CENTER);
+        nameAndSizePanel.setOpaque(false);
+        nameAndSizePanel.setLayout(new BoxLayout(nameAndSizePanel, BoxLayout.Y_AXIS));
+        nameAndSizePanel.add(nameLabel, BorderLayout.NORTH);
+        nameAndSizePanel.add(sizeLabel,  BorderLayout.CENTER);
+        this.add(nameAndSizePanel, BorderLayout.CENTER);
         
     }
     
@@ -39,12 +49,18 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
             case ELLIPSE:    shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "ellipse.png"));   break;
             case TRIANGLE:   shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "triangle.png"));  break;
             case RHOMBUS:    shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rhombus.png"));   break;
+            case TEXT:       shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "text.png"));      break;
             default:         shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "shape.png"));     break;
         }
-        
+
         nameLabel.setText(shapeLayer.getName());
-        nameLabel.setMaximumSize(new Dimension(190, 40));
-        nameLabel.setPreferredSize(new Dimension(190, 40));
+        nameLabel.setMaximumSize(new Dimension(190, 20));
+        nameLabel.setPreferredSize(new Dimension(190, 20));
+        if (shapeLayer.getRealShapeType() == ShapeType.TEXT) sizeLabel.setText(((TextLayer)shapeLayer).getFontName() + ", " + ((TextLayer)shapeLayer).getFontSize() + "pt"); // 텍스트일 경우 폰트 크기를 표시
+        else  sizeLabel.setText((int)shapeLayer.getBoundingBox().getSize().getWidth() + " x " + (int)shapeLayer.getBoundingBox().getSize().getHeight());
+        sizeLabel.setMaximumSize(new Dimension(190, 20));
+        sizeLabel.setPreferredSize(new Dimension(190, 20));
+        
         
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
         if(isSelected) setBackground(list.getSelectionBackground()); // 선택된 리스트를 강조 표시함

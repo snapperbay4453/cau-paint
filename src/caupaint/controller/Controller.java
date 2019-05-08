@@ -104,7 +104,7 @@ public class Controller{
             is.close();
             
             for (int i = 0; i < loadedCanvasContainer.getShapeLayerArrayList().size(); i++) {
-                canvasContainer.addLayer(loadedCanvasContainer.getShapeLayerArrayList().get(i));
+                canvasContainer.addLayerToArrayList(loadedCanvasContainer.getShapeLayerArrayList().get(i));
             }
             canvasContainer.setCanvasSize(loadedCanvasContainer.getCanvasSize());
             canvasContainer.setCanvasBackgroundColor(loadedCanvasContainer.getCanvasBackgroundColor());
@@ -251,6 +251,10 @@ public class Controller{
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.RHOMBUS);
         }
+        else if (event.getActionCommand() == "drawText"){
+            variable.setFunctionType(FunctionType.DRAW);
+            variable.setShapeType(ShapeType.TEXT);
+        }
         else if (event.getActionCommand() == "idle"){
             variable.setFunctionType(FunctionType.IDLE);
         }
@@ -273,24 +277,45 @@ public class Controller{
             changeLayerBackground(variable.getSelectedLayerIndex());
         }
     }
-    // 이벤트 리스너: mainView.ItemChangeActionListener
+    // 이벤트 리스너: mainView.StrokeTypeItemChangeActionListener
     public void MainViewStrokeTypeComboBoxItemStateChangedEventHandler(ItemEvent event) {
        if (event.getStateChange() == ItemEvent.SELECTED) {
-            if (event.getItem().toString() == "실선") { variable.setStrokeWithNewWidth(Constant.defaultSolidLineBasicStroke, variable.getStroke().getLineWidth()); }
-            else if (event.getItem().toString() == "점선") { variable.setStrokeWithNewWidth(Constant.defaultDottedLineBasicStroke, variable.getStroke().getLineWidth()); }
-            else if (event.getItem().toString() == "파선") { variable.setStrokeWithNewWidth(Constant.defaultDashedLineBasicStroke, variable.getStroke().getLineWidth()); }
-            else if (event.getItem().toString() == "긴파선") { variable.setStrokeWithNewWidth(Constant.defaultLongDashedLineBasicStroke, variable.getStroke().getLineWidth()); }
-            else if (event.getItem().toString() == "1점 쇄선") { variable.setStrokeWithNewWidth(Constant.defaultDashSingleDottedLineBasicStroke, variable.getStroke().getLineWidth()); }
-            else if (event.getItem().toString() == "2점 쇄선") { variable.setStrokeWithNewWidth(Constant.defaultDashDoubleDottedLineBasicStroke, variable.getStroke().getLineWidth()); }
-            if (variable.getSelectedLayerIndex() != -1) canvasContainer.getShapeLayerArrayList().get(variable.getSelectedLayerIndex()).setStroke(variable.getStroke());
+
+            if (event.getItem().toString() == "실선") { variable.setStrokeDash(Constant.defaultSolidLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
+            else if (event.getItem().toString() == "점선") { variable.setStrokeDash(Constant.defaultDottedLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
+            else if (event.getItem().toString() == "파선") { variable.setStrokeDash(Constant.defaultDashedLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
+            else if (event.getItem().toString() == "긴파선") { variable.setStrokeDash(Constant.defaultLongDashedLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
+            else if (event.getItem().toString() == "1점 쇄선") { variable.setStrokeDash(Constant.defaultDashSingleDottedLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
+            else if (event.getItem().toString() == "2점 쇄선") { variable.setStrokeDash(Constant.defaultDashDoubleDottedLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
+
+            if (variable.getSelectedLayerIndex() != -1) canvasContainer.setLayerStroke(variable.getSelectedLayerIndex(), variable.getStroke());
        }
     }       
-    // 이벤트 리스너: mainView.SpinnerChangeActionListener
-    public void MainViewSpinnerStateChangedEventHandler(ChangeEvent event, int spinnerValue) {
+    // 이벤트 리스너: mainView.StrokeWidthSpinnerChangeActionListener
+    public void MainViewStrokeWidthSpinnerStateChangedEventHandler(ChangeEvent event, int spinnerValue) {
        if (spinnerValue <= 0 || spinnerValue >= 100) return;
        else {
            variable.setStrokeWidth(spinnerValue);
-           if (variable.getSelectedLayerIndex() != -1) canvasContainer.getShapeLayerArrayList().get(variable.getSelectedLayerIndex()).setStroke(variable.getStroke());
+           if (variable.getSelectedLayerIndex() != -1) canvasContainer.setLayerStroke(variable.getSelectedLayerIndex(), variable.getStroke());
+       }
+    }
+    // 이벤트 리스너: mainView.FontNameComboBoxItemChangeActionListener
+    public void MainViewFontNameComboBoxItemStateChangedEventHandler(ItemEvent event) {
+       if (event.getStateChange() == ItemEvent.SELECTED) {
+            variable.setFontName(event.getItem().toString());
+            if ((variable.getSelectedLayerIndex() != -1) && canvasContainer.getShapeLayerArrayList().get(variable.getSelectedLayerIndex()).getRealShapeType() == ShapeType.TEXT) { // 현재 선택된 레이어가 텍스트 레이어인 경우
+               canvasContainer.setLayerFont(variable.getSelectedLayerIndex(), variable.getFont());
+            }
+       }
+    }       
+    // 이벤트 리스너: mainView.FontSizeSpinnerStateChangeActionListener
+    public void MainViewFontSizeSpinnerStateChangedEventHandler(ChangeEvent event, int spinnerValue) {
+       if (spinnerValue <= 0 || spinnerValue >= 500) return;
+       else {
+           variable.setFontSize(spinnerValue);
+           if ((variable.getSelectedLayerIndex() != -1) && canvasContainer.getShapeLayerArrayList().get(variable.getSelectedLayerIndex()).getRealShapeType() == ShapeType.TEXT) { // 현재 선택된 레이어가 텍스트 레이어인 경우
+                canvasContainer.setLayerFont(variable.getSelectedLayerIndex(), variable.getFont());
+           }
        }
     }
     // 이벤트 리스너: mainView.WindowActionListener
@@ -309,7 +334,7 @@ public class Controller{
             case IDLE:
                 break;
             case DRAW:
-                canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getColor(), variable.getStroke(), variable.getBackgroundType());
+                canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
                 canvasContainer.initializeLayer(event.getPoint());
                 break;
             case MOVE:
@@ -359,7 +384,7 @@ public class Controller{
         }
     // 이벤트 리스너: sidebarView.ButtonClickedActionListener
         public void SidebarActionPerformedEventHandler(ActionEvent event, int index) {
-            if (event.getActionCommand() == "toggleSelectedLayerVisible") canvasContainer.toggleSelectedLayerVisible(index);
+            if (event.getActionCommand() == "toggleSelectedLayerVisible") canvasContainer.toggleLayerIsVisible(index);
             else if (event.getActionCommand()== "moveSelectedLayerFront") canvasContainer.swapNearLayers(index, index - 1);
             else if (event.getActionCommand() == "moveSelectedLayerBack") canvasContainer.swapNearLayers(index, index + 1);
             else if (event.getActionCommand() == "renameSelectedLayer") canvasContainer.renameLayer(index);

@@ -68,7 +68,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         this.strokeDashPhase = Constant.defaultSolidLineBasicStroke.getDashPhase();
         this.backgroundType = source.getBackgroundType();
         this.radianAngle = source.getRadianAngle();
-        this.isVisible = source.isVisible;
+        this.isVisible = source.getIsVisible();
     }
 
     /*
@@ -160,6 +160,9 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     }
     public Color getColor() { return color; }
     public BasicStroke getStroke() { return new BasicStroke(strokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, strokeDash, strokeDashPhase); }
+    public float getStrokeWidth() { return strokeWidth; }
+    public float[] getStrokeDash() { return strokeDash; }
+    public float getStrokeDashPhase() { return strokeDashPhase; }
     public BackgroundType getBackgroundType() { return backgroundType; }
     public double getRadianAngle() { return radianAngle; }
     public boolean getIsVisible() { return isVisible; }
@@ -175,6 +178,9 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         this.strokeDash = stroke.getDashArray();
         this.strokeDashPhase = stroke.getDashPhase();
     }
+    public void setStrokeWidth(float strokeWidth) { this.strokeWidth = strokeWidth; }
+    public void setStrokeDash(float[] strokeDash) { this.strokeDash = strokeDash; }
+    public void setStrokeDashPhase(float strokeDashPhase) { this.strokeDashPhase = strokeDashPhase; }
     public void setBackgroundType (BackgroundType backgroundType) { this.backgroundType = backgroundType;  }
     public void setRadianAngle(double radianAngle) { this.radianAngle = radianAngle; }
     public void setIsVisible(boolean isVisible) { this.isVisible = isVisible; }

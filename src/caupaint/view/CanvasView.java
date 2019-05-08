@@ -49,7 +49,8 @@ public class CanvasView extends JPanel implements CanvasContainerObserver{
                 if (canvasContainer.getShapeLayerArrayList().get(i).getIsVisible() == true) canvasContainer.getShapeLayerArrayList().get(i).draw(g); // isVisible 값이 true일 때만 도형을 나타냄
                 }
             }
-            if ((variable.getFunctionType() == FunctionType.MOVE || variable.getFunctionType() == FunctionType.RESIZE || variable.getFunctionType() == FunctionType.ROTATE)) {
+            if ((variable.getFunctionType() == FunctionType.MOVE || variable.getFunctionType() == FunctionType.RESIZE || variable.getFunctionType() == FunctionType.ROTATE) 
+            && variable.getLastSelectedLayerIndex() != -1 ) {
             // 레이어 변형 시 경계 박스를 표시함
                 Graphics2D g2d = (Graphics2D)g;
                 AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
@@ -59,7 +60,13 @@ public class CanvasView extends JPanel implements CanvasContainerObserver{
                         (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getX(), 
                         (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getY(),
                         (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getWidth(),
-                        (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getHeight()
+                        (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getHeight() // 외곽선 그리기
+                );
+                g.fillOval(
+                        (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getCenterX() - 5, 
+                        (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getCenterY() - 5,
+                        10,
+                        10 // 중심점 그리기
                 );
                 g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함
         }

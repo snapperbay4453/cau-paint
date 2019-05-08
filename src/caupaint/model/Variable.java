@@ -15,6 +15,7 @@ public class Variable implements VariableSubject{
     private BackgroundType backgroundType;
     private Color color;
     private BasicStroke stroke;
+    private Font font;
     private Point recentlyPressedMousePosition;
     private Point recentlyDraggedMousePosition;
     private int selectedLayerIndex;
@@ -32,6 +33,7 @@ public class Variable implements VariableSubject{
         backgroundType = Constant.defaultBackgroundType;
         color = Constant.defaultColor;
         stroke = Constant.defaultStroke;
+        font = Constant.defaultFont;
         recentlyPressedMousePosition = new Point(0, 0);
         recentlyDraggedMousePosition = new Point(0, 0);
         selectedLayerIndex = Constant.defaultSelectedLayerIndex;
@@ -65,6 +67,7 @@ public class Variable implements VariableSubject{
     public BackgroundType getBackgroundType() {  return backgroundType; }
     public Color getColor() {  return color;  }
     public BasicStroke getStroke() { return stroke;  }
+    public Font getFont() { return font; }
     public Point getRecentlyPressedMousePosition() { return recentlyPressedMousePosition;  }
     public Point getRecentlyDraggedMousePosition() { return recentlyDraggedMousePosition;  }
     public int getSelectedLayerIndex() { return selectedLayerIndex; }
@@ -76,16 +79,25 @@ public class Variable implements VariableSubject{
     public void setBackgroundType(BackgroundType backgroundType) { this.backgroundType = backgroundType; notifyVariableObservers(); }
     public void setColor(Color color) {  this.color = color; notifyVariableObservers(); }
     public void setStroke(BasicStroke stroke) { this.stroke = stroke; notifyVariableObservers(); }
-    public void setStrokeWithNewWidth(BasicStroke stroke, float width) {
-        this.stroke = new BasicStroke(width, stroke.getEndCap(), stroke.getLineJoin(), stroke.getMiterLimit(), stroke.getDashArray(), stroke.getDashPhase());;
-        notifyVariableObservers();
-    }
     public void setStrokeWidth(float width) {
         this.stroke = new BasicStroke(width, getStroke().getEndCap(), getStroke().getLineJoin(), getStroke().getMiterLimit(), getStroke().getDashArray(), getStroke().getDashPhase());
         notifyVariableObservers();
     }
     public void setStrokeDash(float[] dash, float dashPhase) {
         this.stroke = new BasicStroke(getStroke().getLineWidth(), getStroke().getEndCap(), getStroke().getLineJoin(), getStroke().getMiterLimit(), dash, dashPhase);
+        notifyVariableObservers();
+    }
+    public void setFont(Font font) { this.font = font;  notifyVariableObservers();}
+    public void setFontName (String name) {
+        this.font = new Font(name, getFont().getStyle(), getFont().getSize());
+        notifyVariableObservers();
+    }
+    public void setFontStyle (int style) {
+        this.font = new Font(getFont().getName(), style, getFont().getSize());
+        notifyVariableObservers();
+    }
+    public void setFontSize (int size) {
+        this.font = new Font(getFont().getName(), getFont().getStyle(), size);
         notifyVariableObservers();
     }
     public void setRecentlyPressedMousePosition (Point point) { recentlyPressedMousePosition = point; }

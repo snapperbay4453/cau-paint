@@ -29,7 +29,7 @@ public class Constant {
     */
     final static public Point defaultCanvasSize = new Point(640, 480);
     final static public Color defaultCanvasBackgroundColor = Color.WHITE;
-    final static public BasicStroke defaultLayerSelectedLineBasicStroke = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{20, 20}, 40.0f);
+    final static public BasicStroke defaultLayerSelectedLineBasicStroke = new BasicStroke(2.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{2, 8}, 4.0f);
 
     /*
     ** Variable 관련 상수
@@ -39,6 +39,7 @@ public class Constant {
     final static public BackgroundType defaultBackgroundType = BackgroundType.EMPTY;
     final static public Color defaultColor = new Color(0, 0, 0);
     final static public BasicStroke defaultStroke = defaultSolidLineBasicStroke;
+     final static public Font defaultFont = new Font("바탕", 0, 30);
     final static public int defaultSelectedLayerIndex = -1;
     final static public String defaultFilePath = null;
    

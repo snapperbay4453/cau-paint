@@ -6,7 +6,6 @@ import caupaint.controller.*;
 import caupaint.observer.*;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     private JButton drawEllipseButton;
     private JButton drawTriangleButton;
     private JButton drawRhombusButton;
+    private JButton drawTextButton;
     private ArrayList<JButton> shapeButtonsArrayList; // 도형 관련 버튼들을 모은 ArrayList
     private JButton idleButton;
     private JButton moveShapeButton;
@@ -57,7 +57,9 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     private JButton fillBackgroundTypeButton;
     private ArrayList<JButton> backgroundTypeButtonsArrayList; // 배경 타입 관련 버튼들을 모두 ArrayList
     private JComboBox strokeTypeComboBox;
-    private JSpinner strokeThicknessSpinner;
+    private JSpinner strokeWidthSpinner;
+    private JComboBox fontNameComboBox;
+    private JSpinner fontSizeSpinner;
 
     /*
     ** 생성자
@@ -206,6 +208,13 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         shapeButtonsArrayList.add(drawRhombusButton);
         drawRhombusButton.addActionListener(new ButtonClickedActionListener());
         
+        drawTextButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "text.png"));
+        drawTextButton.setToolTipText("텍스트를 삽입합니다.");
+        drawTextButton.setActionCommand("drawText");
+        toolBar.add(drawTextButton); 
+        shapeButtonsArrayList.add(drawTextButton);
+        drawTextButton.addActionListener(new ButtonClickedActionListener());
+        
                 toolBar.addSeparator();
         
         idleButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "cursor.png"));   
@@ -268,8 +277,8 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         toolBar.add(new JLabel("  선 속성 "));
         strokeTypeComboBox = new JComboBox();
         strokeTypeComboBox.setSize(30, 10);
-        strokeTypeComboBox.setMaximumSize(new Dimension(160, 42));
-        strokeTypeComboBox.setPreferredSize(new Dimension(160, 42));
+        strokeTypeComboBox.setMaximumSize(new Dimension(100, 42));
+        strokeTypeComboBox.setPreferredSize(new Dimension(100, 42));
         strokeTypeComboBox.addItem("실선");
         strokeTypeComboBox.addItem("점선");
         strokeTypeComboBox.addItem("파선");
@@ -280,13 +289,34 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         toolBar.add(strokeTypeComboBox);
         strokeTypeComboBox.addItemListener(new StrokeTypeComboBoxItemChangeActionListener());
         
-        strokeThicknessSpinner = new JSpinner();
-        strokeThicknessSpinner.setModel(new SpinnerNumberModel(5, 1, 100, 1));
-        strokeThicknessSpinner.setEditor(new JSpinner.NumberEditor(strokeThicknessSpinner, "0"));
-        strokeThicknessSpinner.setMaximumSize(new Dimension(50, 42));
-        strokeThicknessSpinner.setPreferredSize(new Dimension(50, 42));
-        toolBar.add(strokeThicknessSpinner);
-        strokeThicknessSpinner.addChangeListener(new SpinnerChangeActionListener());
+        strokeWidthSpinner = new JSpinner();
+        strokeWidthSpinner.setModel(new SpinnerNumberModel(5, 1, 100, 1));
+        strokeWidthSpinner.setEditor(new JSpinner.NumberEditor(strokeWidthSpinner, "0"));
+        strokeWidthSpinner.setMaximumSize(new Dimension(50, 42));
+        strokeWidthSpinner.setPreferredSize(new Dimension(50, 42));
+        toolBar.add(strokeWidthSpinner);
+        strokeWidthSpinner.addChangeListener(new StrokeWidthSpinnerStateChangeActionListener());
+        
+        // 글꼴 선택 기능
+        toolBar.add(new JLabel("  글꼴 속성 "));
+        fontNameComboBox = new JComboBox();
+        fontNameComboBox.setSize(30, 10);
+        fontNameComboBox.setMaximumSize(new Dimension(100, 42));
+        fontNameComboBox.setPreferredSize(new Dimension(100, 42));
+        fontNameComboBox.addItem("바탕");
+        fontNameComboBox.addItem("궁서");
+        fontNameComboBox.setActionCommand("fontName");
+        toolBar.add(fontNameComboBox);
+        fontNameComboBox.addItemListener(new FontNameComboBoxItemChangeActionListener());
+        
+        fontSizeSpinner = new JSpinner();
+        fontSizeSpinner.setModel(new SpinnerNumberModel(30, 1, 500, 1));
+        fontSizeSpinner.setEditor(new JSpinner.NumberEditor(fontSizeSpinner, "0"));
+        fontSizeSpinner.setMaximumSize(new Dimension(50, 42));
+        fontSizeSpinner.setPreferredSize(new Dimension(50, 42));
+        toolBar.add(fontSizeSpinner);
+        fontSizeSpinner.addChangeListener(new FontSizeSpinnerStateChangeActionListener());
+        
     }
     
     /*
@@ -301,8 +331,14 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     class StrokeTypeComboBoxItemChangeActionListener implements ItemListener{
         @Override public void itemStateChanged(ItemEvent event) { controller.MainViewStrokeTypeComboBoxItemStateChangedEventHandler(event); }       
     }
-    class SpinnerChangeActionListener implements ChangeListener{
-        @Override public void stateChanged(ChangeEvent event) { controller.MainViewSpinnerStateChangedEventHandler(event, (int)strokeThicknessSpinner.getValue()); }       
+    class StrokeWidthSpinnerStateChangeActionListener implements ChangeListener{
+        @Override public void stateChanged(ChangeEvent event) { controller.MainViewStrokeWidthSpinnerStateChangedEventHandler(event, (int)strokeWidthSpinner.getValue()); }       
+    }
+    class FontNameComboBoxItemChangeActionListener implements ItemListener{
+        @Override public void itemStateChanged(ItemEvent event) { controller.MainViewFontNameComboBoxItemStateChangedEventHandler(event); }       
+    }
+    class FontSizeSpinnerStateChangeActionListener implements ChangeListener{
+        @Override public void stateChanged(ChangeEvent event) { controller.MainViewFontSizeSpinnerStateChangedEventHandler(event, (int)fontSizeSpinner.getValue()); }       
     }
     class WindowActionListener extends WindowAdapter {
         @Override public void windowClosing(WindowEvent event) { controller.MainViewWindowClosingEventHandler(event); }
