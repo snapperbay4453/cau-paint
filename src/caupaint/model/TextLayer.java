@@ -4,6 +4,7 @@ import caupaint.model.Enum.*;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import static java.lang.Math.*;
 
 public class TextLayer extends ShapeLayer{
@@ -15,8 +16,8 @@ public class TextLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public TextLayer(String name, Point position, Point size, Color color, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible, Font font) { // 생성에 사용할 모든 정보를 전달받음
-        super(name, position, size, color, stroke, backgroundType, radianAngle, isVisible);
+    public TextLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible, Font font) { // 생성에 사용할 모든 정보를 전달받음
+        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isVisible);
         setFontName(font.getFontName());
         setFontStyle(font.getStyle());
         setFontSize(font.getSize());
@@ -67,10 +68,16 @@ public class TextLayer extends ShapeLayer{
         Graphics2D g2d = (Graphics2D)g;
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g.setFont(new Font(fontName, fontStyle, fontSize)); // 폰트 설정
-        g.setColor(getColor());
         g2d.setStroke(getStroke());
         g2d.rotate(getRadianAngle(), getPosition().getX() + getSize().getX() / 2, getPosition().getY() + getSize().getY() / 2);
-        g.drawString(getName(), (int)getPosition().getX(), (int)getPosition().getY());
+        Rectangle2D textBackgroundRectangle = g.getFontMetrics().getStringBounds(getName(), g);
+        setSize(new Point((int)textBackgroundRectangle.getWidth(), (int)textBackgroundRectangle.getHeight())); // 크기 새로 설정
+        if (getBackgroundType() == BackgroundType.FILL) { // 텍스트의 배경색 그리기
+            g.setColor(getBackgroundColor());
+            g.fillRect((int)getPosition().getX(), (int)getPosition().getY(), (int)textBackgroundRectangle.getWidth(), (int)textBackgroundRectangle.getHeight());
+        }
+        g.setColor(getBorderColor());
+        g.drawString(getName(), (int)getPosition().getX(), (int)getPosition().getY() + g.getFontMetrics().getAscent());
         g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함
     }
     

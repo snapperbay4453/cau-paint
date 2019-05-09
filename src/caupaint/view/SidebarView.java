@@ -143,7 +143,7 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
         public void valueChanged(ListSelectionEvent event){ controller.SidebarValueChangedEventHandler(event, layerList.getSelectedIndex()); }
     }
     class ButtonClickedActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent event) {  controller.SidebarActionPerformedEventHandler(event, layerList.getSelectedIndex()); }
+        public void actionPerformed(ActionEvent event) {  controller.SidebarActionPerformedEventHandler(event); }
     }
     
     /*

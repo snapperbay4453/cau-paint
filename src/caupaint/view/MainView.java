@@ -48,12 +48,13 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     private JButton drawRhombusButton;
     private JButton drawTextButton;
     private ArrayList<JButton> shapeButtonsArrayList; // 도형 관련 버튼들을 모은 ArrayList
-    private JButton idleButton;
+    private JButton selectShapeButton;
     private JButton moveShapeButton;
     private JButton resizeShapeButton;
     private JButton rotateShapeButton;
     private ArrayList<JButton> functionButtonsArrayList; // 기능 관련 버튼들을 모두 ArrayList
-    private JButton chooseColorButton;
+    private JButton chooseBorderColorButton;
+    private JButton chooseBackgroundColorButton;
     private JButton emptyBackgroundTypeButton;
     private JButton fillBackgroundTypeButton;
     private ArrayList<JButton> backgroundTypeButtonsArrayList; // 배경 타입 관련 버튼들을 모두 ArrayList
@@ -101,7 +102,7 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         frame.getContentPane().add(canvasViewContainerScrollPane, BorderLayout.CENTER);
         
         // 프레임 설정
-        frame.setTitle(controller.getMainViewWindowTitle());
+        frame.setTitle(generateMainViewWindowTitle());
         frame.setSize(Constant.defaultWindowSize);
         frame.setJMenuBar(menuBar);
         frame.setVisible(true);
@@ -225,15 +226,15 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         
                 toolBar.addSeparator();
         
-        idleButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "cursor.png"));   
-        idleButton.setToolTipText("어떠한 입력에도 반응하지 않고 대기합니다.");
-        idleButton.setActionCommand("idle");
-        toolBar.add(idleButton);
-        functionButtonsArrayList.add(idleButton);
-        idleButton.addActionListener(new ButtonClickedActionListener());     
+        selectShapeButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "select.png"));   
+        selectShapeButton.setToolTipText("마우스를 클릭하여 도형을 선택합니다.");
+        selectShapeButton.setActionCommand("selectShape");
+        toolBar.add(selectShapeButton);
+        functionButtonsArrayList.add(selectShapeButton);
+        selectShapeButton.addActionListener(new ButtonClickedActionListener());     
                 
         moveShapeButton =  new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "move.png"));
-        moveShapeButton.setToolTipText("선택한 도형을 이동합니다.");
+        moveShapeButton.setToolTipText("선택한 도형의 위치 이동합니다.");
         moveShapeButton.setActionCommand("moveShape");
         toolBar.add(moveShapeButton);
         functionButtonsArrayList.add(moveShapeButton);
@@ -256,12 +257,19 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
                 toolBar.addSeparator();
                 
         toolBar.add(new JLabel("색상 "));
-        chooseColorButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "bgcolor.png"));
-        chooseColorButton.setToolTipText("색상을 설정합니다.");
-        chooseColorButton.setActionCommand("chooseColor");
-        chooseColorButton.setBackground(variable.getColor());
-        toolBar.add(chooseColorButton);
-        chooseColorButton.addActionListener(new ButtonClickedActionListener());
+        chooseBorderColorButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "bgcolor.png"));
+        chooseBorderColorButton.setToolTipText("외곽선 색상을 설정합니다.");
+        chooseBorderColorButton.setActionCommand("chooseBorderColor");
+        chooseBorderColorButton.setBackground(variable.getBorderColor());
+        toolBar.add(chooseBorderColorButton);
+        chooseBorderColorButton.addActionListener(new ButtonClickedActionListener());
+
+        chooseBackgroundColorButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "bgcolor.png"));
+        chooseBackgroundColorButton.setToolTipText("배경 색상을 설정합니다.");
+        chooseBackgroundColorButton.setActionCommand("chooseBackgroundColor");
+        chooseBackgroundColorButton.setBackground(variable.getBackgroundColor());
+        toolBar.add(chooseBackgroundColorButton);
+        chooseBackgroundColorButton.addActionListener(new ButtonClickedActionListener());
         
                 toolBar.addSeparator();
                 
@@ -354,6 +362,14 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     class WindowActionListener extends WindowAdapter {
         @Override public void windowClosing(WindowEvent event) { controller.MainViewWindowClosingEventHandler(event); }
     }
+
+    /*
+    ** 창 관련 메소드
+    */
+    public String generateMainViewWindowTitle(){ // 파일 주소 존재 여부에 따라 프로그램의 제목 표시줄 내용을 결정
+        if (variable.getFilePath() == null) return ("제목 없음 - CauPaint");
+        else return(variable.getFilePath() + " - CauPaint");
+    }
     
     /*
     ** 버튼 배경색 지정 메소드
@@ -367,8 +383,8 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
 
     public void setBackgroundOnlySelectedButton(){
         switch(variable.getFunctionType()) {
-            case IDLE:
-                changeBackgroundOnlySelectedButton(functionButtonsArrayList, idleButton);   break;
+            case SELECT:
+                changeBackgroundOnlySelectedButton(functionButtonsArrayList, selectShapeButton);   break;
             case DRAW:
                 changeBackgroundOnlySelectedButton(functionButtonsArrayList, null);   break;
             case MOVE:
@@ -391,6 +407,8 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
                 changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawTriangleButton);   break;
             case RHOMBUS:
                 changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawRhombusButton);   break;
+            case TEXT:
+                changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawTextButton);   break;
         } else changeBackgroundOnlySelectedButton(shapeButtonsArrayList, null); // 그리기 모드가 아닐 경우
         switch(variable.getBackgroundType()) {
             case EMPTY:
@@ -412,8 +430,9 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     @Override
     public void updateVariable() {
         setBackgroundOnlySelectedButton();
-        chooseColorButton.setBackground(variable.getColor()); // chooseColorButton의 배경색 새로고침
-        frame.setTitle(controller.getMainViewWindowTitle());
+        chooseBorderColorButton.setBackground(variable.getBorderColor()); // chooseBorderColorButton의 배경색 새로고침
+        chooseBackgroundColorButton.setBackground(variable.getBackgroundColor()); // chooseBackgroundColorButton의 배경색 새로고침
+        frame.setTitle(generateMainViewWindowTitle());
         frame.repaint();
     }
     

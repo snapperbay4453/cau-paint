@@ -10,7 +10,8 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     private String name; // 레이어의 이름
     private Point position; // 레이어의 위치
     private Point size; // 레이어의 크기
-    private Color color; // 색상
+    private Color borderColor; // 외곽선 색상
+    private Color backgroundColor; // 배경 색상
     //private BasicStroke stroke; // 외곽선 속성(직렬화가 불가하여 필요한 속성만 따로 저장함)
     private float strokeWidth; // 외곽선 속성 - 선 굵기
     private float[] strokeDash; // 외곽선 속성 - 점선 패턴
@@ -22,11 +23,12 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     /*
     ** 생성자
     */
-    public ShapeLayer(String name, Point position, Point size, Color color, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
+    public ShapeLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
         this.name = name;
         this.position = position;
         this.size = size;
-        this.color = color;
+        this.borderColor = borderColor;
+        this.backgroundColor = backgroundColor;
         this.strokeWidth = stroke.getLineWidth();
         this.strokeDash = stroke.getDashArray();
         this.strokeDashPhase = stroke.getDashPhase();
@@ -38,7 +40,8 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         this.name = "새 도형";
         this.position = position;
         this.size = size;
-        this.color = new Color(0, 0, 0);
+        this.borderColor = new Color(0, 0, 0);
+        this.backgroundColor = new Color(0, 0, 0);
         this.strokeWidth = Constant.defaultSolidLineBasicStroke.getLineWidth();
         this.strokeDash = Constant.defaultSolidLineBasicStroke.getDashArray();
         this.strokeDashPhase = Constant.defaultSolidLineBasicStroke.getDashPhase();
@@ -50,7 +53,8 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         this.name = "새 도형";
         this.position = new Point(0, 0);
         this.size = new Point(0, 0);
-        this.color = new Color(0, 0, 0);
+        this.borderColor = new Color(0, 0, 0);
+        this.backgroundColor = new Color(0, 0, 0);
         this.strokeWidth = Constant.defaultSolidLineBasicStroke.getLineWidth();
         this.strokeDash = Constant.defaultSolidLineBasicStroke.getDashArray();
         this.strokeDashPhase = Constant.defaultSolidLineBasicStroke.getDashPhase();
@@ -62,7 +66,8 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         this.name = source.getName();
         this.position = source.getPosition();
         this.size = source.getSize();
-        this.color = source.getColor();
+        this.borderColor = source.getBorderColor();
+        this.backgroundColor = source.getBackgroundColor();
         this.strokeWidth = Constant.defaultSolidLineBasicStroke.getLineWidth();
         this.strokeDash = Constant.defaultSolidLineBasicStroke.getDashArray();
         this.strokeDashPhase = Constant.defaultSolidLineBasicStroke.getDashPhase();
@@ -124,6 +129,11 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     /*
     ** 레이어 인식 관련 메소드
     */
+    public boolean isOnLayer(Point mousePosition) { // 현재 마우스의 위치가 레이어 내부인지 판단하는 메소드
+        if (mousePosition.getX() >= getPosition().getX() && mousePosition.getY() >= getPosition().getY()
+           && mousePosition.getX() < getPosition().getX() + getSize().getX() && mousePosition.getY() < getPosition().getY() + getSize().getY() ) return true;
+        else return false;
+    }
     public boolean isNearTopLeftCorner(Point mousePosition) { // 현재 마우스의 위치가 레이어의 왼쪽 위 모서리인지 판단하는 메소드
         if (mousePosition.getX() < getCentralPoint().getX() && mousePosition.getY() < getCentralPoint().getY()) return true;
         else return false;
@@ -158,7 +168,8 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         point.setLocation((getPosition().getX() + getSize().getX() / 2), (getPosition().getY() + getSize().getY() / 2));
         return point;
     }
-    public Color getColor() { return color; }
+    public Color getBorderColor() { return borderColor; }
+    public Color getBackgroundColor() { return backgroundColor; }
     public BasicStroke getStroke() { return new BasicStroke(strokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, strokeDash, strokeDashPhase); }
     public float getStrokeWidth() { return strokeWidth; }
     public float[] getStrokeDash() { return strokeDash; }
@@ -172,7 +183,8 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     public void setName(String name) { this.name = name; }
     public void setPosition(Point position) { this.position = position; }
     public void setSize(Point size) { this.size = size; }
-    public void setColor(Color color) { this.color = color; }
+    public void setBorderColor(Color color) { this.borderColor = color; }
+    public void setBackgroundColor(Color color) { this.backgroundColor = color; }
     public void setStroke(BasicStroke stroke) {
         this.strokeWidth = stroke.getLineWidth();
         this.strokeDash = stroke.getDashArray();

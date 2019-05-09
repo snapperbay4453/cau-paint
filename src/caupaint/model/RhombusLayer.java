@@ -11,8 +11,8 @@ public class RhombusLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public RhombusLayer(String name, Point position, Point size, Color color, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
-        super(name, position, size, color, stroke, backgroundType, radianAngle, isVisible);
+    public RhombusLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
+        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isVisible);
     }
     public RhombusLayer(Point position, Point size) {
         super(position, size);
@@ -48,11 +48,14 @@ public class RhombusLayer extends ShapeLayer{
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
-        g.setColor(getColor());
         g2d.setStroke(getStroke());
         g2d.rotate(getRadianAngle(), getPosition().getX() + getSize().getX() / 2, getPosition().getY() + getSize().getY() / 2);
-        if (getBackgroundType() == BackgroundType.EMPTY) g.drawPolygon(new int[] {(int)getVertex(0).getX(), (int)getVertex(1).getX(), (int)getVertex(2).getX(), (int)getVertex(3).getX()}, new int[] {(int)getVertex(0).getY(), (int)getVertex(1).getY(), (int)getVertex(2).getY(), (int)getVertex(3).getY()}, 4);
-        else if (getBackgroundType() == BackgroundType.FILL) g.fillPolygon(new int[] {(int)getVertex(0).getX(), (int)getVertex(1).getX(), (int)getVertex(2).getX(), (int)getVertex(3).getX()}, new int[] {(int)getVertex(0).getY(), (int)getVertex(1).getY(), (int)getVertex(2).getY(), (int)getVertex(3).getY()}, 4);
+        if (getBackgroundType() == BackgroundType.FILL) {
+            g.setColor(getBackgroundColor());
+            g.fillPolygon(new int[] {(int)getVertex(0).getX(), (int)getVertex(1).getX(), (int)getVertex(2).getX(), (int)getVertex(3).getX()}, new int[] {(int)getVertex(0).getY(), (int)getVertex(1).getY(), (int)getVertex(2).getY(), (int)getVertex(3).getY()}, 4);
+        }
+        g.setColor(getBorderColor());
+        g.drawPolygon(new int[] {(int)getVertex(0).getX(), (int)getVertex(1).getX(), (int)getVertex(2).getX(), (int)getVertex(3).getX()}, new int[] {(int)getVertex(0).getY(), (int)getVertex(1).getY(), (int)getVertex(2).getY(), (int)getVertex(3).getY()}, 4);
         g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함
     }
     

@@ -14,8 +14,8 @@ public class LineLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public LineLayer(String name, Point position, Point size, Color color, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
-        super(name, position, size, color, stroke, backgroundType, radianAngle, isVisible);
+    public LineLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
+        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isVisible);
         vertexArrayList = new ArrayList<Point>();
         vertexArrayList.add(new Point((int)getPosition().getX(), (int)getPosition().getY())); // 시작점 설정
         vertexArrayList.add(new Point((int)getPosition().getX(), (int)getPosition().getY())); // 끝점 설정, 시작점과 동일한 값을 가짐
@@ -102,7 +102,7 @@ public class LineLayer extends ShapeLayer{
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
-        g.setColor(getColor());
+        g.setColor(getBorderColor());
         g2d.setStroke(getStroke());
         g2d.rotate(getRadianAngle(), (vertexArrayList.get(0).getX() + vertexArrayList.get(1).getX()) / 2, (vertexArrayList.get(0).getY() + vertexArrayList.get(1).getY()) / 2);
         g.drawLine((int)vertexArrayList.get(0).getX(), (int)vertexArrayList.get(0).getY(), (int)vertexArrayList.get(1).getX(), (int)vertexArrayList.get(1).getY());

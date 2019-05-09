@@ -42,35 +42,17 @@ public class Controller{
     }
     
     /*
-    ** Layer 관련 메소드
-    */
-    public void renameLayer(int index) {
-        canvasContainer.renameLayer(index);
-    }
-    public void changeLayerBackground(int index) {
-        if (variable.getSelectedLayerIndex() != -1) {
-            canvasContainer.getShapeLayerArrayList().get(index).setBackgroundType(variable.getBackgroundType()); // 도형의 배경 채우기 옵션 설정
-            canvasContainer.getShapeLayerArrayList().get(index).setColor(variable.getColor()); // 도형의 color 변경
-        }
-        else return;
-    }
-    
-    /*
     ** Variable 관련 메소드
     */
+    /*
     public String getMainViewWindowTitle(){ // 파일 주소 존재 여부에 따라 프로그램의 제목 표시줄을 다르게 설정
         return variable.generateMainViewWindowTitle();
     }
-
+    */
+    
     /*
     ** Canvas 관련 메소드
     */
-    public Point getCanvasSize(){
-        return canvasContainer.getCanvasSize();
-    }
-    public Color getCanvasBackgroundColor(){
-        return canvasContainer.getCanvasBackgroundColor();
-    }
     public void createNewCanvas() { // 캔버스와 레이어를 모두 초기화
         canvasContainer.deleteAllLayers();
         variable.setFilePath(Constant.defaultFilePath);
@@ -114,7 +96,6 @@ public class Controller{
             JOptionPane.showMessageDialog(null, "파일 불러오기에 실패하였습니다.", "불러오기 실패", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     public String getFilePathToSave() { // 파일을 저장할 경로를 반환하는 메서드
         if (variable.getFilePath() != null) return variable.getFilePath(); // variable에 이미 기존의 파일 경로가 저장되어 있을 경우, 기존의 경로를 반환함
         else {
@@ -133,7 +114,6 @@ public class Controller{
         if (filePath == null) {
             if (variable.getFilePath() == null) return; // 매개변수와 variable 모두 파일 경로가 지정되어 있지 않은 경우
         }
-        
         ObjectOutputStream os;
         try {
             if (filePath.endsWith(Constant.defaultFilenameExtension)) os = new ObjectOutputStream(new FileOutputStream(filePath)); // 확장자가 이미 filePath에 포함되어 있기 때문에 filenameExtension을 붙이지 않음
@@ -170,7 +150,6 @@ public class Controller{
     /*
     ** MainView 이벤트 리스너 관련 메소드
     */
-    
     // 이벤트 리스너: mainView.MenuBarClickedActionListener
     public void MainViewMenuBarClickedEventHandler(ActionEvent event) {
         if (event.getActionCommand() == "createNewCanvas") {
@@ -209,7 +188,6 @@ public class Controller{
             canvasContainer.showSetCanvasBackgroundColorDialogBox();
         }
     }
-    
     // 이벤트 리스너: mainView.ButtonClickedActionListener
     public void MainViewButtonClickedEventHandler(ActionEvent event) {
         if (event.getActionCommand() == "createNewCanvas"){
@@ -259,8 +237,8 @@ public class Controller{
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.TEXT);
         }
-        else if (event.getActionCommand() == "idle"){
-            variable.setFunctionType(FunctionType.IDLE);
+        else if (event.getActionCommand() == "selectShape"){
+            variable.setFunctionType(FunctionType.SELECT);
         }
         else if (event.getActionCommand() == "moveShape"){
             variable.setFunctionType(FunctionType.MOVE);
@@ -271,14 +249,15 @@ public class Controller{
         else if (event.getActionCommand() == "rotateShape"){
             variable.setFunctionType(FunctionType.ROTATE);
         }
-        else if (event.getActionCommand() == "chooseColor") variable.chooseColor();
+        else if (event.getActionCommand() == "chooseBorderColor") variable.chooseBorderColor();
+        else if (event.getActionCommand() == "chooseBackgroundColor") variable.chooseBackgroundColor();
         else if (event.getActionCommand() == "emptyBackgroundType") {
             variable.setBackgroundType(BackgroundType.EMPTY);
-            changeLayerBackground(variable.getSelectedLayerIndex());
+            if (variable.getSelectedLayerIndex() != -1) canvasContainer.changeLayerBackgroundTypeAndColors(variable.getSelectedLayerIndex(), variable.getBackgroundType(), variable.getBorderColor(), variable.getBackgroundColor());
         }
         else if (event.getActionCommand() == "fillBackgroundType") {
             variable.setBackgroundType(BackgroundType.FILL);
-            changeLayerBackground(variable.getSelectedLayerIndex());
+            if (variable.getSelectedLayerIndex() != -1) canvasContainer.changeLayerBackgroundTypeAndColors(variable.getSelectedLayerIndex(), variable.getBackgroundType(), variable.getBorderColor(), variable.getBackgroundColor());
         }
     }
     // 이벤트 리스너: mainView.StrokeTypeItemChangeActionListener
@@ -326,16 +305,15 @@ public class Controller{
     public void MainViewWindowClosingEventHandler(WindowEvent e) {
         checkExit();
     }
-
     
     /*
     ** Canvas 이벤트 리스너 관련 메소드
     */
-    
     // 이벤트 리스너: canvasView.CanvasMouseAdapter
     public void CanvasViewMousePressedEventHandler(MouseEvent event) {
         switch(variable.getFunctionType()) {
-            case IDLE:
+            case SELECT:
+                variable.setSelectedLayerIndex(canvasContainer.selectLayerByMousePoint(event.getPoint()));
                 break;
             case DRAW:
                 switch(variable.getShapeType()) {
@@ -345,7 +323,7 @@ public class Controller{
                     case TRIANGLE:
                     case RHOMBUS:
                     case TEXT:
-                        canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
+                        canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
                         canvasContainer.initializeLayer(event.getPoint());
                         break;
                     case POLYLINE:
@@ -355,7 +333,7 @@ public class Controller{
                             canvasContainer.initializeLayer(event.getPoint());
                         }
                         else {
-                            canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
+                            canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
                             canvasContainer.initializeLayer(event.getPoint());
                         }
                         break;
@@ -373,7 +351,7 @@ public class Controller{
     }
     public void CanvasViewMouseDraggedEventHandler(MouseEvent event) {
         switch(variable.getFunctionType()) {
-            case IDLE:      break;
+            case SELECT:      break;
             case DRAW:      canvasContainer.keepInitializingLayer(variable.getRecentlyPressedMousePosition(), event.getPoint());                              break;
             case MOVE:      canvasContainer.moveLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());    break;
             case RESIZE:    canvasContainer.resizeLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());  break;
@@ -384,7 +362,7 @@ public class Controller{
     }
     public void CanvasViewMouseReleasedEventHandler(MouseEvent event) {
         switch(variable.getFunctionType()) {
-            case IDLE:
+            case SELECT:
                 break;
             case DRAW:
                 canvasContainer.finishInitializingLayer();
@@ -401,19 +379,22 @@ public class Controller{
     /*
     ** Sidebar 리스너 관련 메소드
     */
-    
     // 이벤트 리스너: sidebarView.LayerListSelectionListener
         public void SidebarValueChangedEventHandler(ListSelectionEvent event, int index){
             variable.setSelectedLayerIndex(index);
         }
     // 이벤트 리스너: sidebarView.ButtonClickedActionListener
-        public void SidebarActionPerformedEventHandler(ActionEvent event, int index) {
-            if (event.getActionCommand() == "toggleSelectedLayerVisible") canvasContainer.toggleLayerIsVisible(index);
-            else if (event.getActionCommand()== "moveSelectedLayerFront") canvasContainer.swapNearLayers(index, index - 1);
-            else if (event.getActionCommand() == "moveSelectedLayerBack") canvasContainer.swapNearLayers(index, index + 1);
-            else if (event.getActionCommand() == "renameSelectedLayer") canvasContainer.renameLayer(index);
-            else if (event.getActionCommand() == "copySelectedLayer") canvasContainer.copyLayer(index);
-            else if (event.getActionCommand() == "deleteSelectedLayer") canvasContainer.deleteLayer(index);
+        public void SidebarActionPerformedEventHandler(ActionEvent event) {
+            if (event.getActionCommand() == "toggleSelectedLayerVisible") canvasContainer.toggleLayerIsVisible(variable.getSelectedLayerIndex());
+            else if (event.getActionCommand()== "moveSelectedLayerFront") {
+                if (canvasContainer.swapNearLayers(variable.getSelectedLayerIndex(), variable.getSelectedLayerIndex() - 1) == 0) variable.setSelectedLayerIndex(variable.getSelectedLayerIndex() - 1);
+            }
+            else if (event.getActionCommand() == "moveSelectedLayerBack") {
+                if (canvasContainer.swapNearLayers(variable.getSelectedLayerIndex(), variable.getSelectedLayerIndex() + 1) == 0) variable.setSelectedLayerIndex(variable.getSelectedLayerIndex() + 1);
+            }
+            else if (event.getActionCommand() == "renameSelectedLayer") canvasContainer.renameLayer(variable.getSelectedLayerIndex());
+            else if (event.getActionCommand() == "copySelectedLayer") canvasContainer.copyLayer(variable.getSelectedLayerIndex());
+            else if (event.getActionCommand() == "deleteSelectedLayer") canvasContainer.deleteLayer(variable.getSelectedLayerIndex());
             else if (event.getActionCommand() == "deleteAllLayer") canvasContainer.deleteAllLayers();
         }
     

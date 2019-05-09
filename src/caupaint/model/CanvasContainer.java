@@ -35,6 +35,12 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     public void addLayerToArrayList(ShapeLayer shapeLayer) { // 이미 생성된 레이어를 ArrayList에 추가
         shapeLayerArrayList.add(shapeLayer);
     }
+    public int selectLayerByMousePoint(Point mousePoint) { // 마우스의 위치로 레이어를 선택하는 메소드
+        for(int i = shapeLayerArrayList.size() - 1; i >= 0; i--) { // shapeLayerArrayList를 역순으로, 즉 가장 최근의 레이어부터 순회함
+            if (shapeLayerArrayList.get(i).isOnLayer(mousePoint) == true) return i;
+        }
+        return -1; // 어떤 레이어도 선택되지 않았을 경우
+    }
     public void copyLayer(int index) throws IndexOutOfBoundsException{ // 선택한 레이어를 복제함
         try {
             if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
@@ -63,22 +69,33 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void swapLayers(int sourceIndex, int destinationIndex) throws IndexOutOfBoundsException{ // 두 레이어의 index를 서로 바꿈
+    public int swapLayers(int sourceIndex, int destinationIndex) throws IndexOutOfBoundsException{ // 두 레이어의 index를 서로 바꿈
         try {
             if (sourceIndex == -1 || destinationIndex == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
             ShapeLayer tempShapeLayer = shapeLayerArrayList.get(sourceIndex); // sourceIndex의 레이어 정보를 임시로 저장
             shapeLayerArrayList.set(sourceIndex, shapeLayerArrayList.get(destinationIndex)); // sourceIndex에 destinationIndex의 레이어 정보를 저장
             shapeLayerArrayList.set(destinationIndex, tempShapeLayer); // destinationIndex에 임시로 저장했던 sourceIndex의 레이어 정보를 저장
             notifyCanvasContainerObservers();
+            return 0;
         } catch (IndexOutOfBoundsException exp) {
             JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            return -1;
         }
     }
-    public void swapNearLayers(int sourceIndex, int destinationIndex) throws IndexOutOfBoundsException{ // 인접한 두 레이어의 index를 서로 바꿈
-        if (sourceIndex == -1) JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
-        else if (sourceIndex <= 0 && destinationIndex <= 0) JOptionPane.showMessageDialog(null, "첫 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
-        else if (sourceIndex >= getShapeLayerArrayList().size() - 1 && destinationIndex >= getShapeLayerArrayList().size() - 1) JOptionPane.showMessageDialog(null, "마지막 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
-        else swapLayers(sourceIndex, destinationIndex);
+    public int swapNearLayers(int sourceIndex, int destinationIndex) throws IndexOutOfBoundsException{ // 인접한 두 레이어의 index를 서로 바꿈
+        if (sourceIndex == -1) {
+            JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
+            return -1;
+        }
+        else if (sourceIndex <= 0 && destinationIndex <= 0) {
+            JOptionPane.showMessageDialog(null, "첫 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
+            return -1;
+        }
+        else if (sourceIndex >= getShapeLayerArrayList().size() - 1 && destinationIndex >= getShapeLayerArrayList().size() - 1) {
+            JOptionPane.showMessageDialog(null, "마지막 레이어입니다.", "레이어 이동 불가", JOptionPane.ERROR_MESSAGE);
+            return -1;
+        }
+        else return swapLayers(sourceIndex, destinationIndex);
     }
     public void deleteLayer(int index) throws ArrayIndexOutOfBoundsException { // 선택한 레이어를 삭제함
         try {
@@ -110,28 +127,28 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     /*
     ** ShapeLayer 생성 관련 메소드
     */
-    public void createLayer(ShapeType shapetype, Point point, Color color, BasicStroke stroke, Font font, BackgroundType backgroundType) { // ShapeLayer 클래스를 상속하는 레이어를 생성
+    public void createLayer(ShapeType shapetype, Point point, Color borderColor, Color backgroundColor, BasicStroke stroke, Font font, BackgroundType backgroundType) { // ShapeLayer 클래스를 상속하는 레이어를 생성
         switch(shapetype) {
              case LINE:
-                shapeLayerArrayList.add(new LineLayer("새 직선", point, new Point(0, 0), color, stroke, backgroundType, 0, true));
+                shapeLayerArrayList.add(new LineLayer("새 직선", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
                 break;
              case POLYLINE:
-                shapeLayerArrayList.add(new PolylineLayer("새 폴리선", point, new Point(0, 0), color, stroke, backgroundType, 0, true));
+                shapeLayerArrayList.add(new PolylineLayer("새 폴리선", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
                 break;
             case RECTANGLE:
-                shapeLayerArrayList.add(new RectangleLayer("새 직사각형", point, new Point(0, 0), color, stroke, backgroundType, 0, true));
+                shapeLayerArrayList.add(new RectangleLayer("새 직사각형", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
                 break;
              case ELLIPSE:
-                shapeLayerArrayList.add(new EllipseLayer("새 타원", point, new Point(0, 0), color, stroke, backgroundType, 0, true));
+                shapeLayerArrayList.add(new EllipseLayer("새 타원", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
                 break;
              case TRIANGLE:
-                shapeLayerArrayList.add(new TriangleLayer("새 삼각형", point, new Point(0, 0), color, stroke, backgroundType, 0, true));
+                shapeLayerArrayList.add(new TriangleLayer("새 삼각형", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
                 break;
              case RHOMBUS:
-                shapeLayerArrayList.add(new RhombusLayer("새 마름모", point, new Point(0, 0), color, stroke, backgroundType, 0, true));
+                shapeLayerArrayList.add(new RhombusLayer("새 마름모", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
                 break;
              case TEXT:
-                shapeLayerArrayList.add(new TextLayer("새 텍스트", point, new Point(0, 0), color, stroke, backgroundType, 0, true, font));
+                shapeLayerArrayList.add(new TextLayer("새 텍스트", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true, font));
                 break;
         }
         notifyCanvasContainerObservers();
@@ -166,6 +183,11 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         } catch (IndexOutOfBoundsException exp) {
             JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    public void changeLayerBackgroundTypeAndColors(int index, BackgroundType backgroundType, Color borderColor, Color backgroundColor) {
+       getShapeLayerArrayList().get(index).setBackgroundType(backgroundType); // 도형의 배경 채우기 옵션 설정
+       getShapeLayerArrayList().get(index).setBorderColor(borderColor); // 도형의 borderColor 변경
+       getShapeLayerArrayList().get(index).setBackgroundColor(backgroundColor); // 도형의 backgroundColor 변경
     }
     public void setLayerStroke (int index, BasicStroke stroke) { // 선택한 레이어의 stroke를 변경함
         shapeLayerArrayList.get(index).setStroke(stroke);

@@ -13,7 +13,8 @@ public class Variable implements VariableSubject{
     private FunctionType functionType;
     private ShapeType shapeType;
     private BackgroundType backgroundType;
-    private Color color;
+    private Color borderColor;
+    private Color backgroundColor;
     private BasicStroke stroke;
     private Font font;
     private Point recentlyPressedMousePosition;
@@ -31,7 +32,8 @@ public class Variable implements VariableSubject{
         functionType = Constant.defaultFunctionType;
         shapeType = Constant.defaultShapeType;
         backgroundType = Constant.defaultBackgroundType;
-        color = Constant.defaultColor;
+        borderColor = Constant.defaultBorderColor;
+        backgroundColor = Constant.defaultBackgroundColor;
         stroke = Constant.defaultStroke;
         font = Constant.defaultFont;
         recentlyPressedMousePosition = new Point(0, 0);
@@ -44,20 +46,20 @@ public class Variable implements VariableSubject{
     /*
     ** 프로그램 실행 중 저장하는 속성 관련 메소드
     */
-    public void chooseColor() { // 대화 상자를 열어 색상 설정
+    public void chooseBorderColor() { // 대화 상자를 열어 외곽선 색상 설정
+        Color tempColor = new Color(0, 0, 0);
         JColorChooser chooser=new JColorChooser();
-        color = chooser.showDialog(null,"Color",Color.YELLOW);
+        tempColor = chooser.showDialog(null,"Color",Color.YELLOW);
+        if (tempColor != null) borderColor = tempColor;
         notifyVariableObservers();
     }
-    public String generateMainViewWindowTitle(){ // 파일 주소 존재 여부에 따라 프로그램의 제목 표시줄 내용을 결정
-        if (getFilePath() == null) return ("제목 없음 - CauPaint");
-        else return(getFilePath() + " - CauPaint");
+    public void chooseBackgroundColor() { // 대화 상자를 열어 배경 색상 설정
+        Color tempColor = new Color(0, 0, 0);
+        JColorChooser chooser=new JColorChooser();
+        tempColor = chooser.showDialog(null,"Color",Color.YELLOW);
+        if (tempColor != null) backgroundColor = tempColor;
+        notifyVariableObservers();
     }
-    /*
-    public BasicStroke getStrokeWithNewWidth(BasicStroke stroke, float width) { // 입력된 BasicStroke의 선 넓이만 변경해서 반환하는 메소드
-        return new BasicStroke(width, stroke.getEndCap(), stroke.getLineJoin(), stroke.getMiterLimit(), stroke.getDashArray(), stroke.getDashPhase());
-    }
-    */
     
     /*
     ** getter, setter
@@ -65,7 +67,8 @@ public class Variable implements VariableSubject{
     public FunctionType getFunctionType() { return functionType; }
     public ShapeType getShapeType() { return shapeType; }
     public BackgroundType getBackgroundType() {  return backgroundType; }
-    public Color getColor() {  return color;  }
+    public Color getBorderColor() {  return borderColor;  }
+    public Color getBackgroundColor() {  return backgroundColor;  }
     public BasicStroke getStroke() { return stroke;  }
     public Font getFont() { return font; }
     public Point getRecentlyPressedMousePosition() { return recentlyPressedMousePosition;  }
@@ -77,7 +80,8 @@ public class Variable implements VariableSubject{
     public void setFunctionType(FunctionType functionType) { this.functionType = functionType; notifyVariableObservers(); }
     public void setShapeType(ShapeType shapeType) { this.shapeType = shapeType; notifyVariableObservers(); }
     public void setBackgroundType(BackgroundType backgroundType) { this.backgroundType = backgroundType; notifyVariableObservers(); }
-    public void setColor(Color color) {  this.color = color; notifyVariableObservers(); }
+    public void setBorderColor(Color color) {  this.borderColor = color; notifyVariableObservers(); }
+    public void setBackgroundColor(Color color) {  this.backgroundColor = color; notifyVariableObservers(); }
     public void setStroke(BasicStroke stroke) { this.stroke = stroke; notifyVariableObservers(); }
     public void setStrokeWidth(float width) {
         this.stroke = new BasicStroke(width, getStroke().getEndCap(), getStroke().getLineJoin(), getStroke().getMiterLimit(), getStroke().getDashArray(), getStroke().getDashPhase());
