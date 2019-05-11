@@ -7,7 +7,7 @@ import java.awt.geom.*;
 import static java.lang.Math.*;
 import java.util.ArrayList;
 
-public class PolylineLayer extends ShapeLayer{
+public class PenLayer extends ShapeLayer{
 
     private ArrayList<Point2D.Double> vertexArrayList; // 이 도형을 구성하는 점의 위치 정보를 저장하는 ArrayList
     private boolean isFinishedInitializing; // 폴리선 레이어가 그리기를 마쳤으면 true, 그렇지 않으면 false
@@ -16,34 +16,33 @@ public class PolylineLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public PolylineLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
+    public PenLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
         super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isVisible);
-        super.setName("새 폴리선");
+        super.setName("새 펜");
         vertexArrayList = new ArrayList<Point2D.Double>();
         isFinishedInitializing = false;
         originalSize = new Point((int)getSize().getX(), (int)getSize().getY());
     }
-    public PolylineLayer(Point position, Point size) {
+    public PenLayer(Point position, Point size) {
         super(position, size);
-        super.setName("새 폴리선");
+        super.setName("새 펜");
         vertexArrayList = new ArrayList<Point2D.Double>();
         isFinishedInitializing = false;
         originalSize = new Point((int)getSize().getX(), (int)getSize().getY());
     }
-    public PolylineLayer() {
+    public PenLayer() {
         super();
-        super.setName("새 폴리선");
+        super.setName("새 펜");
         vertexArrayList = new ArrayList<Point2D.Double>();
         isFinishedInitializing = false;
         originalSize = new Point((int)getSize().getX(), (int)getSize().getY());
     }
-    public PolylineLayer(PolylineLayer source) { // 복제 생성자
+    public PenLayer(PenLayer source) { // 복제 생성자
         super(source);
         vertexArrayList = new ArrayList<Point2D.Double>();
         for(int i = 0; i < source.vertexArrayList.size(); i++) {
             vertexArrayList.add(new Point2D.Double(source.vertexArrayList.get(i).getX(), source.vertexArrayList.get(i).getY()));
         }
-        isFinishedInitializing = source.getIsFinishedInitializing();
         originalSize = source.getOriginalSize();
     }
     
@@ -52,40 +51,34 @@ public class PolylineLayer extends ShapeLayer{
     */
     @Override
     public void initialize(Point currentMousePosition) {
-        isFinishedInitializing = false; // 그리는 중이라고 표시
+        isFinishedInitializing = false;
         vertexArrayList.add(new Point2D.Double(currentMousePosition.getX(), currentMousePosition.getY()));
     }
     @Override
     public void keepInitializing(Point recentlyPressedMousePosition, Point currentMousePosition) {
-        vertexArrayList.set(vertexArrayList.size() - 1, new Point2D.Double(currentMousePosition.getX(), currentMousePosition.getY())); // 가장 최근에 생성한 Vertex의 위치 정보를 현재 마우스의 위치로 변경함
+        vertexArrayList.add(new Point2D.Double(currentMousePosition.getX(), currentMousePosition.getY()));
     }
     @Override
     public void finishInitializing() {
-        if((vertexArrayList.size() > 1 // 최소 2개 이상의 Vertex가 있어야 함
-                && vertexArrayList.get(vertexArrayList.size() - 1).getX() > vertexArrayList.get(vertexArrayList.size() - 2).getX() - Constant.nearPointRecognitionRangeRadius)
-                && (vertexArrayList.get(vertexArrayList.size() - 1).getX() < vertexArrayList.get(vertexArrayList.size() - 2).getX() + Constant.nearPointRecognitionRangeRadius)
-                && (vertexArrayList.get(vertexArrayList.size() - 1).getY() > vertexArrayList.get(vertexArrayList.size() - 2).getY() - Constant.nearPointRecognitionRangeRadius)
-                && (vertexArrayList.get(vertexArrayList.size() - 1).getY() < vertexArrayList.get(vertexArrayList.size() - 2).getY() + Constant.nearPointRecognitionRangeRadius)) { // 마지막 Vertex의 위치가 그 전 Vertex의 근처일 경우
 
-            double minX = vertexArrayList.get(0).getX();   double minY = vertexArrayList.get(0).getY();
-            double maxX = vertexArrayList.get(0).getX();   double maxY = vertexArrayList.get(0).getY();
-            for (Point2D.Double point : vertexArrayList) { // 각 점들의 최소 위치값과 최대 위치값을 구함
-                minX = min(point.getX(), minX);
-                minY = min(point.getY(), minY);
-                maxX = max(point.getX(), maxX);
-                maxY = max(point.getY(), maxY);     
-            }
-   
-            setPosition(new Point((int)minX, (int)minY)); // 이 레이어의 위치를 알아내 저장함
-            setSize(new Point((int)(maxX - minX), (int)(maxY - minY))); // 이 레이어의 크기를 알아내 저장함
-            originalSize = (new Point((int)(maxX - minX), (int)(maxY - minY))); // 이 레이어의 크기를 알아내 저장함
-            
-            for (int i = 0; i < vertexArrayList.size(); i++) { // vertex의 값을 절대 위치에서 position을 원점으로 하는 상대 위치로 변환
-                vertexArrayList.set(i, new Point2D.Double(vertexArrayList.get(i).getX() - getPosition().getX(), vertexArrayList.get(i).getY() - getPosition().getY()));
-            }
-            
-            isFinishedInitializing = true; // 그리기 완료
+        double minX = vertexArrayList.get(0).getX();   double minY = vertexArrayList.get(0).getY();
+        double maxX = vertexArrayList.get(0).getX();   double maxY = vertexArrayList.get(0).getY();
+        for (Point2D.Double point : vertexArrayList) { // 각 점들의 최소 위치값과 최대 위치값을 구함
+            minX = min(point.getX(), minX);
+            minY = min(point.getY(), minY);
+            maxX = max(point.getX(), maxX);
+            maxY = max(point.getY(), maxY);     
         }
+        
+        setPosition(new Point((int)minX, (int)minY)); // 이 레이어의 위치를 알아내 저장함
+        setSize(new Point((int)(maxX - minX), (int)(maxY - minY))); // 이 레이어의 크기를 알아내 저장함
+        originalSize = (new Point((int)(maxX - minX), (int)(maxY - minY))); // 이 레이어의 크기를 알아내 저장함
+
+        for (int i = 0; i < vertexArrayList.size(); i++) { // vertex의 값을 절대 위치에서 position을 원점으로 하는 상대 위치로 변환
+            vertexArrayList.set(i, new Point2D.Double(vertexArrayList.get(i).getX() - getPosition().getX(), vertexArrayList.get(i).getY() - getPosition().getY()));
+        }
+        
+        isFinishedInitializing = true;
     }
     
     /*
@@ -98,7 +91,7 @@ public class PolylineLayer extends ShapeLayer{
         g2d.setStroke(getStroke());
         g2d.rotate(getRadianAngle(), getPosition().getX() + getSize().getX() / 2, getPosition().getY() + getSize().getY() / 2);
         
-        // drawPolyline 메소드에서 Polyline을 그리기 위해 필요한 배열을 생성함
+        // drawPen 메소드에서 Pen을 그리기 위해 필요한 배열을 생성함
         int[] xPoints = new int[vertexArrayList.size()];
         for(int i = 0; i < vertexArrayList.size(); i++) {
             if (getIsFinishedInitializing() == true) xPoints[i] = (int)((vertexArrayList.get(i).getX()) * (getSize().getX() / originalSize.getX()) + getPosition().getX());
@@ -122,7 +115,7 @@ public class PolylineLayer extends ShapeLayer{
     /*
     ** getter, setter
     */
-    @Override public ShapeType getRealShapeType() { return ShapeType.POLYLINE; }
+    @Override public ShapeType getRealShapeType() { return ShapeType.PEN; }
     public boolean getIsFinishedInitializing() { // 이 도형의 생성이 완료되었는지 반환
         return isFinishedInitializing;
     }

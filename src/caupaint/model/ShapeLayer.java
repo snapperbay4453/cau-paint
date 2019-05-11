@@ -37,43 +37,13 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         this.isVisible = isVisible;
     }
     public ShapeLayer(Point position, Point size) { // 생성에 최소한으로 필요한 정보만 전달받음
-        this.name = "새 도형";
-        this.position = position;
-        this.size = size;
-        this.borderColor = new Color(0, 0, 0);
-        this.backgroundColor = new Color(0, 0, 0);
-        this.strokeWidth = Constant.defaultSolidLineBasicStroke.getLineWidth();
-        this.strokeDash = Constant.defaultSolidLineBasicStroke.getDashArray();
-        this.strokeDashPhase = Constant.defaultSolidLineBasicStroke.getDashPhase();
-        this.backgroundType = BackgroundType.EMPTY;
-        this.radianAngle = 0;
-        this.isVisible = true;
+        this("새 도형", position, size, Constant.defaultBorderColor, Constant.defaultBackgroundColor, Constant.defaultSolidLineBasicStroke, Constant.defaultBackgroundType, 0, Constant.defaultIsVisible);
     }
     public ShapeLayer() { // 생성에 필요한 어떠한 정보도 전달받지 않음
-        this.name = "새 도형";
-        this.position = new Point(0, 0);
-        this.size = new Point(0, 0);
-        this.borderColor = new Color(0, 0, 0);
-        this.backgroundColor = new Color(0, 0, 0);
-        this.strokeWidth = Constant.defaultSolidLineBasicStroke.getLineWidth();
-        this.strokeDash = Constant.defaultSolidLineBasicStroke.getDashArray();
-        this.strokeDashPhase = Constant.defaultSolidLineBasicStroke.getDashPhase();
-        this.backgroundType = BackgroundType.EMPTY;
-        this.radianAngle = 0;
-        this.isVisible = true;
+        this("새 도형", new Point(0, 0), new Point(0, 0), Constant.defaultBorderColor, Constant.defaultBackgroundColor, Constant.defaultSolidLineBasicStroke, Constant.defaultBackgroundType, 0, Constant.defaultIsVisible);
     }
     public ShapeLayer(ShapeLayer source) { // 복제 생성자
-        this.name = source.getName();
-        this.position = source.getPosition();
-        this.size = source.getSize();
-        this.borderColor = source.getBorderColor();
-        this.backgroundColor = source.getBackgroundColor();
-        this.strokeWidth = Constant.defaultSolidLineBasicStroke.getLineWidth();
-        this.strokeDash = Constant.defaultSolidLineBasicStroke.getDashArray();
-        this.strokeDashPhase = Constant.defaultSolidLineBasicStroke.getDashPhase();
-        this.backgroundType = source.getBackgroundType();
-        this.radianAngle = source.getRadianAngle();
-        this.isVisible = source.getIsVisible();
+        this(source.getName(), source.getPosition(), source.getSize(), source.getBorderColor(), source.getBackgroundColor(), source.getStroke(), source.getBackgroundType(), source.getRadianAngle(), source.getIsVisible());
     }
 
     /*

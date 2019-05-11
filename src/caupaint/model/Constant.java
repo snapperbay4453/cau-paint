@@ -36,11 +36,12 @@ public class Constant {
     */
     final static public FunctionType defaultFunctionType = FunctionType.SELECT;
     final static public ShapeType defaultShapeType = ShapeType.RECTANGLE;
-    final static public BackgroundType defaultBackgroundType = BackgroundType.EMPTY;
     final static public Color defaultBorderColor = Color.BLACK;
     final static public Color defaultBackgroundColor = Color.WHITE;
     final static public BasicStroke defaultStroke = defaultSolidLineBasicStroke;
-     final static public Font defaultFont = new Font("바탕", 0, 30);
+    final static public BackgroundType defaultBackgroundType = BackgroundType.EMPTY;
+    final static public boolean defaultIsVisible = true;
+    final static public Font defaultFont = new Font("바탕", 0, 30);
     final static public int defaultSelectedLayerIndex = -1;
     final static public String defaultFilePath = null;
    

@@ -46,11 +46,13 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
         switch(shapeLayer.getRealShapeType()) { // 레이어의 도형 종류 표시
             case LINE:       shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "line.png"));      break;
             case POLYLINE:   shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "polyline.png"));  break;
+            case PEN:        shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "pen.png"));       break;
             case RECTANGLE:  shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rectangle.png")); break;
             case ELLIPSE:    shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "ellipse.png"));   break;
             case TRIANGLE:   shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "triangle.png"));  break;
             case RHOMBUS:    shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rhombus.png"));   break;
             case TEXT:       shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "text.png"));      break;
+            case IMAGE:      shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "image.png"));     break;
             default:         shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "shape.png"));     break;
         }
 

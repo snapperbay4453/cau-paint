@@ -3,13 +3,10 @@ package caupaint.controller;
 import caupaint.model.*;
 import caupaint.model.Enum.*;
 import caupaint.view.*;
-
-import java.awt.Color;
 import java.awt.Point;
+
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,15 +39,6 @@ public class Controller{
     }
     
     /*
-    ** Variable 관련 메소드
-    */
-    /*
-    public String getMainViewWindowTitle(){ // 파일 주소 존재 여부에 따라 프로그램의 제목 표시줄을 다르게 설정
-        return variable.generateMainViewWindowTitle();
-    }
-    */
-    
-    /*
     ** Canvas 관련 메소드
     */
     public void createNewCanvas() { // 캔버스와 레이어를 모두 초기화
@@ -73,6 +61,14 @@ public class Controller{
         if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             canvasContainer.getShapeLayerArrayList().clear(); // 불러오기 전에 현재 레이어를 모두 지움
             canvasContainer.notifyCanvasContainerObservers();
+            return fileChooser.getSelectedFile().getPath();
+        } // 대화상자를 불러온 후 파일 불러오기에 성공한 경우, 그 절대 주소를 반환함
+        else return null; // 대화상자를 불러온 후 파일 불러오기에 실패한 경우
+    }
+    public String getImageFilePathToOpen() {
+        JFileChooser fileChooser = new JFileChooser();
+        
+        if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             return fileChooser.getSelectedFile().getPath();
         } // 대화상자를 불러온 후 파일 불러오기에 성공한 경우, 그 절대 주소를 반환함
         else return null; // 대화상자를 불러온 후 파일 불러오기에 실패한 경우
@@ -217,6 +213,10 @@ public class Controller{
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.POLYLINE);
         }
+        else if (event.getActionCommand() == "drawPen"){
+            variable.setFunctionType(FunctionType.DRAW);
+            variable.setShapeType(ShapeType.PEN);
+        }
         else if (event.getActionCommand() == "drawRectangle"){
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.RECTANGLE);
@@ -236,6 +236,13 @@ public class Controller{
         else if (event.getActionCommand() == "drawText"){
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.TEXT);
+        }
+        else if (event.getActionCommand() == "insertImage"){
+            String imagePath = getImageFilePathToOpen();
+            if (imagePath == null) return;
+            variable.setFunctionType(FunctionType.DRAW);
+            variable.setShapeType(ShapeType.IMAGE);
+            canvasContainer.createLayer(variable.getShapeType(), new Point(0, 0), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType(), imagePath);
         }
         else if (event.getActionCommand() == "selectShape"){
             variable.setFunctionType(FunctionType.SELECT);
@@ -318,24 +325,27 @@ public class Controller{
             case DRAW:
                 switch(variable.getShapeType()) {
                     case LINE:
+                    case PEN:
                     case RECTANGLE:
                     case ELLIPSE:
                     case TRIANGLE:
                     case RHOMBUS:
                     case TEXT:
-                        canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
+                        canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType(), null);
                         canvasContainer.initializeLayer(event.getPoint());
                         break;
                     case POLYLINE:
                         if ((canvasContainer.getShapeLayerArrayList().isEmpty() == false) // 1. ShapeLayerArrayList가 비어있지 않고
                                 && (canvasContainer.getShapeLayerArrayList().get(canvasContainer.getShapeLayerArrayList().size() - 1).getRealShapeType() == ShapeType.POLYLINE) // 2. ShapeLayerArrayList의 가장 마지막 레이어가 Polyline 타입이고
-                                && (((PolylineLayer)(canvasContainer.getShapeLayerArrayList().get(canvasContainer.getShapeLayerArrayList().size() - 1))).getIsFinishedInitializing() == false )) { // 3. 그 레이어의 생성이 완료되었다고 표시되었을 시
+                                && (((PolylineLayer)(canvasContainer.getShapeLayerArrayList().get(canvasContainer.getShapeLayerArrayList().size() - 1))).getIsFinishedInitializing() == false )) { // 3. 그 레이어의 생성이 완료되지 않았다고 표시되었을 시
                             canvasContainer.initializeLayer(event.getPoint());
                         }
                         else {
-                            canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType());
+                            canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType(), null);
                             canvasContainer.initializeLayer(event.getPoint());
                         }
+                        break;
+                    case IMAGE:
                         break;
                 }
                 break;
@@ -351,7 +361,7 @@ public class Controller{
     }
     public void CanvasViewMouseDraggedEventHandler(MouseEvent event) {
         switch(variable.getFunctionType()) {
-            case SELECT:      break;
+            case SELECT:    break;
             case DRAW:      canvasContainer.keepInitializingLayer(variable.getRecentlyPressedMousePosition(), event.getPoint());                              break;
             case MOVE:      canvasContainer.moveLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());    break;
             case RESIZE:    canvasContainer.resizeLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());  break;

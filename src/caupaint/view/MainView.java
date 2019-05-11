@@ -42,11 +42,13 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     private JButton saveToFileButton;
     private JButton drawLineButton;
     private JButton drawPolylineButton;
+    private JButton drawPenButton;
     private JButton drawRectangleButton;
     private JButton drawEllipseButton;
     private JButton drawTriangleButton;
     private JButton drawRhombusButton;
     private JButton drawTextButton;
+    private JButton insertImageButton;
     private ArrayList<JButton> shapeButtonsArrayList; // 도형 관련 버튼들을 모은 ArrayList
     private JButton selectShapeButton;
     private JButton moveShapeButton;
@@ -189,6 +191,13 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         shapeButtonsArrayList.add(drawPolylineButton);
         drawPolylineButton.addActionListener(new ButtonClickedActionListener());
         
+        drawPenButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "pen.png"));
+        drawPenButton.setToolTipText("마우스를 드래그하여 자유곡선을 그립니다.");
+        drawPenButton.setActionCommand("drawPen");
+        toolBar.add(drawPenButton);
+        shapeButtonsArrayList.add(drawPenButton);
+        drawPenButton.addActionListener(new ButtonClickedActionListener());
+        
         drawRectangleButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "rectangle.png"));
         drawRectangleButton.setToolTipText("마우스로 드래그하여 직사각형을 그립니다.");
         drawRectangleButton.setActionCommand("drawRectangle");
@@ -226,6 +235,15 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         
                 toolBar.addSeparator();
         
+        insertImageButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "image.png"));
+        insertImageButton.setToolTipText("이미지를 삽입합니다.");
+        insertImageButton.setActionCommand("insertImage");
+        toolBar.add(insertImageButton); 
+        shapeButtonsArrayList.add(insertImageButton);
+        insertImageButton.addActionListener(new ButtonClickedActionListener());
+        
+                toolBar.addSeparator();
+                
         selectShapeButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "select.png"));   
         selectShapeButton.setToolTipText("마우스를 클릭하여 도형을 선택합니다.");
         selectShapeButton.setActionCommand("selectShape");

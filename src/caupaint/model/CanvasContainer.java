@@ -127,13 +127,16 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     /*
     ** ShapeLayer 생성 관련 메소드
     */
-    public void createLayer(ShapeType shapetype, Point point, Color borderColor, Color backgroundColor, BasicStroke stroke, Font font, BackgroundType backgroundType) { // ShapeLayer 클래스를 상속하는 레이어를 생성
+    public void createLayer(ShapeType shapetype, Point point, Color borderColor, Color backgroundColor, BasicStroke stroke, Font font, BackgroundType backgroundType, String imagePath) { // ShapeLayer 클래스를 상속하는 레이어를 생성
         switch(shapetype) {
              case LINE:
                 shapeLayerArrayList.add(new LineLayer("새 직선", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
                 break;
              case POLYLINE:
                 shapeLayerArrayList.add(new PolylineLayer("새 폴리선", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
+                break;
+             case PEN:
+                shapeLayerArrayList.add(new PenLayer("새 펜", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
                 break;
             case RECTANGLE:
                 shapeLayerArrayList.add(new RectangleLayer("새 직사각형", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true));
@@ -149,6 +152,9 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
                 break;
              case TEXT:
                 shapeLayerArrayList.add(new TextLayer("새 텍스트", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true, font));
+                break;
+             case IMAGE:
+                shapeLayerArrayList.add(new ImageLayer("새 이미지", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, true, imagePath));
                 break;
         }
         notifyCanvasContainerObservers();

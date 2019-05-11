@@ -7,7 +7,7 @@ public class Enum {
     public enum FunctionType { SELECT, DRAW, MOVE, RESIZE, ROTATE };
     
      // 도형의 종류를 나타냄
-    public enum ShapeType { LINE, POLYLINE, RECTANGLE, ELLIPSE, TRIANGLE, RHOMBUS, TEXT, SHAPE };
+    public enum ShapeType { LINE, POLYLINE, PEN, RECTANGLE, ELLIPSE, TRIANGLE, RHOMBUS, TEXT, IMAGE, SHAPE };
     
      // 배경을 채우는 방법을 나타냄
     public enum BackgroundType { EMPTY, FILL };
