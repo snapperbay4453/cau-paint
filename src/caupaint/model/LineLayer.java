@@ -14,14 +14,8 @@ public class LineLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public LineLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
-        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isVisible);
-        vertexArrayList = new ArrayList<Point>();
-        vertexArrayList.add(new Point((int)getPosition().getX(), (int)getPosition().getY())); // 시작점 설정
-        vertexArrayList.add(new Point((int)getPosition().getX(), (int)getPosition().getY())); // 끝점 설정, 시작점과 동일한 값을 가짐
-    }
-    public LineLayer(Point position, Point size) {
-        super(position, size);
+    public LineLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, int isFlipped, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
+        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isFlipped, isVisible);
         vertexArrayList = new ArrayList<Point>();
         vertexArrayList.add(new Point((int)getPosition().getX(), (int)getPosition().getY())); // 시작점 설정
         vertexArrayList.add(new Point((int)getPosition().getX(), (int)getPosition().getY())); // 끝점 설정, 시작점과 동일한 값을 가짐
@@ -42,31 +36,45 @@ public class LineLayer extends ShapeLayer{
     }
     
     /*
+    ** Builder 메소드
+    */
+    public static class Builder extends ShapeLayer.Builder { 
+        public LineLayer build() {
+            BasicStroke tempStroke = new BasicStroke(strokeWidth, Constant.defaultSolidLineBasicStroke.getEndCap(), Constant.defaultSolidLineBasicStroke.getLineJoin(), Constant.defaultSolidLineBasicStroke.getMiterLimit(), strokeDash, strokeDashPhase);
+            return new LineLayer(name, position, size, borderColor, backgroundColor, tempStroke, backgroundType, radianAngle, isFlipped, isVisible);
+        }
+    }
+    
+    /*
     ** 레이어 생성 관련 메소드
     */
     @Override
-    public void initialize(Point currentMousePosition) {
-        vertexArrayList.set(0, currentMousePosition);
-    }
-    @Override
-    public void keepInitializing(Point recentlyPressedMousePosition, Point currentMousePosition) {
-        vertexArrayList.set(1, currentMousePosition);
-    }
-    @Override
-    public void finishInitializing() {
-        if (vertexArrayList.get(0).getX() <= vertexArrayList.get(1).getX() && vertexArrayList.get(0).getY() <= vertexArrayList.get(1).getY()) { // 1사분면
-            setPosition(new Point((int)vertexArrayList.get(0).getX(), (int)vertexArrayList.get(0).getY()));
+    public void initialize(MouseActionType mouseActionType, Point recentlyPressedMousePosition, Point currentMousePosition) {
+        switch(mouseActionType) {
+            case PRESSED:
+                vertexArrayList.set(0, currentMousePosition);
+                break;
+            case DRAGGED:
+                vertexArrayList.set(1, currentMousePosition);
+                break;
+            case RELEASED:
+                if (vertexArrayList.get(0).getX() <= vertexArrayList.get(1).getX() && vertexArrayList.get(0).getY() <= vertexArrayList.get(1).getY()) { // 1사분면
+                    setPosition(new Point((int)vertexArrayList.get(0).getX(), (int)vertexArrayList.get(0).getY()));
+                }
+                else if (vertexArrayList.get(0).getX() <= vertexArrayList.get(1).getX() && vertexArrayList.get(0).getY() <= vertexArrayList.get(1).getY()) { // 2사분면
+                    setPosition(new Point((int)vertexArrayList.get(1).getX(), (int)vertexArrayList.get(0).getY()));
+                }
+                else if (vertexArrayList.get(0).getX() <= vertexArrayList.get(1).getX() && vertexArrayList.get(0).getY() <= vertexArrayList.get(1).getY()) { // 3사분면
+                    setPosition(new Point((int)vertexArrayList.get(1).getX(), (int)vertexArrayList.get(1).getY()));
+                }
+                else if (vertexArrayList.get(0).getX() <= vertexArrayList.get(1).getX() && vertexArrayList.get(0).getY() <= vertexArrayList.get(1).getY()) { // 4사분면
+                    setPosition(new Point((int)vertexArrayList.get(0).getX(), (int)vertexArrayList.get(1).getY()));
+                }
+                setSize(new Point(abs((int)(vertexArrayList.get(1).getX() - vertexArrayList.get(0).getX())), abs((int)(vertexArrayList.get(1).getY() - vertexArrayList.get(0).getY()))));
+                break;
+            default: break;
         }
-        else if (vertexArrayList.get(0).getX() <= vertexArrayList.get(1).getX() && vertexArrayList.get(0).getY() <= vertexArrayList.get(1).getY()) { // 2사분면
-            setPosition(new Point((int)vertexArrayList.get(1).getX(), (int)vertexArrayList.get(0).getY()));
-        }
-        else if (vertexArrayList.get(0).getX() <= vertexArrayList.get(1).getX() && vertexArrayList.get(0).getY() <= vertexArrayList.get(1).getY()) { // 3사분면
-            setPosition(new Point((int)vertexArrayList.get(1).getX(), (int)vertexArrayList.get(1).getY()));
-        }
-        else if (vertexArrayList.get(0).getX() <= vertexArrayList.get(1).getX() && vertexArrayList.get(0).getY() <= vertexArrayList.get(1).getY()) { // 4사분면
-            setPosition(new Point((int)vertexArrayList.get(0).getX(), (int)vertexArrayList.get(1).getY()));
-        }
-        setSize(new Point(abs((int)(vertexArrayList.get(1).getX() - vertexArrayList.get(0).getX())), abs((int)(vertexArrayList.get(1).getY() - vertexArrayList.get(0).getY()))));
+
     }
     
     /*

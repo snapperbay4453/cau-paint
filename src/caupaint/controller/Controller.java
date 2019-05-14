@@ -2,19 +2,11 @@
 package caupaint.controller;
 import caupaint.model.*;
 import caupaint.model.Enum.*;
+import caupaint.model.command.CommandFactory;
 import caupaint.view.*;
-import java.awt.Point;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 
@@ -35,21 +27,15 @@ public class Controller{
         canvasView = new CanvasView(canvasContainer, variable, this);
         sidebarView = new SidebarView(canvasContainer, variable, this);
         mainView = new MainView(canvasContainer, variable, canvasView, sidebarView, this);
+        
         mainView.createView();
-    }
-    
-    /*
-    ** Canvas 관련 메소드
-    */
-    public void createNewCanvas() { // 캔버스와 레이어를 모두 초기화
-        canvasContainer.deleteAllLayers();
-        variable.setFilePath(Constant.defaultFilePath);
-        canvasContainer.clearCanvas();
     }
     
     /*
     ** I/O 관련 메소드
     */
+    
+    /*
     public String getFilePathToOpen() {
         JFileChooser fileChooser = new JFileChooser();
         
@@ -87,13 +73,13 @@ public class Controller{
             canvasContainer.setCanvasSize(loadedCanvasContainer.getCanvasSize());
             canvasContainer.setCanvasBackgroundColor(loadedCanvasContainer.getCanvasBackgroundColor());
             
-            variable.setFilePath(filePath);
+            canvasContainer.setFilePath(filePath);
         } catch (IOException exp) {
             JOptionPane.showMessageDialog(null, "파일 불러오기에 실패하였습니다.", "불러오기 실패", JOptionPane.ERROR_MESSAGE);
         }
     }
     public String getFilePathToSave() { // 파일을 저장할 경로를 반환하는 메서드
-        if (variable.getFilePath() != null) return variable.getFilePath(); // variable에 이미 기존의 파일 경로가 저장되어 있을 경우, 기존의 경로를 반환함
+        if (canvasContainer.getFilePath() != null) return canvasContainer.getFilePath(); // variable에 이미 기존의 파일 경로가 저장되어 있을 경우, 기존의 경로를 반환함
         else {
             JFileChooser jFileChooser = new JFileChooser();
             if(jFileChooser.showSaveDialog(null) == 0) return jFileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
@@ -108,7 +94,7 @@ public class Controller{
     }
     public void saveLayersToFile(String filePath) throws IOException {
         if (filePath == null) {
-            if (variable.getFilePath() == null) return; // 매개변수와 variable 모두 파일 경로가 지정되어 있지 않은 경우
+            if (canvasContainer.getFilePath() == null) return; // 매개변수와 variable 모두 파일 경로가 지정되어 있지 않은 경우
         }
         ObjectOutputStream os;
         try {
@@ -117,18 +103,20 @@ public class Controller{
             os.writeObject(canvasContainer);
             JOptionPane.showMessageDialog(null, "파일을 저장하였습니다.", "저장 완료", JOptionPane.INFORMATION_MESSAGE);
             os.close();
-            if (filePath.endsWith(Constant.defaultFilenameExtension)) variable.setFilePath(filePath);
-            else variable.setFilePath(filePath + Constant.defaultFilenameExtension);
+            if (filePath.endsWith(Constant.defaultFilenameExtension)) canvasContainer.setFilePath(filePath);
+            else canvasContainer.setFilePath(filePath + Constant.defaultFilenameExtension);
             mainView.updateCanvasContainer();
         } catch (IOException exp) {
             JOptionPane.showMessageDialog(null, "파일 저장에 실패하였습니다.", "저장 실패", JOptionPane.ERROR_MESSAGE);
             exp.printStackTrace();
         }
     }
+    */
     
     /*
     ** 설정 관련 메소드
     */
+    /*
     public void checkExit() {
         if (canvasContainer.getShapeLayerArrayList().isEmpty() == false) { // 레이어가 하나라도 남아있을 경우
             switch ((JOptionPane.showConfirmDialog(null, "캔버스에 도형이 남아있습니다.\n정말 종료하시겠습니까?", "종료", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE))) {
@@ -141,19 +129,25 @@ public class Controller{
                }
         else System.exit(0); // 레이어가 비어있을 경우
     }
-
+*/
     
     /*
     ** MainView 이벤트 리스너 관련 메소드
     */
     // 이벤트 리스너: mainView.MenuBarClickedActionListener
     public void MainViewMenuBarClickedEventHandler(ActionEvent event) {
-        if (event.getActionCommand() == "createNewCanvas") {
-            createNewCanvas();
+
+        CommandFactory.createCommand(event.getActionCommand(), canvasContainer, variable, event, null).execute();
+        /*
+        if (event.getActionCommand() == "exit") {
+            checkExit();    return;
         }
-        if (event.getActionCommand() == "loadFromFile") {
+        else if (event.getActionCommand() == "createNewCanvas") {
+            canvasContainer.createNewCanvas();
+        }
+        else if (event.getActionCommand() == "loadFromFile") {
             try {
-                loadLayersFromFile(getFilePathToOpen());
+                canvasContainer.loadLayersFromFile(canvasContainer.getFilePathToOpen());
             } catch (IOException ex) {
                 Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
@@ -162,14 +156,14 @@ public class Controller{
         }
         else if (event.getActionCommand() == "saveToFile") {
             try {
-                saveLayersToFile(getFilePathToSave());
+                canvasContainer.saveLayersToFile(canvasContainer.getFilePathToSave());
             } catch (IOException ex) {
                 Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         else if (event.getActionCommand() == "saveAsToFile") {
             try {
-                saveLayersToFile(getNewFilePathToSave());
+                canvasContainer.saveLayersToFile(canvasContainer.getNewFilePathToSave());
             } catch (IOException ex) {
                 Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -177,21 +171,32 @@ public class Controller{
         else if (event.getActionCommand() == "exit") {
             checkExit();
         }
-        else if (event.getActionCommand() == "canvasSizeSetting") {
+        else if (event.getActionCommand() == "setCanvasSize") {
             canvasContainer.showSetCanvasSizeDialogBox();
         }
-        else if (event.getActionCommand() == "canvasBackgroundColorSetting") {
+        else if (event.getActionCommand() == "setCanvasBackgroundColor") {
             canvasContainer.showSetCanvasBackgroundColorDialogBox();
         }
+        /*
+        else if (event.getActionCommand() == "flipLayerHorizontally") {
+            canvasContainer.flipLayerHorizontally(canvasContainer.getSelectedLayerIndex());
+        }
+        else if (event.getActionCommand() == "flipLayerVertically") {
+            canvasContainer.flipLayerVertically(canvasContainer.getSelectedLayerIndex());
+        }
+        */
     }
     // 이벤트 리스너: mainView.ButtonClickedActionListener
     public void MainViewButtonClickedEventHandler(ActionEvent event) {
+    CommandFactory.createCommand(event.getActionCommand(), canvasContainer, variable, event, null).execute();
+    
+        /*
         if (event.getActionCommand() == "createNewCanvas"){
-            createNewCanvas();
+            canvasContainer.createNewCanvas();
         }
         else if (event.getActionCommand() == "loadFromFile"){
             try {
-                loadLayersFromFile(getFilePathToOpen());
+                canvasContainer.loadLayersFromFile(canvasContainer.getFilePathToOpen());
             } catch (IOException ex) {
                 Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
@@ -200,7 +205,7 @@ public class Controller{
         }
         else if (event.getActionCommand() == "saveToFile"){
             try {
-                saveLayersToFile(getFilePathToSave());
+                canvasContainer.saveLayersToFile(canvasContainer.getFilePathToSave());
             } catch (IOException ex) {
                 Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -233,16 +238,18 @@ public class Controller{
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.RHOMBUS);
         }
-        else if (event.getActionCommand() == "drawText"){
+        else if (event.getActionCommand() == "insertText"){
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.TEXT);
+            canvasContainer.insertTextLayer(variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getBackgroundType(), variable.getFont());
         }
         else if (event.getActionCommand() == "insertImage"){
-            String imagePath = getImageFilePathToOpen();
-            if (imagePath == null) return;
+            //String imagePath = canvasContainer.getImageFilePathToOpen();
+            //if (imagePath == null) return;
             variable.setFunctionType(FunctionType.DRAW);
             variable.setShapeType(ShapeType.IMAGE);
-            canvasContainer.createLayer(variable.getShapeType(), new Point(0, 0), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType(), imagePath);
+            canvasContainer.insertImageLayer();
+            //canvasContainer.createNewLayer(variable.getShapeType(), new Point(0, 0), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType(), imagePath);
         }
         else if (event.getActionCommand() == "selectShape"){
             variable.setFunctionType(FunctionType.SELECT);
@@ -260,16 +267,21 @@ public class Controller{
         else if (event.getActionCommand() == "chooseBackgroundColor") variable.chooseBackgroundColor();
         else if (event.getActionCommand() == "emptyBackgroundType") {
             variable.setBackgroundType(BackgroundType.EMPTY);
-            if (variable.getSelectedLayerIndex() != -1) canvasContainer.changeLayerBackgroundTypeAndColors(variable.getSelectedLayerIndex(), variable.getBackgroundType(), variable.getBorderColor(), variable.getBackgroundColor());
+            if (canvasContainer.getSelectedLayerIndex() != -1) canvasContainer.changeLayerBackgroundTypeAndColors(canvasContainer.getSelectedLayerIndex(), variable.getBackgroundType(), variable.getBorderColor(), variable.getBackgroundColor());
         }
         else if (event.getActionCommand() == "fillBackgroundType") {
             variable.setBackgroundType(BackgroundType.FILL);
-            if (variable.getSelectedLayerIndex() != -1) canvasContainer.changeLayerBackgroundTypeAndColors(variable.getSelectedLayerIndex(), variable.getBackgroundType(), variable.getBorderColor(), variable.getBackgroundColor());
+            if (canvasContainer.getSelectedLayerIndex() != -1) canvasContainer.changeLayerBackgroundTypeAndColors(canvasContainer.getSelectedLayerIndex(), variable.getBackgroundType(), variable.getBorderColor(), variable.getBackgroundColor());
         }
+            */
     }
+        
     // 이벤트 리스너: mainView.StrokeTypeItemChangeActionListener
     public void MainViewStrokeTypeComboBoxItemStateChangedEventHandler(ItemEvent event) {
        if (event.getStateChange() == ItemEvent.SELECTED) {
+            CommandFactory.createCommand("setStrokeByName", canvasContainer, variable, event, event.getItem().toString()).execute();
+                      /*  
+            variable.setStrokeByName(event.getItem().toString());
 
             if (event.getItem().toString() == "실선") { variable.setStrokeDash(Constant.defaultSolidLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
             else if (event.getItem().toString() == "점선") { variable.setStrokeDash(Constant.defaultDottedLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
@@ -278,39 +290,50 @@ public class Controller{
             else if (event.getItem().toString() == "1점 쇄선") { variable.setStrokeDash(Constant.defaultDashSingleDottedLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
             else if (event.getItem().toString() == "2점 쇄선") { variable.setStrokeDash(Constant.defaultDashDoubleDottedLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
 
-            if (variable.getSelectedLayerIndex() != -1) canvasContainer.setLayerStroke(variable.getSelectedLayerIndex(), variable.getStroke());
+            if (canvasContainer.getSelectedLayerIndex() != -1) canvasContainer.setLayerStroke(canvasContainer.getSelectedLayerIndex(), variable.getStroke());
+                      */  
        }
     }       
     // 이벤트 리스너: mainView.StrokeWidthSpinnerChangeActionListener
     public void MainViewStrokeWidthSpinnerStateChangedEventHandler(ChangeEvent event, int spinnerValue) {
+       CommandFactory.createCommand("setStrokeWidth", canvasContainer, variable, event, spinnerValue).execute();
+       /*
        if (spinnerValue <= 0 || spinnerValue >= 100) return;
        else {
            variable.setStrokeWidth(spinnerValue);
-           if (variable.getSelectedLayerIndex() != -1) canvasContainer.setLayerStroke(variable.getSelectedLayerIndex(), variable.getStroke());
+           if (canvasContainer.getSelectedLayerIndex() != -1) canvasContainer.setLayerStroke(canvasContainer.getSelectedLayerIndex(), variable.getStroke());
        }
+       */
     }
     // 이벤트 리스너: mainView.FontNameComboBoxItemChangeActionListener
     public void MainViewFontNameComboBoxItemStateChangedEventHandler(ItemEvent event) {
        if (event.getStateChange() == ItemEvent.SELECTED) {
+           CommandFactory.createCommand("setFontName", canvasContainer, variable, event, event.getItem().toString()).execute();
+           /*
             variable.setFontName(event.getItem().toString());
-            if ((variable.getSelectedLayerIndex() != -1) && canvasContainer.getShapeLayerArrayList().get(variable.getSelectedLayerIndex()).getRealShapeType() == ShapeType.TEXT) { // 현재 선택된 레이어가 텍스트 레이어인 경우
-               canvasContainer.setLayerFont(variable.getSelectedLayerIndex(), variable.getFont());
+            if ((canvasContainer.getSelectedLayerIndex() != -1) && canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getRealShapeType() == ShapeType.TEXT) { // 현재 선택된 레이어가 텍스트 레이어인 경우
+               canvasContainer.setLayerFont(canvasContainer.getSelectedLayerIndex(), variable.getFont());
             }
+           */
        }
     }       
     // 이벤트 리스너: mainView.FontSizeSpinnerStateChangeActionListener
     public void MainViewFontSizeSpinnerStateChangedEventHandler(ChangeEvent event, int spinnerValue) {
        if (spinnerValue <= 0 || spinnerValue >= 500) return;
        else {
+           CommandFactory.createCommand("setFontSize", canvasContainer, variable, event, spinnerValue).execute();
+           /*
            variable.setFontSize(spinnerValue);
-           if ((variable.getSelectedLayerIndex() != -1) && canvasContainer.getShapeLayerArrayList().get(variable.getSelectedLayerIndex()).getRealShapeType() == ShapeType.TEXT) { // 현재 선택된 레이어가 텍스트 레이어인 경우
-                canvasContainer.setLayerFont(variable.getSelectedLayerIndex(), variable.getFont());
+           if ((canvasContainer.getSelectedLayerIndex() != -1) && canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getRealShapeType() == ShapeType.TEXT) { // 현재 선택된 레이어가 텍스트 레이어인 경우
+                canvasContainer.setLayerFont(canvasContainer.getSelectedLayerIndex(), variable.getFont());
            }
+                      */
        }
     }
     // 이벤트 리스너: mainView.WindowActionListener
-    public void MainViewWindowClosingEventHandler(WindowEvent e) {
-        checkExit();
+    public void MainViewWindowClosingEventHandler(WindowEvent event) {
+        CommandFactory.createCommand("checkExit", canvasContainer, variable, event, null).execute();
+        //checkExit();
     }
     
     /*
@@ -318,11 +341,15 @@ public class Controller{
     */
     // 이벤트 리스너: canvasView.CanvasMouseAdapter
     public void CanvasViewMousePressedEventHandler(MouseEvent event) {
+    variable.setMouseActionType(MouseActionType.PRESSED);
+    variable.setRecentlyPressedMousePosition(event.getPoint());
+    variable.setRecentlyDraggedMousePosition(event.getPoint());
         switch(variable.getFunctionType()) {
             case SELECT:
-                variable.setSelectedLayerIndex(canvasContainer.selectLayerByMousePoint(event.getPoint()));
-                break;
-            case DRAW:
+                CommandFactory.createCommand("selectLayerByMousePoint", canvasContainer, variable, event, null).execute();  break;
+                //canvasContainer.setSelectedLayerIndex(canvasContainer.selectLayerByMousePoint(event.getPoint()));  break;
+            case DRAW:      CommandFactory.createCommand("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
+            /*
                 switch(variable.getShapeType()) {
                     case LINE:
                     case PEN:
@@ -331,7 +358,7 @@ public class Controller{
                     case TRIANGLE:
                     case RHOMBUS:
                     case TEXT:
-                        canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType(), null);
+                        canvasContainer.addNewLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType(), null);
                         canvasContainer.initializeLayer(event.getPoint());
                         break;
                     case POLYLINE:
@@ -341,7 +368,7 @@ public class Controller{
                             canvasContainer.initializeLayer(event.getPoint());
                         }
                         else {
-                            canvasContainer.createLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType(), null);
+                            canvasContainer.addNewLayer(variable.getShapeType(), event.getPoint(), variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getFont(), variable.getBackgroundType(), null);
                             canvasContainer.initializeLayer(event.getPoint());
                         }
                         break;
@@ -349,38 +376,43 @@ public class Controller{
                         break;
                 }
                 break;
-            case MOVE:
-            case RESIZE:
-            case ROTATE:
-                break;
+                */
+            case MOVE:      CommandFactory.createCommand("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
+            case RESIZE:    CommandFactory.createCommand("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
+            case ROTATE:    CommandFactory.createCommand("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                //canvasContainer.modifyLayer(canvasContainer.getSelectedLayerIndex(), variable.getFunctionType(), MouseActionType.PRESSED, variable.getRecentlyDraggedMousePosition(), event.getPoint());
+                //break;
             default:
                 break;
         }
-    variable.setRecentlyPressedMousePosition(event.getPoint());
-    variable.setRecentlyDraggedMousePosition(event.getPoint());
     }
     public void CanvasViewMouseDraggedEventHandler(MouseEvent event) {
+    variable.setMouseActionType(MouseActionType.DRAGGED);
         switch(variable.getFunctionType()) {
-            case SELECT:    break;
-            case DRAW:      canvasContainer.keepInitializingLayer(variable.getRecentlyPressedMousePosition(), event.getPoint());                              break;
-            case MOVE:      canvasContainer.moveLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());    break;
-            case RESIZE:    canvasContainer.resizeLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());  break;
-            case ROTATE:    canvasContainer.rotateLayer(variable.getLastSelectedLayerIndex(), variable.getRecentlyDraggedMousePosition(), event.getPoint());  break;
-            default:        break;
+            case SELECT:
+                break;
+            case DRAW:      CommandFactory.createCommand("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
+            case MOVE:      CommandFactory.createCommand("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
+            case RESIZE:    CommandFactory.createCommand("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
+            case ROTATE:    CommandFactory.createCommand("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                //canvasContainer.modifyLayer(canvasContainer.getSelectedLayerIndex(), variable.getFunctionType(), MouseActionType.DRAGGED, variable.getRecentlyDraggedMousePosition(), event.getPoint());
+                //break;
+            default:
+                break;
         }
     variable.setRecentlyDraggedMousePosition(event.getPoint());
     }
     public void CanvasViewMouseReleasedEventHandler(MouseEvent event) {
+    variable.setMouseActionType(MouseActionType.RELEASED);
         switch(variable.getFunctionType()) {
             case SELECT:
                 break;
-            case DRAW:
-                canvasContainer.finishInitializingLayer();
-                break;
-            case MOVE:
-            case RESIZE:
-            case ROTATE:
-                break;
+            case DRAW:      CommandFactory.createCommand("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
+            case MOVE:      CommandFactory.createCommand("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
+            case RESIZE:    CommandFactory.createCommand("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
+            case ROTATE:    CommandFactory.createCommand("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                //canvasContainer.modifyLayer(canvasContainer.getSelectedLayerIndex(), variable.getFunctionType(), MouseActionType.RELEASED, variable.getRecentlyDraggedMousePosition(), event.getPoint());
+                //break;
             default:
                 break;
         }
@@ -391,21 +423,25 @@ public class Controller{
     */
     // 이벤트 리스너: sidebarView.LayerListSelectionListener
         public void SidebarValueChangedEventHandler(ListSelectionEvent event, int index){
-            variable.setSelectedLayerIndex(index);
+            CommandFactory.createCommand("setSelectedLayerIndex", canvasContainer, variable, event, index).execute();
+            //canvasContainer.setSelectedLayerIndex(index);
         }
     // 이벤트 리스너: sidebarView.ButtonClickedActionListener
         public void SidebarActionPerformedEventHandler(ActionEvent event) {
-            if (event.getActionCommand() == "toggleSelectedLayerVisible") canvasContainer.toggleLayerIsVisible(variable.getSelectedLayerIndex());
+            CommandFactory.createCommand(event.getActionCommand(), canvasContainer, variable, event, null).execute();
+            /*
+            if (event.getActionCommand() == "toggleSelectedLayerVisible") canvasContainer.toggleLayerIsVisible(canvasContainer.getSelectedLayerIndex());
             else if (event.getActionCommand()== "moveSelectedLayerFront") {
-                if (canvasContainer.swapNearLayers(variable.getSelectedLayerIndex(), variable.getSelectedLayerIndex() - 1) == 0) variable.setSelectedLayerIndex(variable.getSelectedLayerIndex() - 1);
+                if (canvasContainer.swapNearLayers(canvasContainer.getSelectedLayerIndex(), canvasContainer.getSelectedLayerIndex() - 1) == 0) canvasContainer.setSelectedLayerIndex(canvasContainer.getSelectedLayerIndex() - 1);
             }
             else if (event.getActionCommand() == "moveSelectedLayerBack") {
-                if (canvasContainer.swapNearLayers(variable.getSelectedLayerIndex(), variable.getSelectedLayerIndex() + 1) == 0) variable.setSelectedLayerIndex(variable.getSelectedLayerIndex() + 1);
+                if (canvasContainer.swapNearLayers(canvasContainer.getSelectedLayerIndex(), canvasContainer.getSelectedLayerIndex() + 1) == 0) canvasContainer.setSelectedLayerIndex(canvasContainer.getSelectedLayerIndex() + 1);
             }
-            else if (event.getActionCommand() == "renameSelectedLayer") canvasContainer.renameLayer(variable.getSelectedLayerIndex());
-            else if (event.getActionCommand() == "copySelectedLayer") canvasContainer.copyLayer(variable.getSelectedLayerIndex());
-            else if (event.getActionCommand() == "deleteSelectedLayer") canvasContainer.deleteLayer(variable.getSelectedLayerIndex());
+            else if (event.getActionCommand() == "renameSelectedLayer") canvasContainer.renameLayer(canvasContainer.getSelectedLayerIndex());
+            else if (event.getActionCommand() == "copySelectedLayer") canvasContainer.copyLayer(canvasContainer.getSelectedLayerIndex());
+            else if (event.getActionCommand() == "deleteSelectedLayer") canvasContainer.deleteLayer(canvasContainer.getSelectedLayerIndex());
             else if (event.getActionCommand() == "deleteAllLayer") canvasContainer.deleteAllLayers();
+*/
         }
     
 }

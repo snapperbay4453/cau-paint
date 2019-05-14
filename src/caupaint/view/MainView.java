@@ -9,11 +9,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class MainView implements CanvasContainerObserver, VariableObserver{
+public class MainView implements Runnable, CanvasContainerObserver, VariableObserver{
 
     private CanvasContainer canvasContainer;
     private Variable variable;
@@ -32,9 +34,12 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     private JMenuItem saveToFileMenuItem;
     private JMenuItem saveAsToFileMenuItem;
     private JMenuItem exitMenuItem;
-    private JMenu modifyMenu;
-    private JMenuItem canvasSizeSettingMenuItem;
-    private JMenuItem canvasBackgroundColorSettingMenuItem;
+    private JMenu canvasMenu;
+    private JMenuItem setCanvasSizeMenuItem;
+    private JMenuItem setCanvasBackgroundColorMenuItem;
+    private JMenu layerMenu;
+    private JMenuItem flipLayerHorizontallyMenuItem;
+    private JMenuItem flipLayerVerticallyMenuItem;
 
     private JToolBar toolBar;
     private JButton createNewCanvasButton;
@@ -47,7 +52,7 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     private JButton drawEllipseButton;
     private JButton drawTriangleButton;
     private JButton drawRhombusButton;
-    private JButton drawTextButton;
+    private JButton insertTextButton;
     private JButton insertImageButton;
     private ArrayList<JButton> shapeButtonsArrayList; // 도형 관련 버튼들을 모은 ArrayList
     private JButton selectShapeButton;
@@ -77,6 +82,28 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         
         canvasContainer.registerCanvasContainerObserver(this); // CanvasContainerObserver를 구현하는 클래스에 옵저버로 등록
         variable.registerVariableObserver(this); // VariableObserver를 구현하는 클래스에 옵저버로 등록        
+    }
+
+    /*
+    ** 스레드 관련 메소드
+    */    
+    public void run() {
+        
+        while(true) {
+            canvasViewInnerContainerPanel.revalidate(); // canvasInnerContainerPanel 새로고침
+            sidebarView.refreshLayerList();
+            frame.setTitle(generateMainViewWindowTitle());
+            setBackgroundOnlySelectedButton();
+            chooseBorderColorButton.setBackground(variable.getBorderColor()); // chooseBorderColorButton의 배경색 새로고침
+            chooseBackgroundColorButton.setBackground(variable.getBackgroundColor()); // chooseBackgroundColorButton의 배경색 새로고침
+            frame.repaint();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
     
     /*
@@ -108,15 +135,20 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         frame.setSize(Constant.defaultWindowSize);
         frame.setJMenuBar(menuBar);
         frame.setVisible(true);
+        
+        run();
     }
+    
     private void createMenuBar() { //메뉴바를 생성하고 리스너에 등록함
         menuBar = new JMenuBar();
         
         //메뉴바에 메뉴를 추가함
         fileMenu = new JMenu("파일");
         menuBar.add(fileMenu);
-        modifyMenu = new JMenu("편집");
-        menuBar.add(modifyMenu);
+        canvasMenu = new JMenu("캔버스");
+        menuBar.add(canvasMenu);
+        layerMenu = new JMenu("레이어");
+        menuBar.add(layerMenu);
         
         //메뉴바에 아이템을 추가함, 아이템을 리스너에 등록함
         createNewCanvasMenuItem = new JMenuItem("새 캔버스 만들기");
@@ -137,18 +169,28 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         saveAsToFileMenuItem.addActionListener(new MenuBarClickedActionListener());
                 fileMenu.addSeparator();
         exitMenuItem = new JMenuItem("종료");
-        exitMenuItem.setActionCommand("exit");
+        exitMenuItem.setActionCommand("checkExit");
         fileMenu.add(exitMenuItem);
         exitMenuItem.addActionListener(new MenuBarClickedActionListener());
-        canvasSizeSettingMenuItem = new JMenuItem("캔버스 크기 설정");
-        canvasSizeSettingMenuItem.setActionCommand("canvasSizeSetting");
-        modifyMenu.add(canvasSizeSettingMenuItem);
-        canvasSizeSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
-                modifyMenu.addSeparator();
-        canvasBackgroundColorSettingMenuItem = new JMenuItem("캔버스 배경색 설정");
-        canvasBackgroundColorSettingMenuItem.setActionCommand("canvasBackgroundColorSetting");
-        modifyMenu.add(canvasBackgroundColorSettingMenuItem);
-        canvasBackgroundColorSettingMenuItem.addActionListener(new MenuBarClickedActionListener());
+        
+        setCanvasSizeMenuItem = new JMenuItem("캔버스 크기 설정");
+        setCanvasSizeMenuItem.setActionCommand("setCanvasSize");
+        canvasMenu.add(setCanvasSizeMenuItem);
+        setCanvasSizeMenuItem.addActionListener(new MenuBarClickedActionListener());
+        setCanvasBackgroundColorMenuItem = new JMenuItem("캔버스 배경색 설정");
+        setCanvasBackgroundColorMenuItem.setActionCommand("setCanvasBackgroundColor");
+        canvasMenu.add(setCanvasBackgroundColorMenuItem);
+        setCanvasBackgroundColorMenuItem.addActionListener(new MenuBarClickedActionListener());
+        
+        flipLayerHorizontallyMenuItem = new JMenuItem("레이어 가로 대칭");
+        flipLayerHorizontallyMenuItem.setActionCommand("flipLayerHorizontally");
+        layerMenu.add(flipLayerHorizontallyMenuItem);
+        flipLayerHorizontallyMenuItem.addActionListener(new MenuBarClickedActionListener());
+        flipLayerVerticallyMenuItem = new JMenuItem("레이어 세로 대칭");
+        flipLayerVerticallyMenuItem.setActionCommand("flipLayerVertically");
+        layerMenu.add(flipLayerVerticallyMenuItem);
+        flipLayerVerticallyMenuItem.addActionListener(new MenuBarClickedActionListener());
+        
     }
     private void createToolBar() { // 툴바를 생성하고 리스너에 등록함
         toolBar = new JToolBar();
@@ -226,14 +268,14 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
         shapeButtonsArrayList.add(drawRhombusButton);
         drawRhombusButton.addActionListener(new ButtonClickedActionListener());
         
-        drawTextButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "text.png"));
-        drawTextButton.setToolTipText("텍스트를 삽입합니다.");
-        drawTextButton.setActionCommand("drawText");
-        toolBar.add(drawTextButton); 
-        shapeButtonsArrayList.add(drawTextButton);
-        drawTextButton.addActionListener(new ButtonClickedActionListener());
-        
                 toolBar.addSeparator();
+        
+        insertTextButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "text.png"));
+        insertTextButton.setToolTipText("텍스트를 삽입합니다.");
+        insertTextButton.setActionCommand("insertText");
+        toolBar.add(insertTextButton); 
+        shapeButtonsArrayList.add(insertTextButton);
+        insertTextButton.addActionListener(new ButtonClickedActionListener());
         
         insertImageButton = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + "image.png"));
         insertImageButton.setToolTipText("이미지를 삽입합니다.");
@@ -385,8 +427,8 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     ** 창 관련 메소드
     */
     public String generateMainViewWindowTitle(){ // 파일 주소 존재 여부에 따라 프로그램의 제목 표시줄 내용을 결정
-        if (variable.getFilePath() == null) return ("제목 없음 - CauPaint");
-        else return(variable.getFilePath() + " - CauPaint");
+        if (canvasContainer.getFilePath() == null) return ("제목 없음 - CauPaint");
+        else return(canvasContainer.getFilePath() + " - CauPaint");
     }
     
     /*
@@ -417,6 +459,8 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
                 changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawLineButton);   break;
             case POLYLINE:
                 changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawPolylineButton);   break;
+            case PEN:
+                changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawPenButton);   break;
             case RECTANGLE:
                 changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawRectangleButton);   break;
             case ELLIPSE:
@@ -425,8 +469,8 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
                 changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawTriangleButton);   break;
             case RHOMBUS:
                 changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawRhombusButton);   break;
-            case TEXT:
-                changeBackgroundOnlySelectedButton(shapeButtonsArrayList, drawTextButton);   break;
+            case TEXT: break;
+            case IMAGE: break;
         } else changeBackgroundOnlySelectedButton(shapeButtonsArrayList, null); // 그리기 모드가 아닐 경우
         switch(variable.getBackgroundType()) {
             case EMPTY:
@@ -441,17 +485,21 @@ public class MainView implements CanvasContainerObserver, VariableObserver{
     */
     @Override
     public void updateCanvasContainer() {
+        /*
         canvasViewInnerContainerPanel.revalidate(); // canvasInnerContainerPanel 새로고침
         sidebarView.refreshLayerList();
+        frame.setTitle(generateMainViewWindowTitle());
         frame.repaint();
+*/
     }
     @Override
     public void updateVariable() {
+        /*
         setBackgroundOnlySelectedButton();
         chooseBorderColorButton.setBackground(variable.getBorderColor()); // chooseBorderColorButton의 배경색 새로고침
         chooseBackgroundColorButton.setBackground(variable.getBackgroundColor()); // chooseBackgroundColorButton의 배경색 새로고침
-        frame.setTitle(generateMainViewWindowTitle());
         frame.repaint();
+*/
     }
     
 }

@@ -14,14 +14,8 @@ public class ImageLayer extends RectangleLayer{
     /*
     ** 생성자
     */
-    public ImageLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible, String imagePath) { // 생성에 사용할 모든 정보를 전달받음
-        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isVisible);
-        setImageIcon(imagePath);
-        setSize(new Point(imageIcon.getIconWidth(), imageIcon.getIconHeight())); // imageIcon으로부터 크기 정보 추출
-    }
-    public ImageLayer(Point position, Point size, String imagePath) { // 생성에 최소한으로 필요한 정보만 전달받음
-        super(position, size);
-        super.setName("새 이미지");
+    public ImageLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, int isFlipped, boolean isVisible, String imagePath) { // 생성에 사용할 모든 정보를 전달받음
+        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isFlipped, isVisible);
         setImageIcon(imagePath);
         setSize(new Point(imageIcon.getIconWidth(), imageIcon.getIconHeight())); // imageIcon으로부터 크기 정보 추출
     }
@@ -33,6 +27,16 @@ public class ImageLayer extends RectangleLayer{
     public ImageLayer(ImageLayer source) { // 복제 생성자
         super(source);
         this.imageIcon = source.getImageIcon();
+    }
+
+    /*
+    ** Builder 메소드
+    */
+    public static class Builder extends ShapeLayer.Builder { 
+        public ImageLayer build() {
+            BasicStroke tempStroke = new BasicStroke(strokeWidth, Constant.defaultSolidLineBasicStroke.getEndCap(), Constant.defaultSolidLineBasicStroke.getLineJoin(), Constant.defaultSolidLineBasicStroke.getMiterLimit(), strokeDash, strokeDashPhase);
+            return new ImageLayer(name, position, size, borderColor, backgroundColor, tempStroke, backgroundType, radianAngle, isFlipped, isVisible, imagePath);
+        }
     }
     
     /*
@@ -65,7 +69,23 @@ public class ImageLayer extends RectangleLayer{
 
         g2d.setStroke(getStroke());
         g2d.rotate(getRadianAngle(), getPosition().getX() + getSize().getX() / 2, getPosition().getY() + getSize().getY() / 2);
-        g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY(), null);
+        switch(getIsFlipped()) {
+            case 0x0: // 대칭 없음
+                g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY(), null);
+                break;
+            case Constant.isFlippedHorizontallyFlag: // 가로 대칭
+                g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX() + (int)getSize().getX(), (int)getPosition().getY(), -(int)getSize().getX(), (int)getSize().getY(), null);
+                break;
+            case Constant.isFlippedVerticallyFlag: // 세로 대칭
+                g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX() + (int)getSize().getX(), (int)getPosition().getY(), -(int)getSize().getX(), (int)getSize().getY(), null);
+                //g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY() + (int)getSize().getY(), (int)getSize().getX(), -(int)getSize().getY(), null);
+                break; 
+            case Constant.isFlippedHorizontallyFlag | Constant.isFlippedVerticallyFlag: // 가로 및 세로 대칭
+                g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY(), null);
+                //g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX() + (int)getSize().getX(), (int)getPosition().getY() + (int)getSize().getY(), -(int)getSize().getX(), -(int)getSize().getY(), null);
+                break;
+        }
+        //g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY(), null);
         g.setColor(getBorderColor());
         g.drawRect((int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY());
         g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함

@@ -16,15 +16,8 @@ public class PenLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public PenLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
-        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isVisible);
-        super.setName("새 펜");
-        vertexArrayList = new ArrayList<Point2D.Double>();
-        isFinishedInitializing = false;
-        originalSize = new Point((int)getSize().getX(), (int)getSize().getY());
-    }
-    public PenLayer(Point position, Point size) {
-        super(position, size);
+    public PenLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, int isFlipped, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
+        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isFlipped, isVisible);
         super.setName("새 펜");
         vertexArrayList = new ArrayList<Point2D.Double>();
         isFinishedInitializing = false;
@@ -43,42 +36,56 @@ public class PenLayer extends ShapeLayer{
         for(int i = 0; i < source.vertexArrayList.size(); i++) {
             vertexArrayList.add(new Point2D.Double(source.vertexArrayList.get(i).getX(), source.vertexArrayList.get(i).getY()));
         }
+        isFinishedInitializing = source.getIsFinishedInitializing();
         originalSize = source.getOriginalSize();
+    }
+    
+    /*
+    ** Builder 메소드
+    */
+    public static class Builder extends ShapeLayer.Builder { 
+        public PenLayer build() {
+            BasicStroke tempStroke = new BasicStroke(strokeWidth, Constant.defaultSolidLineBasicStroke.getEndCap(), Constant.defaultSolidLineBasicStroke.getLineJoin(), Constant.defaultSolidLineBasicStroke.getMiterLimit(), strokeDash, strokeDashPhase);
+            return new PenLayer(name, position, size, borderColor, backgroundColor, tempStroke, backgroundType, radianAngle, isFlipped, isVisible);
+        }
     }
     
     /*
     ** 레이어 생성 관련 메소드
     */
     @Override
-    public void initialize(Point currentMousePosition) {
-        isFinishedInitializing = false;
-        vertexArrayList.add(new Point2D.Double(currentMousePosition.getX(), currentMousePosition.getY()));
-    }
-    @Override
-    public void keepInitializing(Point recentlyPressedMousePosition, Point currentMousePosition) {
-        vertexArrayList.add(new Point2D.Double(currentMousePosition.getX(), currentMousePosition.getY()));
-    }
-    @Override
-    public void finishInitializing() {
+    public void initialize(MouseActionType mouseActionType, Point recentlyPressedMousePosition, Point currentMousePosition) {
+        switch(mouseActionType) {
+            case PRESSED:
+                isFinishedInitializing = false;
+                vertexArrayList.add(new Point2D.Double(currentMousePosition.getX(), currentMousePosition.getY()));
+                break;
+            case DRAGGED:
+                vertexArrayList.add(new Point2D.Double(currentMousePosition.getX(), currentMousePosition.getY()));
+                break;
+            case RELEASED:
+                double minX = vertexArrayList.get(0).getX();   double minY = vertexArrayList.get(0).getY();
+                double maxX = vertexArrayList.get(0).getX();   double maxY = vertexArrayList.get(0).getY();
+                for (Point2D.Double point : vertexArrayList) { // 각 점들의 최소 위치값과 최대 위치값을 구함
+                    minX = min(point.getX(), minX);
+                    minY = min(point.getY(), minY);
+                    maxX = max(point.getX(), maxX);
+                    maxY = max(point.getY(), maxY);     
+                }
 
-        double minX = vertexArrayList.get(0).getX();   double minY = vertexArrayList.get(0).getY();
-        double maxX = vertexArrayList.get(0).getX();   double maxY = vertexArrayList.get(0).getY();
-        for (Point2D.Double point : vertexArrayList) { // 각 점들의 최소 위치값과 최대 위치값을 구함
-            minX = min(point.getX(), minX);
-            minY = min(point.getY(), minY);
-            maxX = max(point.getX(), maxX);
-            maxY = max(point.getY(), maxY);     
-        }
-        
-        setPosition(new Point((int)minX, (int)minY)); // 이 레이어의 위치를 알아내 저장함
-        setSize(new Point((int)(maxX - minX), (int)(maxY - minY))); // 이 레이어의 크기를 알아내 저장함
-        originalSize = (new Point((int)(maxX - minX), (int)(maxY - minY))); // 이 레이어의 크기를 알아내 저장함
+                setPosition(new Point((int)minX, (int)minY)); // 이 레이어의 위치를 알아내 저장함
+                setSize(new Point((int)(maxX - minX), (int)(maxY - minY))); // 이 레이어의 크기를 알아내 저장함
+                originalSize = (new Point((int)(maxX - minX), (int)(maxY - minY))); // 이 레이어의 크기를 알아내 저장함
 
-        for (int i = 0; i < vertexArrayList.size(); i++) { // vertex의 값을 절대 위치에서 position을 원점으로 하는 상대 위치로 변환
-            vertexArrayList.set(i, new Point2D.Double(vertexArrayList.get(i).getX() - getPosition().getX(), vertexArrayList.get(i).getY() - getPosition().getY()));
+                for (int i = 0; i < vertexArrayList.size(); i++) { // vertex의 값을 절대 위치에서 position을 원점으로 하는 상대 위치로 변환
+                    vertexArrayList.set(i, new Point2D.Double(vertexArrayList.get(i).getX() - getPosition().getX(), vertexArrayList.get(i).getY() - getPosition().getY()));
+                }
+
+                isFinishedInitializing = true; // 그리기 완료
+                break;
+            default: break;
         }
-        
-        isFinishedInitializing = true;
+
     }
     
     /*

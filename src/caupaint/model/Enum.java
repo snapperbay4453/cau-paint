@@ -12,4 +12,7 @@ public class Enum {
      // 배경을 채우는 방법을 나타냄
     public enum BackgroundType { EMPTY, FILL };
 
+    // 마우스의 상태를 나타냄
+    public enum MouseActionType { CLICKED, ENTERED, EXITED, PRESSED, RELEASED, DRAGGED, MOVED };
+    
 }

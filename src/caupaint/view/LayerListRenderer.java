@@ -10,6 +10,8 @@ import javax.swing.*;
 
 public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeLayer> {
 
+    private CanvasContainer canvasContainer;
+    
     private JLabel indexLabel;
     private JLabel shapeIconLabel;
     private JLabel nameLabel;
@@ -17,7 +19,9 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
     private JPanel nameAndSizePanel;
     private JLabel isVisibleIconLabel;
     
-    public LayerListRenderer() {
+    public LayerListRenderer(CanvasContainer canvasContainer) {
+        this.canvasContainer = canvasContainer;
+        
         indexLabel = new JLabel();
         shapeIconLabel = new JLabel();
         nameAndSizePanel = new JPanel();
@@ -69,7 +73,7 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
         
         
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        if(isSelected) setBackground(list.getSelectionBackground()); // 선택된 리스트를 강조 표시함
+        if(index == canvasContainer.getSelectedLayerIndex()) setBackground(list.getSelectionBackground()); // 선택된 리스트를 강조 표시함
         else setBackground(list.getBackground());
         
         return this;

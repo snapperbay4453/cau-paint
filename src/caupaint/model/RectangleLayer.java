@@ -11,12 +11,8 @@ public class RectangleLayer extends ShapeLayer{
     /*
     ** 생성자
     */
-    public RectangleLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
-        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isVisible);
-    }
-    public RectangleLayer(Point position, Point size) { // 생성에 최소한으로 필요한 정보만 전달받음
-        super(position, size);
-        super.setName("새 사각형");
+    public RectangleLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, int isFlipped, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
+        super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isFlipped, isVisible);
     }
     public RectangleLayer() { // 생성에 필요한 어떠한 정보도 전달받지 않음
         super();
@@ -27,21 +23,35 @@ public class RectangleLayer extends ShapeLayer{
     }
     
     /*
+    ** Builder 메소드
+    */
+    public static class Builder extends ShapeLayer.Builder { 
+        public RectangleLayer build() {
+            BasicStroke tempStroke = new BasicStroke(strokeWidth, Constant.defaultSolidLineBasicStroke.getEndCap(), Constant.defaultSolidLineBasicStroke.getLineJoin(), Constant.defaultSolidLineBasicStroke.getMiterLimit(), strokeDash, strokeDashPhase);
+            return new RectangleLayer(name, position, size, borderColor, backgroundColor, tempStroke, backgroundType, radianAngle, isFlipped, isVisible);
+        }
+    }
+
+    
+    /*
     ** 레이어 생성 관련 메소드
     */
     @Override
-    public void initialize(Point currentMousePosition) {
-        setPosition(currentMousePosition);
+    public void initialize(MouseActionType mouseActionType, Point recentlyPressedMousePosition, Point currentMousePosition) {
+        switch(mouseActionType) {
+            case PRESSED:
+                setPosition(currentMousePosition);
+                break;
+            case DRAGGED:
+                setPosition(new Point(min((int)recentlyPressedMousePosition.getX(), (int)currentMousePosition.getX()), 
+                min((int)recentlyPressedMousePosition.getY(), (int)currentMousePosition.getY())));
+                setSize(new Point((int)abs(currentMousePosition.getX() - recentlyPressedMousePosition.getX()),
+                (int)abs(currentMousePosition.getY() - recentlyPressedMousePosition.getY())));
+                break;
+            case RELEASED: break;
+            default: break;
+        }
     };
-    @Override
-    public void keepInitializing(Point recentlyPressedMousePosition, Point currentMousePosition){
-        setPosition(new Point(min((int)recentlyPressedMousePosition.getX(), (int)currentMousePosition.getX()), 
-                              min((int)recentlyPressedMousePosition.getY(), (int)currentMousePosition.getY())));
-        setSize(new Point((int)abs(currentMousePosition.getX() - recentlyPressedMousePosition.getX()),
-                          (int)abs(currentMousePosition.getY() - recentlyPressedMousePosition.getY())));
-    }
-    @Override
-    public void finishInitializing() {};
     
     /*
     **  레이어 출력 관련 메소드

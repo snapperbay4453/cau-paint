@@ -55,7 +55,7 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
         LayerListScrollPane.setMinimumSize(Constant.defaultLayerListScrollPaneSize);
         LayerListScrollPane.setPreferredSize(Constant.defaultLayerListScrollPaneSize); // LayerList의 크기 지정
 
-        layerList.setCellRenderer(new LayerListRenderer());
+        layerList.setCellRenderer(new LayerListRenderer(canvasContainer));
         
         createToolBar(); // 툴바에 아이콘을 추가하고 리스너에 등록함
         
@@ -140,7 +140,7 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
     ** 리스너 관련 메소드
     */
     class LayerListSelectionListener implements ListSelectionListener{
-        public void valueChanged(ListSelectionEvent event){ controller.SidebarValueChangedEventHandler(event, layerList.getSelectedIndex()); }
+        public void valueChanged(ListSelectionEvent event){ if (layerList.getSelectedIndex() != -1) controller.SidebarValueChangedEventHandler(event, layerList.getSelectedIndex()); }
     }
     class ButtonClickedActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {  controller.SidebarActionPerformedEventHandler(event); }

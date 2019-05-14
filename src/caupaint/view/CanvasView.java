@@ -49,22 +49,27 @@ public class CanvasView extends JPanel implements CanvasContainerObserver{
                 if (canvasContainer.getShapeLayerArrayList().get(i).getIsVisible() == true) canvasContainer.getShapeLayerArrayList().get(i).draw(g); // isVisible 값이 true일 때만 도형을 나타냄
                 }
         }
+        
+        if (canvasContainer.getTempShapeLayer() != null) { // tempShapeLayer가 있다면
+            canvasContainer.getTempShapeLayer().draw(g);
+        }
+        
         if ((variable.getFunctionType() == FunctionType.SELECT || variable.getFunctionType() == FunctionType.MOVE || variable.getFunctionType() == FunctionType.RESIZE || variable.getFunctionType() == FunctionType.ROTATE) 
-        && !canvasContainer.getShapeLayerArrayList().isEmpty() && variable.getLastSelectedLayerIndex() != -1) { // 도형 변형 기능을 선택했고, ShapeLayerArrayList가 비어있으며, 선택한 레이어가 있을 경우
+        && !canvasContainer.getShapeLayerArrayList().isEmpty() && canvasContainer.getSelectedLayerIndex() != -1) { // 도형 선택 또는 변형 기능을 선택했고, ShapeLayerArrayList가 비어있으며, 선택한 레이어가 있을 경우
         // 레이어 변형 시 경계 박스를 표시함
             Graphics2D g2d = (Graphics2D)g;
             AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
             g.setColor(Color.GRAY);
             g2d.setStroke(Constant.defaultLayerSelectedLineBasicStroke);
             g.drawRect(
-                    (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getX() - 10, 
-                    (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getY() - 10,
-                    (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getWidth() + 20,
-                    (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getHeight() + 20 // 외곽선 그리기
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getX() - 10, 
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getY() - 10,
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getWidth() + 20,
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getHeight() + 20 // 외곽선 그리기
             );
             g.fillOval(
-                    (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getCenterX() - 5, 
-                    (int)canvasContainer.getShapeLayerArrayList().get(variable.getLastSelectedLayerIndex()).getBoundingBox().getCenterY() - 5,
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getCenterX() - 5, 
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getCenterY() - 5,
                     10,
                     10 // 중심점 그리기
             );
