@@ -44,20 +44,6 @@ public class Variable implements VariableSubject{
     /*
     ** 프로그램 실행 중 저장하는 속성 관련 메소드
     */
-    public void chooseBorderColor() { // 대화 상자를 열어 외곽선 색상 설정
-        Color tempColor = new Color(0, 0, 0);
-        JColorChooser chooser=new JColorChooser();
-        tempColor = chooser.showDialog(null,"Color",Color.YELLOW);
-        if (tempColor != null) borderColor = tempColor;
-        notifyVariableObservers();
-    }
-    public void chooseBackgroundColor() { // 대화 상자를 열어 배경 색상 설정
-        Color tempColor = new Color(0, 0, 0);
-        JColorChooser chooser=new JColorChooser();
-        tempColor = chooser.showDialog(null,"Color",Color.YELLOW);
-        if (tempColor != null) backgroundColor = tempColor;
-        notifyVariableObservers();
-    }
     public void setStrokeByName(String name) { // 선 이름으로 stroke 설정
         if (name == "실선") { setStrokeDash(Constant.defaultSolidLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }
         else if (name == "점선") { setStrokeDash(Constant.defaultDottedLineBasicStroke.getDashArray(), Constant.defaultSolidLineBasicStroke.getDashPhase()); }

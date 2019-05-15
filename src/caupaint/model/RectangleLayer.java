@@ -16,7 +16,6 @@ public class RectangleLayer extends ShapeLayer{
     }
     public RectangleLayer() { // 생성에 필요한 어떠한 정보도 전달받지 않음
         super();
-        super.setName("새 사각형");
     }
     public RectangleLayer(RectangleLayer source) { // 복제 생성자
         super(source);
@@ -26,6 +25,7 @@ public class RectangleLayer extends ShapeLayer{
     ** Builder 메소드
     */
     public static class Builder extends ShapeLayer.Builder { 
+        public String getDefaultName() { return "새 직사각형"; }
         public RectangleLayer build() {
             BasicStroke tempStroke = new BasicStroke(strokeWidth, Constant.defaultSolidLineBasicStroke.getEndCap(), Constant.defaultSolidLineBasicStroke.getLineJoin(), Constant.defaultSolidLineBasicStroke.getMiterLimit(), strokeDash, strokeDashPhase);
             return new RectangleLayer(name, position, size, borderColor, backgroundColor, tempStroke, backgroundType, radianAngle, isFlipped, isVisible);
@@ -44,9 +44,9 @@ public class RectangleLayer extends ShapeLayer{
                 break;
             case DRAGGED:
                 setPosition(new Point(min((int)recentlyPressedMousePosition.getX(), (int)currentMousePosition.getX()), 
-                min((int)recentlyPressedMousePosition.getY(), (int)currentMousePosition.getY())));
+                    min((int)recentlyPressedMousePosition.getY(), (int)currentMousePosition.getY())));
                 setSize(new Point((int)abs(currentMousePosition.getX() - recentlyPressedMousePosition.getX()),
-                (int)abs(currentMousePosition.getY() - recentlyPressedMousePosition.getY())));
+                    (int)abs(currentMousePosition.getY() - recentlyPressedMousePosition.getY())));
                 break;
             case RELEASED: break;
             default: break;
@@ -76,5 +76,6 @@ public class RectangleLayer extends ShapeLayer{
     ** getter, setter
     */
     @Override public ShapeType getRealShapeType() { return ShapeType.RECTANGLE; }
+    @Override public String getIconFileName() { return "rectangle.png"; } ;
 
 }

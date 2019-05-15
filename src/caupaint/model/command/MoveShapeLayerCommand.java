@@ -1,8 +1,8 @@
 
 package caupaint.model.command;
-
 import caupaint.model.*;
 import caupaint.model.Enum.*;
+
 import java.awt.Point;
 
 public class MoveShapeLayerCommand implements Command {
@@ -22,7 +22,7 @@ public class MoveShapeLayerCommand implements Command {
     }
     
     public void execute() {
-        canvasContainer.modifyLayer(index, FunctionType.MOVE, mouseActionType, recentlyDraggedMousePosition, currentMousePosition);
+        canvasContainer.moveLayer(index, mouseActionType, recentlyDraggedMousePosition, currentMousePosition);
     }
     
 }

@@ -16,7 +16,6 @@ public class EllipseLayer extends ShapeLayer{
     }
     public EllipseLayer() { // 생성에 필요한 어떠한 정보도 전달받지 않음
         super();
-        super.setName("새 타원");
     }
     public EllipseLayer(EllipseLayer source) { // 복제 생성자
         super(source);
@@ -26,6 +25,7 @@ public class EllipseLayer extends ShapeLayer{
     ** Builder 메소드
     */
     public static class Builder extends ShapeLayer.Builder { 
+        public String getDefaultName() { return "새 타원"; }
         public EllipseLayer build() {
             BasicStroke tempStroke = new BasicStroke(strokeWidth, Constant.defaultSolidLineBasicStroke.getEndCap(), Constant.defaultSolidLineBasicStroke.getLineJoin(), Constant.defaultSolidLineBasicStroke.getMiterLimit(), strokeDash, strokeDashPhase);
             return new EllipseLayer(name, position, size, borderColor, backgroundColor, tempStroke, backgroundType, radianAngle, isFlipped, isVisible);
@@ -75,5 +75,6 @@ public class EllipseLayer extends ShapeLayer{
     ** getter, setter
     */
     @Override public ShapeType getRealShapeType() { return ShapeType.ELLIPSE; }
+    @Override public String getIconFileName() { return "ellipse.png"; } ;
     
 }

@@ -21,7 +21,6 @@ public class ImageLayer extends RectangleLayer{
     }
     public ImageLayer() { // 생성에 필요한 어떠한 정보도 전달받지 않음
         super();
-        super.setName("새 이미지");
         setImageIcon(null);
     }
     public ImageLayer(ImageLayer source) { // 복제 생성자
@@ -33,30 +32,12 @@ public class ImageLayer extends RectangleLayer{
     ** Builder 메소드
     */
     public static class Builder extends ShapeLayer.Builder { 
+        public String getDefaultName() { return "새 이미지"; }
         public ImageLayer build() {
             BasicStroke tempStroke = new BasicStroke(strokeWidth, Constant.defaultSolidLineBasicStroke.getEndCap(), Constant.defaultSolidLineBasicStroke.getLineJoin(), Constant.defaultSolidLineBasicStroke.getMiterLimit(), strokeDash, strokeDashPhase);
             return new ImageLayer(name, position, size, borderColor, backgroundColor, tempStroke, backgroundType, radianAngle, isFlipped, isVisible, imagePath);
         }
     }
-    
-    /*
-    ** 레이어 생성 관련 메소드
-    */
-    /*
-    @Override
-    public void initialize(Point currentMousePosition) {
-        setPosition(currentMousePosition);
-    };
-    @Override
-    public void keepInitializing(Point recentlyPressedMousePosition, Point currentMousePosition){
-        setPosition(new Point(min((int)recentlyPressedMousePosition.getX(), (int)currentMousePosition.getX()), 
-                              min((int)recentlyPressedMousePosition.getY(), (int)currentMousePosition.getY())));
-        setSize(new Point((int)abs(currentMousePosition.getX() - recentlyPressedMousePosition.getX()),
-                          (int)abs(currentMousePosition.getY() - recentlyPressedMousePosition.getY())));
-    }
-    @Override
-    public void finishInitializing() {};
-    */
     
     /*
     **  레이어 출력 관련 메소드
@@ -77,17 +58,17 @@ public class ImageLayer extends RectangleLayer{
                 g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX() + (int)getSize().getX(), (int)getPosition().getY(), -(int)getSize().getX(), (int)getSize().getY(), null);
                 break;
             case Constant.isFlippedVerticallyFlag: // 세로 대칭
-                g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX() + (int)getSize().getX(), (int)getPosition().getY(), -(int)getSize().getX(), (int)getSize().getY(), null);
-                //g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY() + (int)getSize().getY(), (int)getSize().getX(), -(int)getSize().getY(), null);
+                g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY() + (int)getSize().getY(), (int)getSize().getX(), -(int)getSize().getY(), null);
                 break; 
             case Constant.isFlippedHorizontallyFlag | Constant.isFlippedVerticallyFlag: // 가로 및 세로 대칭
-                g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY(), null);
-                //g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX() + (int)getSize().getX(), (int)getPosition().getY() + (int)getSize().getY(), -(int)getSize().getX(), -(int)getSize().getY(), null);
+                g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX() + (int)getSize().getX(), (int)getPosition().getY() + (int)getSize().getY(), -(int)getSize().getX(), -(int)getSize().getY(), null);
                 break;
         }
         //g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY(), null);
-        g.setColor(getBorderColor());
-        g.drawRect((int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY());
+        if (getBackgroundType().equals(BackgroundType.FILL)) {
+            g.setColor(getBackgroundColor());
+            g.drawRect((int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY());
+        }
         g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함
     }
     
@@ -95,6 +76,7 @@ public class ImageLayer extends RectangleLayer{
     ** getter, setter
     */
     @Override public ShapeType getRealShapeType() { return ShapeType.IMAGE; }
+    @Override public String getIconFileName() { return "image.png"; } ;
     public ImageIcon getImageIcon() { return imageIcon; }
     public void setImageIcon(String imagePath) { imageIcon = new ImageIcon(imagePath); }
 

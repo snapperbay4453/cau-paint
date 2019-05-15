@@ -68,25 +68,6 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
             ShapeLayer copiedShapeLayer;
             copiedShapeLayer = ShapeLayerFactory.createClone(shapeLayerArrayList.get(index).getRealShapeType(), shapeLayerArrayList.get(index));
-            /*
-            switch(shapeLayerArrayList.get(index).getRealShapeType()) { // Shape 객체의 실제 형식에 따라 다른 복제 생성자를 호출함
-                case LINE:
-                    copiedShapeLayer = new LineLayer((LineLayer)shapeLayerArrayList.get(index));            break;
-                case POLYLINE:
-                    copiedShapeLayer = new PolylineLayer((PolylineLayer)shapeLayerArrayList.get(index));    break;
-                case RECTANGLE:
-                    copiedShapeLayer = new RectangleLayer((RectangleLayer)shapeLayerArrayList.get(index));  break;
-                case ELLIPSE:
-                    copiedShapeLayer = new EllipseLayer((EllipseLayer)shapeLayerArrayList.get(index));      break;
-                case TRIANGLE:
-                    copiedShapeLayer = new TriangleLayer((TriangleLayer)shapeLayerArrayList.get(index));    break;
-                case RHOMBUS:
-                    copiedShapeLayer = new RhombusLayer((RhombusLayer)shapeLayerArrayList.get(index));      break;
-                case TEXT:
-                    copiedShapeLayer = new TextLayer((TextLayer)shapeLayerArrayList.get(index));            break;  
-                default: return;
-            }
-            */
             shapeLayerArrayList.add(index + 1, copiedShapeLayer);
             shapeLayerArrayList.get(index + 1).setName(shapeLayerArrayList.get(index).getName() + Constant.defaultCopiedFileSuffix);
             notifyCanvasContainerObservers();
@@ -160,48 +141,16 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         tempShapeLayer.initialize(mouseActionType, recentlyPressedMousePosition, currentMousePosition);
         
         // 마우스가 Released 상태여야 하지만, 초기화중인 Layer가 Polyline이면서 그리기가 끝나지 않은 상태여서는 안됨
-        if ( mouseActionType.equals(MouseActionType.RELEASED) && !((tempShapeLayer.getRealShapeType().equals(ShapeType.POLYLINE)) && (((PolylineLayer)tempShapeLayer).getIsFinishedInitializing() == false)) ) {
-                                                 tempShapeLayer.setBorderColor(borderColor);
-                                                 tempShapeLayer.setBackgroundColor(backgroundColor);
-                                                 tempShapeLayer.setStroke(stroke);
-                                                 tempShapeLayer.setBackgroundType(backgroundType);
+        if ( mouseActionType.equals(MouseActionType.RELEASED) && !((tempShapeLayer instanceof PolylineLayer ) && (((PolylineLayer)tempShapeLayer).getIsFinishedInitializing() == false)) ) {
+            tempShapeLayer.setBorderColor(borderColor);
+            tempShapeLayer.setBackgroundColor(backgroundColor);
+            tempShapeLayer.setStroke(stroke);
+            tempShapeLayer.setBackgroundType(backgroundType);
             addLayerToArrayList(ShapeLayerFactory.createClone(shapeType, tempShapeLayer));
             tempShapeLayer = null;
         }
         notifyCanvasContainerObservers();
     }
-    
-    /*
-    public void createAndInitializeNewLayer(ShapeType shapeType, Point point, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, Font font, String imagePath) {
-        switch(shapeType) {
-            case LINE:
-            case PEN:
-            case RECTANGLE:
-            case ELLIPSE:
-            case TRIANGLE:
-            case RHOMBUS:
-            case TEXT:
-                createNewLayer(shapeType, point, borderColor, backgroundColor, stroke, backgroundType, font, imagePath);
-                initializeLayer(point);
-                break;
-            case POLYLINE:
-                if ((getShapeLayerArrayList().isEmpty() == false) // 1. ShapeLayerArrayList가 비어있지 않고
-                        && (getShapeLayerArrayList().get(getShapeLayerArrayList().size() - 1).getRealShapeType() == ShapeType.POLYLINE) // 2. ShapeLayerArrayList의 가장 마지막 레이어가 Polyline 타입이고
-                        && (((PolylineLayer)(getShapeLayerArrayList().get(getShapeLayerArrayList().size() - 1))).getIsFinishedInitializing() == false )) { // 3. 그 레이어의 생성이 완료되지 않았다고 표시되었을 시
-                    initializeLayer(point);
-                }
-                else {
-                    createNewLayer(shapeType, point, borderColor, backgroundColor, stroke, backgroundType, font, imagePath);
-                    initializeLayer(point);
-                }
-                break;
-            case IMAGE:
-                break;
-        }
-        notifyCanvasContainerObservers();
-    }
-    */
-    
     public void insertTextLayer(Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, Font font) {
         String name = null;
         try {
@@ -210,77 +159,20 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             shapeLayerArrayList.add(ShapeLayerFactory.createBuilder(ShapeType.TEXT).setName(name).setBorderColor(borderColor).setBackgroundColor(backgroundColor).setStroke(stroke).setBackgroundType(backgroundType).setFont(font).build());
         } catch (IllegalArgumentException exp){}    // 취소 버튼을 누른 경우 catch문 발동
     }
-    public void insertImageLayer() {
+    public void insertImageLayer(Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType) {
         String imagePath = getImageFilePathToOpen();
         if (imagePath == null) return;
-        shapeLayerArrayList.add(ShapeLayerFactory.createBuilder(ShapeType.IMAGE).setImagePath(imagePath).build());
+        shapeLayerArrayList.add(ShapeLayerFactory.createBuilder(ShapeType.IMAGE).setImagePath(imagePath).setBackgroundColor(backgroundColor).setStroke(stroke).setBackgroundType(backgroundType).build());
         //shapeLayerArrayList.add(new ImageLayer(new Point(0, 0), new Point(0, 0), imagePath));
         notifyCanvasContainerObservers();
     }
-
-        /*
-                
-        switch(shapeType) {
-             case LINE:
-                shapeLayerArrayList.add(new LineLayer("새 직선", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, 0x0, true));
-                break;
-             case POLYLINE:
-                shapeLayerArrayList.add(new PolylineLayer("새 폴리선", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, 0x0, true));
-                break;
-             case PEN:
-                shapeLayerArrayList.add(new PenLayer("새 펜", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, 0x0, true));
-                break;
-            case RECTANGLE:
-                //shapeLayerArrayList.add(ShapeLayerFactory.create(ShapeType.RECTANGLE));
-                shapeLayerArrayList.add(new RectangleLayer("새 직사각형", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, 0x0, true));
-                break;
-             case ELLIPSE:
-                shapeLayerArrayList.add(new EllipseLayer("새 타원", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, 0x0, true));
-                break;
-             case TRIANGLE:
-                shapeLayerArrayList.add(new TriangleLayer("새 삼각형", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, 0x0, true));
-                break;
-             case RHOMBUS:
-                shapeLayerArrayList.add(new RhombusLayer("새 마름모", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, 0x0, true));
-                break;
-             case TEXT:
-                shapeLayerArrayList.add(new TextLayer("새 텍스트", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, 0x0, true, font));
-                break;
-             case IMAGE:
-                shapeLayerArrayList.add(new ImageLayer("새 이미지", point, new Point(0, 0), borderColor, backgroundColor, stroke, backgroundType, 0, 0x0, true, imagePath));
-                break;
-        }
-        */
-
-    
-    /*
-    public void initializeLayer(Point currentMousePosition) { // 레이어를 처음 생성할 때 호출되는 메서드, 마우스의 버튼을 눌러 도형 생성 및 위치 지정
-        shapeLayerArrayList.get(shapeLayerArrayList.size() - 1).initialize(currentMousePosition);
-        notifyCanvasContainerObservers();
-    }
-    public void keepInitializingLayer(Point recentlyPressedMousePosition, Point currentMousePosition) { // 레이어를 처음 생성할 때 호출되는 메서드, 마우스의 버튼을 누른 채로 드래그하여 크기 변형
-        shapeLayerArrayList.get(shapeLayerArrayList.size() - 1).keepInitializing(recentlyPressedMousePosition, currentMousePosition);
-        notifyCanvasContainerObservers();
-    }
-    public void finishInitializingLayer() { // 레이어를 처음 생성할 때 호출되는 메서드, 마우스의 드래그를 완료하여 크기 지정 완료
-        shapeLayerArrayList.get(shapeLayerArrayList.size() - 1).finishInitializing();
-        notifyCanvasContainerObservers();
-    }
-    */
     
     /*
     ** ShapeLayer 변수 조작 관련 메소드
     */
-    public void renameLayer(int index) { // 선택한 레이어의 name을 변경함
+    public void renameLayer(int index, String name) { // 선택한 레이어의 name을 변경함
         try {
-            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
-            String tempName = JOptionPane.showInputDialog(null, "새 이름을 입력하세요.", shapeLayerArrayList.get(index).getName());
-            if (tempName == "") { // 새로 입력한 이름이 비어 있으면
-                JOptionPane.showMessageDialog(null, "이름을 지정해야 합니다.", "오류", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            else if (tempName == null) return; // 취소 버튼을 누른 경우
-            shapeLayerArrayList.get(index).setName(tempName);
+            shapeLayerArrayList.get(index).setName(name);
             notifyCanvasContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
             JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
@@ -312,7 +204,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     /*
     ** ShapeLayer 도형 변형 관련 메소드
     */
-    public void modifyLayer(int index, FunctionType functionType, MouseActionType mouseActionType, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException {
+    public void moveLayer(int index, MouseActionType mouseActionType, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException {
         try {
             switch(mouseActionType) {
                 case PRESSED:
@@ -320,28 +212,10 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
                     tempShapeLayer.setBorderColor(Color.LIGHT_GRAY);
                     break;
                 case DRAGGED:
-                    switch(functionType) {
-                        case MOVE:      tempShapeLayer.translate(recentlyDraggedMousePosition, currentMousePosition);    break;
-                        case RESIZE:    tempShapeLayer.scale(recentlyDraggedMousePosition, currentMousePosition);  break;
-                        case ROTATE:    tempShapeLayer.rotate(recentlyDraggedMousePosition, currentMousePosition); break;
-                        default:    break;
-                    }
+                        tempShapeLayer.translate(recentlyDraggedMousePosition, currentMousePosition);
                     break;
                 case RELEASED:
-                    switch(functionType) {
-                        case MOVE:
-                            shapeLayerArrayList.get(index).setPosition(tempShapeLayer.getPosition());
-                            break;
-                        case RESIZE: 
-                            shapeLayerArrayList.get(index).setPosition(tempShapeLayer.getPosition());
-                            shapeLayerArrayList.get(index).setSize(tempShapeLayer.getSize());
-                            break;
-                        case ROTATE:
-                            shapeLayerArrayList.get(index).setRadianAngle(tempShapeLayer.getRadianAngle());
-                            break;
-                        default:
-                            break;
-                    }
+                    shapeLayerArrayList.get(index).setPosition(tempShapeLayer.getPosition());
                     tempShapeLayer = null;
                     break;
                 default:
@@ -352,35 +226,51 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-    /*
-    public void moveLayer(int index, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException{
+    public void resizeLayer(int index, MouseActionType mouseActionType, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException {
         try {
-            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
-            shapeLayerArrayList.get(index).translate(recentlyDraggedMousePosition, currentMousePosition);
+            switch(mouseActionType) {
+                case PRESSED:
+                    tempShapeLayer = ShapeLayerFactory.createClone(shapeLayerArrayList.get(index).getRealShapeType(), shapeLayerArrayList.get(index));
+                    tempShapeLayer.setBorderColor(Color.LIGHT_GRAY);
+                    break;
+                case DRAGGED:
+                        tempShapeLayer.scale(recentlyDraggedMousePosition, currentMousePosition);
+                    break;
+                case RELEASED:
+                    shapeLayerArrayList.get(index).setPosition(tempShapeLayer.getPosition());
+                    shapeLayerArrayList.get(index).setSize(tempShapeLayer.getSize());
+                    tempShapeLayer = null;
+                    break;
+                default:
+                    break;
+            }
             notifyCanvasContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
             JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void resizeLayer(int index, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException{
+    public void rotateLayer(int index, MouseActionType mouseActionType, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException {
         try {
-            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
-        shapeLayerArrayList.get(index).scale(recentlyDraggedMousePosition, currentMousePosition);
-        notifyCanvasContainerObservers();
+            switch(mouseActionType) {
+                case PRESSED:
+                    tempShapeLayer = ShapeLayerFactory.createClone(shapeLayerArrayList.get(index).getRealShapeType(), shapeLayerArrayList.get(index));
+                    tempShapeLayer.setBorderColor(Color.LIGHT_GRAY);
+                    break;
+                case DRAGGED:
+                        tempShapeLayer.rotate(recentlyDraggedMousePosition, currentMousePosition);
+                    break;
+                case RELEASED:
+                    shapeLayerArrayList.get(index).setRadianAngle(tempShapeLayer.getRadianAngle());
+                    tempShapeLayer = null;
+                    break;
+                default:
+                    break;
+            }
+            notifyCanvasContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
             JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void rotateLayer(int index, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException{
-        try {
-            if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
-        shapeLayerArrayList.get(index).rotate(recentlyDraggedMousePosition, currentMousePosition);
-        notifyCanvasContainerObservers();
-        } catch (IndexOutOfBoundsException exp) {
-            JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    */
     public void flipLayerHorizontally(int index) throws IndexOutOfBoundsException{
         try {
             if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
@@ -489,6 +379,10 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
 
         if(fileChooser.showSaveDialog(null) == 0) return fileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
         else return null; // 대화상자를 불러온 후 파일 저장 위치 확인에 실패한 경우
+    }
+    public String generateMainViewWindowTitle(){ // 파일 주소 존재 여부에 따라 프로그램의 제목 표시줄 내용을 결정
+        if (getFilePath() == null) return ("제목 없음 - CauPaint");
+        else return(getFilePath() + " - CauPaint");
     }
     public void saveLayersToFile(String filePath) throws IOException {
         if (filePath == null) {

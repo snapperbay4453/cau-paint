@@ -1,6 +1,5 @@
 
 package caupaint.model.command;
-
 import caupaint.model.*;
 import caupaint.model.Enum.*;
 
@@ -14,6 +13,7 @@ public class SetFunctionTypeCommand implements Command {
         this.functionType = functionType;
     }
     
+    @Override
     public void execute() {
         variable.setFunctionType(functionType);
     }

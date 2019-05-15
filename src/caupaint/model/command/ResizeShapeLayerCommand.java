@@ -22,7 +22,7 @@ public class ResizeShapeLayerCommand implements Command {
     }
     
     public void execute() {
-        canvasContainer.modifyLayer(index, FunctionType.RESIZE, mouseActionType, recentlyDraggedMousePosition, currentMousePosition);
+        canvasContainer.resizeLayer(index, mouseActionType, recentlyDraggedMousePosition, currentMousePosition);
     }
     
 }

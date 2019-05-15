@@ -37,7 +37,6 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
         nameAndSizePanel.add(nameLabel, BorderLayout.NORTH);
         nameAndSizePanel.add(sizeLabel,  BorderLayout.CENTER);
         this.add(nameAndSizePanel, BorderLayout.CENTER);
-        
     }
     
     public Component getListCellRendererComponent(JList<? extends ShapeLayer> list, ShapeLayer shapeLayer, int index, boolean isSelected, boolean cellHasFocus) {
@@ -47,26 +46,12 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
         else isVisibleIconLabel.setIcon(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "null.png").getImage().getScaledInstance((int)new Dimension(14, 14).getWidth(), (int)new Dimension(14, 14).getHeight(), java.awt.Image.SCALE_SMOOTH)));
         
         indexLabel.setText(Integer.toString(index));
-        switch(shapeLayer.getRealShapeType()) { // 레이어의 도형 종류 표시
-            case LINE:       shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "line.png"));      break;
-            case POLYLINE:   shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "polyline.png"));  break;
-            case PEN:        shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "pen.png"));       break;
-            case RECTANGLE:  shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rectangle.png")); break;
-            case ELLIPSE:    shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "ellipse.png"));   break;
-            case TRIANGLE:   shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "triangle.png"));  break;
-            case RHOMBUS:    shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rhombus.png"));   break;
-            case TEXT:       shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "text.png"));      break;
-            case IMAGE:      shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "image.png"));     break;
-            default:         shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "shape.png"));     break;
-        }
-
+        shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + shapeLayer.getIconFileName()));
+        
         nameLabel.setText(shapeLayer.getName());
         nameLabel.setMaximumSize(new Dimension(190, 20));
         nameLabel.setPreferredSize(new Dimension(190, 20));
-        if  ((shapeLayer.getRealShapeType() == ShapeType.POLYLINE) && (((PolylineLayer)shapeLayer).getIsFinishedInitializing() == false)) {
-            sizeLabel.setText((int)shapeLayer.getBoundingBox().getSize().getWidth() + " x " + (int)shapeLayer.getBoundingBox().getSize().getHeight() + " (그리는 중)"); // 현재 폴리선이 완전히 그려지지 않은 경우, 그리는 중이라고 표시함
-            }
-        else if (shapeLayer.getRealShapeType() == ShapeType.TEXT) sizeLabel.setText(((TextLayer)shapeLayer).getFontName() + ", " + ((TextLayer)shapeLayer).getFontSize() + "pt"); // 텍스트일 경우 폰트 크기를 표시
+        if (shapeLayer instanceof TextLayer) sizeLabel.setText(((TextLayer)shapeLayer).getFontName() + ", " + ((TextLayer)shapeLayer).getFontSize() + "pt"); // 텍스트일 경우 폰트 크기를 표시
         else  sizeLabel.setText((int)shapeLayer.getBoundingBox().getSize().getWidth() + " x " + (int)shapeLayer.getBoundingBox().getSize().getHeight());
         sizeLabel.setMaximumSize(new Dimension(190, 20));
         sizeLabel.setPreferredSize(new Dimension(190, 20));

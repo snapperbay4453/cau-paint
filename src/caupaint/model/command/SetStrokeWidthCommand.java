@@ -2,8 +2,6 @@
 package caupaint.model.command;
 
 import caupaint.model.*;
-import java.awt.event.ItemEvent;
-import javax.swing.event.ChangeEvent;
 
 public class SetStrokeWidthCommand implements Command {
     
@@ -17,6 +15,7 @@ public class SetStrokeWidthCommand implements Command {
         this.width = width;
     }
     
+    @Override
     public void execute() {
        variable.setStrokeWidth(width);
        if (canvasContainer.getSelectedLayerIndex() != -1) canvasContainer.setLayerStroke(canvasContainer.getSelectedLayerIndex(), variable.getStroke());

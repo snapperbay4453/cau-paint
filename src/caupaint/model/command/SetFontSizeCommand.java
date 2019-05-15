@@ -16,6 +16,7 @@ public class SetFontSizeCommand implements Command {
         this.size = size;
     }
     
+    @Override
     public void execute() {
            variable.setFontSize(size);
            if ((canvasContainer.getSelectedLayerIndex() != -1) && canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getRealShapeType() == ShapeType.TEXT) { // 현재 선택된 레이어가 텍스트 레이어인 경우

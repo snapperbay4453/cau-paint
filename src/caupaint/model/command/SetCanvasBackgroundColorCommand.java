@@ -1,6 +1,5 @@
 
 package caupaint.model.command;
-
 import caupaint.model.*;
 
 public class SetCanvasBackgroundColorCommand implements Command {
@@ -11,6 +10,7 @@ public class SetCanvasBackgroundColorCommand implements Command {
         this.canvasContainer = canvasContainer;
     }
     
+    @Override
     public void execute() {
         canvasContainer.showSetCanvasBackgroundColorDialogBox();
     }

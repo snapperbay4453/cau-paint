@@ -1,6 +1,5 @@
 
 package caupaint.model.command;
-
 import caupaint.model.*;
 
 public class SetCanvasSizeCommand implements Command {

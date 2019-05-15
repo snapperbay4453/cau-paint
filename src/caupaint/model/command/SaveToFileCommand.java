@@ -1,8 +1,8 @@
 
 package caupaint.model.command;
-
 import caupaint.model.*;
 import caupaint.view.MainView;
+
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

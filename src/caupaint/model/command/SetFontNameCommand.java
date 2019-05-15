@@ -16,6 +16,7 @@ public class SetFontNameCommand implements Command {
         this.name = name;
     }
     
+    @Override
     public void execute() {
         variable.setFontName(name);
         if ((canvasContainer.getSelectedLayerIndex() != -1) && canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getRealShapeType() == ShapeType.TEXT) { // 현재 선택된 레이어가 텍스트 레이어인 경우

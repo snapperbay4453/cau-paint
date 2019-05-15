@@ -1,6 +1,5 @@
 
 package caupaint.model.command;
-
 import caupaint.model.*;
 import caupaint.model.Enum.*;
 
@@ -16,6 +15,7 @@ public class SetBackgroundTypeCommand implements Command {
         this.backgroundType = backgroundType;
     }
     
+    @Override
     public void execute() {
         variable.setBackgroundType(backgroundType);
             if (canvasContainer.getSelectedLayerIndex() != -1) canvasContainer.changeLayerBackgroundTypeAndColors(canvasContainer.getSelectedLayerIndex(), variable.getBackgroundType(), variable.getBorderColor(), variable.getBackgroundColor());

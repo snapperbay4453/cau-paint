@@ -7,7 +7,7 @@ import java.util.EventObject;
 
 public class CommandFactory {
     
-    public static Command createCommand(String commandName, CanvasContainer canvasContainer, Variable variable, EventObject event, Object args) {
+    public static Command create(String commandName, CanvasContainer canvasContainer, Variable variable, EventObject event, Object args) {
         
         switch (commandName) {
             case "createNewCanvas": return new CreateNewCanvasCommand(canvasContainer);
@@ -18,7 +18,6 @@ public class CommandFactory {
             case "setCanvasSize": return new SetCanvasSizeCommand(canvasContainer);
             case "setCanvasBackgroundColor": return new SetCanvasBackgroundColorCommand(canvasContainer);
             
-            case "drawLine": return new SetShapeTypeCommand(variable, ShapeType.LINE);
             case "drawPolyline": return new SetShapeTypeCommand(variable, ShapeType.POLYLINE);
             case "drawPen": return new SetShapeTypeCommand(variable, ShapeType.PEN);
             case "drawRectangle": return new SetShapeTypeCommand(variable, ShapeType.RECTANGLE);
@@ -26,8 +25,8 @@ public class CommandFactory {
             case "drawTriangle": return new SetShapeTypeCommand(variable, ShapeType.TRIANGLE);
             case "drawRhombus": return new SetShapeTypeCommand(variable, ShapeType.RHOMBUS);
             
-            case "insertText": return new InsertTextCommand(canvasContainer, variable);
-            case "insertImage": return new InsertImageCommand(canvasContainer, variable);
+            case "insertText": return new InsertTextCommand(canvasContainer, variable.getBorderColor(), variable.getBackgroundColor(), variable.getStroke(), variable.getBackgroundType(), variable.getFont());
+            case "insertImage": return new InsertImageCommand(canvasContainer, variable.getBackgroundColor(), variable.getStroke(), variable.getBackgroundType());
             
             case "selectShape": return new SetFunctionTypeCommand(variable, FunctionType.SELECT);
             case "moveShape": return new SetFunctionTypeCommand(variable, FunctionType.MOVE);
@@ -60,6 +59,8 @@ public class CommandFactory {
             case "moveShapeLayer": return new MoveShapeLayerCommand(canvasContainer, canvasContainer.getSelectedLayerIndex(), variable.getMouseActionType(), variable.getRecentlyDraggedMousePosition(), ((MouseEvent)event).getPoint());
             case "resizeShapeLayer": return new ResizeShapeLayerCommand(canvasContainer, canvasContainer.getSelectedLayerIndex(), variable.getMouseActionType(), variable.getRecentlyDraggedMousePosition(), ((MouseEvent)event).getPoint());
             case "rotateShapeLayer": return new RotateShapeLayerCommand(canvasContainer, canvasContainer.getSelectedLayerIndex(), variable.getMouseActionType(), variable.getRecentlyDraggedMousePosition(), ((MouseEvent)event).getPoint());
+            case "flipLayerHorizontally": return new FlipLayerHorizontallyCommand(canvasContainer, canvasContainer.getSelectedLayerIndex());
+            case "flipLayerVertically": return new FlipLayerVerticallyCommand(canvasContainer, canvasContainer.getSelectedLayerIndex());
             
             case "checkExit": return new CheckExitCommand(canvasContainer);
             

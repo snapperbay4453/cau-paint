@@ -15,6 +15,7 @@ public class SetStrokeByNameCommand implements Command {
         this.name = name;
     }
     
+    @Override
     public void execute() {
         variable.setStrokeByName(name);
         if (canvasContainer.getSelectedLayerIndex() != -1) canvasContainer.setLayerStroke(canvasContainer.getSelectedLayerIndex(), variable.getStroke());

@@ -1,8 +1,8 @@
 
 package caupaint.model.command;
-
 import caupaint.model.*;
 import caupaint.view.MainView;
+
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,9 +19,7 @@ public class LoadFromFileCommand implements Command {
     public void execute() {
         try {
             canvasContainer.loadLayersFromFile(canvasContainer.getFilePathToOpen());
-        } catch (IOException ex) {
-            Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

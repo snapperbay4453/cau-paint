@@ -22,7 +22,7 @@ public class RotateShapeLayerCommand implements Command {
     }
     
     public void execute() {
-        canvasContainer.modifyLayer(index, FunctionType.ROTATE, mouseActionType, recentlyDraggedMousePosition, currentMousePosition);
+        canvasContainer.rotateLayer(index, mouseActionType, recentlyDraggedMousePosition, currentMousePosition);
     }
     
 }

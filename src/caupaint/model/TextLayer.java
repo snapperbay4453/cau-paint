@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.*;
+import javax.swing.JOptionPane;
 
 public class TextLayer extends ShapeLayer{
  
@@ -24,7 +25,6 @@ public class TextLayer extends ShapeLayer{
     }
     public TextLayer() { // 생성에 필요한 어떠한 정보도 전달받지 않음
         super();
-        super.setName("새 텍스트");
         setFontName(Constant.defaultFont.getFontName());
         setFontStyle(Constant.defaultFont.getStyle());
         setFontSize(Constant.defaultFont.getSize());
@@ -40,6 +40,7 @@ public class TextLayer extends ShapeLayer{
     ** Builder 메소드
     */
     public static class Builder extends ShapeLayer.Builder { 
+        public String getDefaultName() { return "새 텍스트"; }
         public TextLayer build() {
             BasicStroke tempStroke = new BasicStroke(strokeWidth, Constant.defaultSolidLineBasicStroke.getEndCap(), Constant.defaultSolidLineBasicStroke.getLineJoin(), Constant.defaultSolidLineBasicStroke.getMiterLimit(), strokeDash, strokeDashPhase);
             return new TextLayer(name, position, size, borderColor, backgroundColor, tempStroke, backgroundType, radianAngle, isFlipped, isVisible, font);
@@ -64,8 +65,19 @@ public class TextLayer extends ShapeLayer{
             case RELEASED: break;
             default: break;
         }
-
     };
+    
+    /*
+    ** 레이어 변형 관련 메소드
+    */
+    @Override
+        public void flipHorizontally(){
+            JOptionPane.showMessageDialog(null, "이 레이어는 대칭 기능을 지원하지 않습니다.", "지원하지 않는 명령", JOptionPane.ERROR_MESSAGE);
+    }
+    @Override
+    public void flipVertically(){
+        JOptionPane.showMessageDialog(null, "이 레이어는 대칭 기능을 지원하지 않습니다.", "지원하지 않는 명령", JOptionPane.ERROR_MESSAGE);
+    }
     
     /*
     **  레이어 출력 관련 메소드
@@ -96,6 +108,7 @@ public class TextLayer extends ShapeLayer{
     public int getFontStyle() { return fontStyle; };
     public int getFontSize() { return fontSize; };
     @Override public ShapeType getRealShapeType() { return ShapeType.TEXT; }
+    @Override public String getIconFileName() { return "text.png"; } ;
 
     public void setFont(Font font) {
         this.fontName = font.getName();

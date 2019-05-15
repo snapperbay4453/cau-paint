@@ -18,14 +18,12 @@ public class PolylineLayer extends ShapeLayer{
     */
     public PolylineLayer(String name, Point position, Point size, Color borderColor, Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType, double radianAngle, int isFlipped, boolean isVisible) { // 생성에 사용할 모든 정보를 전달받음
         super(name, position, size, borderColor, backgroundColor, stroke, backgroundType, radianAngle, isFlipped, isVisible);
-        super.setName("새 폴리선");
         vertexArrayList = new ArrayList<Point2D.Double>();
         isFinishedInitializing = false;
         originalSize = new Point((int)getSize().getX(), (int)getSize().getY());
     }
     public PolylineLayer() {
         super();
-        super.setName("새 폴리선");
         vertexArrayList = new ArrayList<Point2D.Double>();
         isFinishedInitializing = false;
         originalSize = new Point((int)getSize().getX(), (int)getSize().getY());
@@ -44,6 +42,7 @@ public class PolylineLayer extends ShapeLayer{
     ** Builder 메소드
     */
     public static class Builder extends ShapeLayer.Builder { 
+        public String getDefaultName() { return "새 폴리선"; }
         public PolylineLayer build() {
             BasicStroke tempStroke = new BasicStroke(strokeWidth, Constant.defaultSolidLineBasicStroke.getEndCap(), Constant.defaultSolidLineBasicStroke.getLineJoin(), Constant.defaultSolidLineBasicStroke.getMiterLimit(), strokeDash, strokeDashPhase);
             return new PolylineLayer(name, position, size, borderColor, backgroundColor, tempStroke, backgroundType, radianAngle, isFlipped, isVisible);
@@ -107,12 +106,14 @@ public class PolylineLayer extends ShapeLayer{
         // drawPolyline 메소드에서 Polyline을 그리기 위해 필요한 배열을 생성함
         int[] xPoints = new int[vertexArrayList.size()];
         for(int i = 0; i < vertexArrayList.size(); i++) {
-            if (getIsFinishedInitializing() == true) xPoints[i] = (int)((vertexArrayList.get(i).getX()) * (getSize().getX() / originalSize.getX()) + getPosition().getX());
+            if (getIsFinishedInitializing() == true && getIsFlippedHorizontally() == true) xPoints[i] = (int)(getSize().getX() - (vertexArrayList.get(i).getX()) * (getSize().getX() / originalSize.getX()) + getPosition().getX());
+            else if (getIsFinishedInitializing() == true) xPoints[i] = (int)((vertexArrayList.get(i).getX()) * (getSize().getX() / originalSize.getX()) + getPosition().getX());
             else xPoints[i] = (int)(vertexArrayList.get(i).getX());
         }
         int[] yPoints = new int[vertexArrayList.size()];
         for(int i = 0; i < vertexArrayList.size(); i++) {
-            if (getIsFinishedInitializing() == true) yPoints[i] = (int)((vertexArrayList.get(i).getY()) * (getSize().getY() / originalSize.getY()) + getPosition().getY());
+            if (getIsFinishedInitializing() == true && getIsFlippedVertically() == true) yPoints[i] = (int)(getSize().getY() - (vertexArrayList.get(i).getY()) * (getSize().getY() / originalSize.getY()) + getPosition().getY());
+            else if (getIsFinishedInitializing() == true) yPoints[i] = (int)((vertexArrayList.get(i).getY()) * (getSize().getY() / originalSize.getY()) + getPosition().getY());
             else yPoints[i] = (int)(vertexArrayList.get(i).getY());
         }
 
@@ -129,6 +130,7 @@ public class PolylineLayer extends ShapeLayer{
     ** getter, setter
     */
     @Override public ShapeType getRealShapeType() { return ShapeType.POLYLINE; }
+    @Override public String getIconFileName() { return "polyline.png"; } ;
     public boolean getIsFinishedInitializing() { // 이 도형의 생성이 완료되었는지 반환
         return isFinishedInitializing;
     }

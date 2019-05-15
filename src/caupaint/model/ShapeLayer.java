@@ -69,7 +69,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         boolean isVisible; // 화면에 표시 여부
 
         public Builder() {
-            this.name = "새 도형";
+            this.name = getDefaultName();
             this.position = new Point(0, 0);
             this.size= new Point(0, 0);
             this.borderColor = Constant.defaultBorderColor;
@@ -84,7 +84,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
             this.isFlipped = 0x0;
             this.isVisible = Constant.defaultIsVisible;
         }
-
+        abstract public String getDefaultName();
         public Builder setName(String name) { this.name = name; return this; }
         public Builder setPosition(Point position) { this.position = position; return this; }
         public Builder setSize(Point size) { this.size = size; return this; }
@@ -159,8 +159,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     public void flipVertically(){
         if (getIsFlippedVertically() == true) isFlipped &= ~Constant.isFlippedVerticallyFlag;
         else if (getIsFlippedVertically() == false) isFlipped |= Constant.isFlippedVerticallyFlag;
-        if (getRadianAngle() > Math.PI) setRadianAngle((3 * Math.PI - getRadianAngle()) % (2 * Math.PI));
-        else setRadianAngle((Math.PI - getRadianAngle()) % (2 * Math.PI));
+        setRadianAngle(getRadianAngle() * -1);
     }
     /*
     public Point rotatePoint(Point targetPoint, Point centerPoint, double radianAngle) {
@@ -229,7 +228,8 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         else return false;
     }
     public boolean getIsVisible() { return isVisible; }
-    public ShapeType getRealShapeType() { return ShapeType.SHAPE; }
+    abstract public ShapeType getRealShapeType();
+    abstract public String getIconFileName();
     public Rectangle getBoundingBox() { return new Rectangle((int)position.getX(), (int)position.getY(), (int)size.getX(), (int)size.getY()); }
     
     public void setName(String name) { this.name = name; }
