@@ -1,12 +1,10 @@
 
 package caupaint.model;
 import caupaint.model.Enum.*;
-import caupaint.controller.*;
 import caupaint.observer.*;
 
 import java.awt.*;
 import java.util.ArrayList;
-import javax.swing.*;
 
 public class Variable implements VariableSubject{
     
@@ -27,7 +25,7 @@ public class Variable implements VariableSubject{
     /*
     ** 생성자
     */
-    public Variable(Controller controller) {
+    public Variable() {
         functionType = Constant.defaultFunctionType;
         shapeType = Constant.defaultShapeType;
         backgroundType = Constant.defaultBackgroundType;

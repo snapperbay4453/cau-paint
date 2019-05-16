@@ -1,31 +1,23 @@
 
 package caupaint.view;
 import caupaint.model.*;
-import caupaint.controller.*;
 import caupaint.observer.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.*;
-import javax.swing.event.*;
 
 public class SidebarView extends JPanel implements CanvasContainerObserver, VariableObserver{
     
     private CanvasContainer canvasContainer;
     private Variable variable;
-    private Controller controller;
     
     private GridBagLayout Gbag;
-    
+
     private JPanel sidebarToolBarPanel;
-    private JButton toggleSelectedLayerVisibleButton;
-    private JButton moveSelectedLayerFrontButton;
-    private JButton moveSelectedLayerBackButton;
-    private JButton renameSelectedLayerButton;
-    private JButton copySelectedLayerButton;
-    private JButton deleteSelectedLayerButton;
-    private JButton deleteAllLayerButton;
+    
+    ArrayList<AbstractButton> buttonArrayList = new ArrayList<AbstractButton>();
+
     private JLabel layerListLabel;
     private ScrollPane LayerListScrollPane;
 
@@ -34,10 +26,9 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
     /*
     ** 생성자
     */
-    public SidebarView(CanvasContainer canvasContainer, Variable variable, Controller controller) {
+    public SidebarView(CanvasContainer canvasContainer, Variable variable) {
         this.canvasContainer = canvasContainer;
         this.variable = variable;
-        this.controller = controller;
         
         canvasContainer.registerCanvasContainerObserver(this); // CanvasContainerObserver를 구현하는 클래스에 옵저버로 등록
         variable.registerVariableObserver(this); // VariableObserver를 구현하는 클래스에 옵저버로 등록  
@@ -68,64 +59,21 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
         addGrid(sidebarToolBarPanel, 1, 0);
         addGrid(LayerListScrollPane, 2, 1);
         
-        layerList.addListSelectionListener(new LayerListSelectionListener());
+        //layerList.addListSelectionListener(new LayerListSelectionListener());
     }
     
     /*
     ** 윈도우 생성 관련 메소드
     */
     private void createToolBar() { // 툴바에 아이콘을 추가하고 리스너에 등록함
-        
         sidebarToolBarPanel = new JPanel();
-        
-        toggleSelectedLayerVisibleButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "invisible.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));   
-        toggleSelectedLayerVisibleButton.setToolTipText("선택한 레이어를 가리거나 다시 보입니다.");
-        toggleSelectedLayerVisibleButton.setActionCommand("toggleSelectedLayerVisible");
-        toggleSelectedLayerVisibleButton.setPreferredSize(Constant.defaultToolBarButtonSize); 
-        sidebarToolBarPanel.add(toggleSelectedLayerVisibleButton);
-        toggleSelectedLayerVisibleButton.addActionListener((ActionListener) new ButtonClickedActionListener());
-        
-        moveSelectedLayerFrontButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "up_arrow.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));   
-        moveSelectedLayerFrontButton.setToolTipText("선택한 레이어를 한 칸 위로 올립니다.");
-        moveSelectedLayerFrontButton.setActionCommand("moveSelectedLayerFront");
-        moveSelectedLayerFrontButton.setPreferredSize(Constant.defaultToolBarButtonSize); 
-        sidebarToolBarPanel.add(moveSelectedLayerFrontButton);
-        moveSelectedLayerFrontButton.addActionListener((ActionListener) new ButtonClickedActionListener());
-        
-        moveSelectedLayerBackButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "down_arrow.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
-        moveSelectedLayerBackButton.setToolTipText("선택한 레이어를 한 칸 아래로 내립니다.");   
-        moveSelectedLayerBackButton.setActionCommand("moveSelectedLayerBack");
-        moveSelectedLayerBackButton.setPreferredSize(Constant.defaultToolBarButtonSize);
-        sidebarToolBarPanel.add(moveSelectedLayerBackButton);
-        moveSelectedLayerBackButton.addActionListener(new ButtonClickedActionListener());
-        
-        renameSelectedLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "rename.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
-        renameSelectedLayerButton.setToolTipText("선택한 레이어의 이름을 변경합니다."); 
-        renameSelectedLayerButton.setActionCommand("renameSelectedLayer");
-        renameSelectedLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
-        sidebarToolBarPanel.add(renameSelectedLayerButton);
-        renameSelectedLayerButton.addActionListener(new ButtonClickedActionListener());
-        
-        copySelectedLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "copy.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
-        copySelectedLayerButton.setToolTipText("선택한 레이어를 복제합니다.");
-        copySelectedLayerButton.setActionCommand("copySelectedLayer");
-        copySelectedLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
-        sidebarToolBarPanel.add(copySelectedLayerButton);
-        copySelectedLayerButton.addActionListener(new ButtonClickedActionListener());
-        
-        deleteSelectedLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "delete.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
-        deleteSelectedLayerButton.setToolTipText("선택한 레이어를 삭제합니다.");
-        deleteSelectedLayerButton.setActionCommand("deleteSelectedLayer");
-        deleteSelectedLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
-        sidebarToolBarPanel.add(deleteSelectedLayerButton);
-        deleteSelectedLayerButton.addActionListener(new ButtonClickedActionListener());
-        
-        deleteAllLayerButton = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "clear.png").getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
-        deleteAllLayerButton.setToolTipText("모든 레이어를 삭제합니다.");
-        deleteAllLayerButton.setActionCommand("deleteAllLayer");
-        deleteAllLayerButton.setPreferredSize(Constant.defaultToolBarButtonSize);
-        sidebarToolBarPanel.add(deleteAllLayerButton);
-        deleteAllLayerButton.addActionListener(new ButtonClickedActionListener());
+        addButtonToSidebarToolBarPanel("invisible.png", "선택한 레이어를 가리거나 다시 보입니다.", "toggleSelectedLayerVisible");   
+        addButtonToSidebarToolBarPanel("up_arrow.png", "선택한 레이어를 한 칸 위로 올립니다.", "moveSelectedLayerFront");   
+        addButtonToSidebarToolBarPanel("down_arrow.png", "선택한 레이어를 한 칸 아래로 내립니다.", "moveSelectedLayerBack");   
+        addButtonToSidebarToolBarPanel("rename.png", "선택한 레이어의 이름을 변경합니다.", "renameSelectedLayer");   
+        addButtonToSidebarToolBarPanel("copy.png", "선택한 레이어를 복제합니다.", "copySelectedLayer");   
+        addButtonToSidebarToolBarPanel("delete.png", "선택한 레이어를 삭제합니다.", "deleteSelectedLayer");   
+        addButtonToSidebarToolBarPanel("clear.png", "모든 레이어를 삭제합니다.", "deleteAllLayer");   
     }
     
     /*
@@ -136,14 +84,15 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
         layerListLabel.setText("총 " + canvasContainer.getShapeLayerArrayListToVector().size() + "개의 레이어");
     }
     
-    /*
-    ** 리스너 관련 메소드
-    */
-    class LayerListSelectionListener implements ListSelectionListener{
-        public void valueChanged(ListSelectionEvent event){ if (layerList.getSelectedIndex() != -1) controller.SidebarValueChangedEventHandler(event, layerList.getSelectedIndex()); }
-    }
-    class ButtonClickedActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent event) {  controller.SidebarActionPerformedEventHandler(event); }
+    private void addButtonToSidebarToolBarPanel (String iconPath, String toolTipText, String actionCommand) {
+        JButton button = new JButton(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + iconPath).getImage().getScaledInstance((int)Constant.defaultToolBarButtonImageSize.getWidth(), (int)Constant.defaultToolBarButtonImageSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));   
+        button.setMinimumSize(Constant.defaultToolBarButtonSize);
+        button.setPreferredSize(Constant.defaultToolBarButtonSize); // LayerList의 크기 지정
+        button.setToolTipText(toolTipText);
+        button.setActionCommand(actionCommand);
+        sidebarToolBarPanel.add(button);
+        buttonArrayList.add(button);
+        // actionListener로의 등록은 controller에서 함
     }
     
     /*
@@ -161,11 +110,16 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
         Gbag.setConstraints(c, gbc);
         add(c);
     }
+
+    /*
+    ** getter
+    */
+    public ArrayList<AbstractButton> getButtonArrayList() { return buttonArrayList; }
+    public JList getLayerList() { return layerList;  }
     
     /*
-    ** 옵저버 관련 메소드
+    ** 옵저버 관련 메소드 - 사용하지 않음
     */
-    @Override public void updateCanvasContainer() { this.repaint(); }
-    @Override public void updateVariable() { this.repaint(); }
-    
+    @Override public void updateCanvasContainer() { /*this.repaint();*/ }
+    @Override public void updateVariable() { /*this.repaint();*/ }
 }

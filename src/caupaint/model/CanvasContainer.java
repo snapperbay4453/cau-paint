@@ -22,9 +22,9 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     private ArrayList<ShapeLayer> shapeLayerArrayList; // Shape를 저장하는 ArrayList
     private Point canvasSize; // 캔버스의 너비와 높이를 저장
     private Color canvasBackgroundColor; // 캔버스의 배경색을 저장
-    private int selectedLayerIndex;
+    private int selectedLayerIndex; // 현재 선택된 레이어의 인덱스
     
-    transient private String filePath;
+    transient private String filePath; // 불러온 파일의 절대 위치
     transient private ShapeLayer tempShapeLayer; // 레이어를 생성 또는 변형 시 임시로 정보를 저장하는 ShapeLayer
     transient private ArrayList<CanvasContainerObserver> CanvasContainerObserverArrayList = new ArrayList<CanvasContainerObserver>(); // CanvasContainer를 구독하는 옵저버들을 저장하는 ArrayList
 
@@ -146,7 +146,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             tempShapeLayer.setBackgroundColor(backgroundColor);
             tempShapeLayer.setStroke(stroke);
             tempShapeLayer.setBackgroundType(backgroundType);
-            addLayerToArrayList(ShapeLayerFactory.createClone(shapeType, tempShapeLayer));
+            addLayerToArrayList(tempShapeLayer);
             tempShapeLayer = null;
         }
         notifyCanvasContainerObservers();
@@ -157,7 +157,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             name = JOptionPane.showInputDialog(null, "텍스트를 입력하세요.", "새 텍스트");
             if (name == null) throw new IllegalArgumentException();
             shapeLayerArrayList.add(ShapeLayerFactory.createBuilder(ShapeType.TEXT).setName(name).setBorderColor(borderColor).setBackgroundColor(backgroundColor).setStroke(stroke).setBackgroundType(backgroundType).setFont(font).build());
-        } catch (IllegalArgumentException exp){}    // 취소 버튼을 누른 경우 catch문 발동
+        } catch (IllegalArgumentException Creexp){}    // 취소 버튼을 누른 경우 catch문 발동
     }
     public void insertImageLayer(Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType) {
         String imagePath = getImageFilePathToOpen();
@@ -431,7 +431,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     public void setFilePath(String filePath) { this.filePath = filePath; notifyCanvasContainerObservers(); }
     
     /*
-    ** 옵저버 관련 메소드
+    ** 옵저버 관련 메소드 - 사용하지 않음
     */
     public void registerCanvasContainerObserver(CanvasContainerObserver o) { CanvasContainerObserverArrayList.add(o); }
     public void removeCanvasContainerObserver(CanvasContainerObserver o) { CanvasContainerObserverArrayList.remove(o); }

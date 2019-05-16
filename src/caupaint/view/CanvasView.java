@@ -1,7 +1,6 @@
 
 package caupaint.view;
 import caupaint.model.*;
-import caupaint.controller.*;
 import caupaint.model.Enum.*;
 import caupaint.observer.*;
 import java.awt.Color;
@@ -17,26 +16,20 @@ public class CanvasView extends JPanel implements CanvasContainerObserver{
     
     private CanvasContainer canvasContainer;
     private Variable variable;
-    private Controller controller;
     
     private MouseAdapter canvasViewMouseAdapter;
     
     /*
     ** 생성자
     */
-    public CanvasView(CanvasContainer canvasContainer, Variable variable, Controller controller) {
+    public CanvasView(CanvasContainer canvasContainer, Variable variable) {
         this.setBackground(canvasContainer.getCanvasBackgroundColor());
         this.canvasContainer = canvasContainer;
         this.variable = variable;
-        this.controller = controller;
         
-        canvasContainer.registerCanvasContainerObserver(this); // CayerContainerObserver를 구현하는 클래스에 옵저버로 등록
+        //canvasContainer.registerCanvasContainerObserver(this); // CayerContainerObserver를 구현하는 클래스에 옵저버로 등록
         
         this.setPreferredSize(new Dimension((int)canvasContainer.getCanvasSize().getX(), (int)canvasContainer.getCanvasSize().getY())); // Controller를 통해 CanvasContainer에 저장된 Canvas 크기 정보를 불러옴
-        
-        canvasViewMouseAdapter = new CanvasViewMouseAdapter();
-        this.addMouseListener(canvasViewMouseAdapter);
-        this.addMouseMotionListener(canvasViewMouseAdapter);
     }
     
     /*
@@ -76,18 +69,9 @@ public class CanvasView extends JPanel implements CanvasContainerObserver{
             g2d.setTransform(resetAffineTransform); // 기존 아핀 변환 정보로 초기화, 다음에 그려질 그래픽 객체들이 이전 객체의 아핀 변환 값에 영향을 받지 않게 하기 위함
         }
     }
-
-    /*
-    ** 리스너 관련 메소드
-    */
-    class CanvasViewMouseAdapter extends MouseAdapter{
-        public void mousePressed(MouseEvent event) { controller.CanvasViewMousePressedEventHandler(event); }
-        public void mouseReleased(MouseEvent event) { controller.CanvasViewMouseReleasedEventHandler(event); }
-        public void mouseDragged(MouseEvent event) { controller.CanvasViewMouseDraggedEventHandler(event); }
-    }
     
     /*
-    ** 옵저버 관련 메소드
+    ** 옵저버 관련 메소드 - 사용하지 않음
     */
     @Override
     public void updateCanvasContainer() {

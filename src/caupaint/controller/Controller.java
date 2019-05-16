@@ -7,8 +7,15 @@ import caupaint.view.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.*;
+import javax.swing.AbstractButton;
+import javax.swing.JComboBox;
+import javax.swing.JMenuItem;
+import javax.swing.JSpinner;
+import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class Controller{
     
@@ -21,103 +28,101 @@ public class Controller{
     /*
     ** 생성자
     */
-    public Controller() {
-        canvasContainer = new CanvasContainer();
-        variable = new Variable(this);
-        canvasView = new CanvasView(canvasContainer, variable, this);
-        sidebarView = new SidebarView(canvasContainer, variable, this);
-        mainView = new MainView(canvasContainer, variable, canvasView, sidebarView, this);
+    public Controller(CanvasContainer canvasContainer, Variable variable, CanvasView canvasView, SidebarView sidebarView, MainView mainView) {
+        this.canvasContainer = canvasContainer;
+        this.variable = variable;
+        this.canvasView = canvasView;
+        this.sidebarView = sidebarView;
+        this.mainView = mainView;
         
-        mainView.createView();
+        /*
+        ** MainView 이벤트 리스너 관련 메소드
+        */
+        for (JMenuItem menuItem : mainView.getMenuItemArrayList()) {
+            menuItem.addActionListener(event -> CommandFactory.create(event.getActionCommand(), canvasContainer, variable, event, null).execute());
+        }
+        for (AbstractButton button : mainView.getButtonArrayList()) {
+            button.addActionListener(event -> CommandFactory.create(event.getActionCommand(), canvasContainer, variable, event, null).execute());
+        }
+        
+        mainView.getStrokeTypeComboBox().addItemListener(event -> {
+            if (event.getStateChange() == ItemEvent.SELECTED) {
+                CommandFactory.create("setStrokeByName", canvasContainer, variable, event, event.getItem().toString()).execute();
+            }
+        });
+        mainView.getStrokeWidthSpinner().addChangeListener(event -> CommandFactory.create("setStrokeWidth", canvasContainer, variable, event, mainView.getStrokeWidthSpinner().getValue()).execute());
+        mainView.getFontNameComboBox().addItemListener(event -> {
+            if (event.getStateChange() == ItemEvent.SELECTED) {
+                CommandFactory.create("setFontName", canvasContainer, variable, event, event.getItem().toString()).execute();
+            }
+        });
+        mainView.getFontSizeSpinner().addChangeListener(event -> CommandFactory.create("setFontSize", canvasContainer, variable, event, mainView.getFontSizeSpinner().getValue()).execute());
+        mainView.getFrame().addWindowListener(new MainViewWindowActionListener());
+        
+        /*
+        ** Canvas 이벤트 리스너 관련 메소드
+        */
+        CanvasViewMouseListener canvasViewMouseListener = new CanvasViewMouseListener();
+        canvasView.addMouseListener(canvasViewMouseListener);
+        canvasView.addMouseMotionListener(canvasViewMouseListener);
+        
+        /*
+        ** Sidebar 이벤트 리스너 관련 메소드
+        */
+        sidebarView.getLayerList().addListSelectionListener(event -> {
+            if (sidebarView.getLayerList().getSelectedIndex() != -1) CommandFactory.create("setSelectedLayerIndex", canvasContainer, variable, event, sidebarView.getLayerList().getSelectedIndex()).execute();
+        });
+        for (AbstractButton button : sidebarView.getButtonArrayList()) {
+            button.addActionListener(event -> CommandFactory.create(event.getActionCommand(), canvasContainer, variable, event, null).execute());
+        }
     }
- 
-    /*
-    ** MainView 이벤트 리스너 관련 메소드
-    */
-    // 이벤트 리스너: mainView.MenuBarClickedActionListener
-    public void MainViewMenuBarClickedEventHandler(ActionEvent event) {
-        CommandFactory.create(event.getActionCommand(), canvasContainer, variable, event, null).execute();
-    }
-    // 이벤트 리스너: mainView.ButtonClickedActionListener
-    public void MainViewButtonClickedEventHandler(ActionEvent event) {
-        CommandFactory.create(event.getActionCommand(), canvasContainer, variable, event, null).execute();
-    }
-    // 이벤트 리스너: mainView.StrokeTypeItemChangeActionListener
-    public void MainViewStrokeTypeComboBoxItemStateChangedEventHandler(ItemEvent event) {
-       if (event.getStateChange() == ItemEvent.SELECTED) {
-            CommandFactory.create("setStrokeByName", canvasContainer, variable, event, event.getItem().toString()).execute();
-       }
-    }       
-    // 이벤트 리스너: mainView.StrokeWidthSpinnerChangeActionListener
-    public void MainViewStrokeWidthSpinnerStateChangedEventHandler(ChangeEvent event, int spinnerValue) {
-       CommandFactory.create("setStrokeWidth", canvasContainer, variable, event, spinnerValue).execute();
-    }
-    // 이벤트 리스너: mainView.FontNameComboBoxItemChangeActionListener
-    public void MainViewFontNameComboBoxItemStateChangedEventHandler(ItemEvent event) {
-       if (event.getStateChange() == ItemEvent.SELECTED) {
-           CommandFactory.create("setFontName", canvasContainer, variable, event, event.getItem().toString()).execute();
-       }
-    }       
-    // 이벤트 리스너: mainView.FontSizeSpinnerStateChangeActionListener
-    public void MainViewFontSizeSpinnerStateChangedEventHandler(ChangeEvent event, int spinnerValue) {
-       CommandFactory.create("setFontSize", canvasContainer, variable, event, spinnerValue).execute();
-    }
-    // 이벤트 리스너: mainView.WindowActionListener
-    public void MainViewWindowClosingEventHandler(WindowEvent event) {
-        CommandFactory.create("checkExit", canvasContainer, variable, event, null).execute();
+
+    class MainViewWindowActionListener extends WindowAdapter {
+        @Override public void windowClosing(WindowEvent event) {
+            CommandFactory.create("checkExit", canvasContainer, variable, event, null).execute();
+        }
     }
     
     /*
     ** Canvas 이벤트 리스너 관련 메소드
     */
-    // 이벤트 리스너: canvasView.CanvasMouseAdapter
-    public void CanvasViewMousePressedEventHandler(MouseEvent event) {
-    variable.setMouseActionType(MouseActionType.PRESSED);
-    variable.setRecentlyPressedMousePosition(event.getPoint());
-    variable.setRecentlyDraggedMousePosition(event.getPoint());
-        switch(variable.getFunctionType()) {
-            case SELECT:    CommandFactory.create("selectLayerByMousePoint", canvasContainer, variable, event, null).execute();  break;
-            case DRAW:      CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            case MOVE:      CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            case RESIZE:    CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            case ROTATE:    CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            default:        break;
+    class CanvasViewMouseListener extends MouseAdapter{
+        public void mousePressed(MouseEvent event) {
+            variable.setMouseActionType(MouseActionType.PRESSED);
+            variable.setRecentlyPressedMousePosition(event.getPoint());
+            variable.setRecentlyDraggedMousePosition(event.getPoint());
+            switch(variable.getFunctionType()) {
+                case SELECT:    CommandFactory.create("selectLayerByMousePoint", canvasContainer, variable, event, null).execute();  break;
+                case DRAW:      CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case MOVE:      CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case RESIZE:    CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case ROTATE:    CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                default:        break;
+            }
         }
-    }
-    public void CanvasViewMouseDraggedEventHandler(MouseEvent event) {
-    variable.setMouseActionType(MouseActionType.DRAGGED);
-        switch(variable.getFunctionType()) {
-            case SELECT:    break;
-            case DRAW:      CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            case MOVE:      CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            case RESIZE:    CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            case ROTATE:    CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            default:        break;
+        public void mouseDragged(MouseEvent event) {
+            variable.setMouseActionType(MouseActionType.DRAGGED);
+            switch(variable.getFunctionType()) {
+                case SELECT:    break;
+                case DRAW:      CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case MOVE:      CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case RESIZE:    CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case ROTATE:    CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                default:        break;
+            }
+            variable.setRecentlyDraggedMousePosition(event.getPoint());
         }
-    variable.setRecentlyDraggedMousePosition(event.getPoint());
-    }
-    public void CanvasViewMouseReleasedEventHandler(MouseEvent event) {
-    variable.setMouseActionType(MouseActionType.RELEASED);
-        switch(variable.getFunctionType()) {
-            case SELECT:    break;
-            case DRAW:      CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            case MOVE:      CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            case RESIZE:    CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            case ROTATE:    CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
-            default:        break;
+        public void mouseReleased(MouseEvent event) {
+            variable.setMouseActionType(MouseActionType.RELEASED);
+            switch(variable.getFunctionType()) {
+                case SELECT:    break;
+                case DRAW:      CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case MOVE:      CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case RESIZE:    CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case ROTATE:    CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                default:        break;
+            }
         }
     }
     
-    /*
-    ** Sidebar 이벤트 리스너 관련 메소드
-    */
-    // 이벤트 리스너: sidebarView.LayerListSelectionListener
-        public void SidebarValueChangedEventHandler(ListSelectionEvent event, int index){
-            CommandFactory.create("setSelectedLayerIndex", canvasContainer, variable, event, index).execute();
-        }
-    // 이벤트 리스너: sidebarView.ButtonClickedActionListener
-        public void SidebarActionPerformedEventHandler(ActionEvent event) {
-            CommandFactory.create(event.getActionCommand(), canvasContainer, variable, event, null).execute();
-        }
-        
 }
