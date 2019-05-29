@@ -101,7 +101,7 @@ public class PolylineLayer extends ShapeLayer{
         Graphics2D g2d = (Graphics2D)g;
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g2d.setStroke(getStroke());
-        g2d.rotate(getRadianAngle(), getPosition().getX() + getSize().getX() / 2, getPosition().getY() + getSize().getY() / 2);
+        g2d.rotate(getRadianAngle(), getCentralPoint().getX(), getCentralPoint().getY());
         
         // drawPolyline 메소드에서 Polyline을 그리기 위해 필요한 배열을 생성함
         int[] xPoints = new int[vertexArrayList.size()];
@@ -129,13 +129,16 @@ public class PolylineLayer extends ShapeLayer{
     /*
     ** getter, setter
     */
+    public ArrayList<Point2D.Double> getVertexArayList() { return vertexArrayList; }
     @Override public ShapeType getRealShapeType() { return ShapeType.POLYLINE; }
     @Override public String getIconFileName() { return "polyline.png"; } ;
-    public boolean getIsFinishedInitializing() { // 이 도형의 생성이 완료되었는지 반환
-        return isFinishedInitializing;
+        @Override public ShapeLayer getWireframe() {
+        PolylineLayer wireframe = (PolylineLayer)ShapeLayerFactory.createClone(ShapeType.POLYLINE, this);
+        wireframe.setBackgroundType(BackgroundType.EMPTY);
+        wireframe.setBorderColor(Color.GRAY);
+        return wireframe;
     }
-    public Point getOriginalSize() {
-        return originalSize;
-    }
+    public boolean getIsFinishedInitializing() { return isFinishedInitializing; }// 이 도형의 생성이 완료되었는지 반환
+    public Point getOriginalSize() { return originalSize; }
 
 }

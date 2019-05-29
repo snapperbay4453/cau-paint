@@ -3,8 +3,6 @@ package caupaint.model;
 import caupaint.model.Enum.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
 import javax.swing.ImageIcon;
 
 public class ImageLayer extends RectangleLayer{
@@ -49,7 +47,7 @@ public class ImageLayer extends RectangleLayer{
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
 
         g2d.setStroke(getStroke());
-        g2d.rotate(getRadianAngle(), getPosition().getX() + getSize().getX() / 2, getPosition().getY() + getSize().getY() / 2);
+        g2d.rotate(getRadianAngle(), getCentralPoint().getX(), getCentralPoint().getY());
         switch(getIsFlipped()) {
             case 0x0: // 대칭 없음
                 g.drawImage(scaledImageIcon.getImage(), (int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY(), null);
@@ -76,7 +74,7 @@ public class ImageLayer extends RectangleLayer{
     ** getter, setter
     */
     @Override public ShapeType getRealShapeType() { return ShapeType.IMAGE; }
-    @Override public String getIconFileName() { return "image.png"; } ;
+    @Override public String getIconFileName() { return "image.png"; }
     public ImageIcon getImageIcon() { return imageIcon; }
     public void setImageIcon(String imagePath) { imageIcon = new ImageIcon(imagePath); }
 

@@ -62,7 +62,7 @@ public class RectangleLayer extends ShapeLayer{
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
 
         g2d.setStroke(getStroke());
-        g2d.rotate(getRadianAngle(), getPosition().getX() + getSize().getX() / 2, getPosition().getY() + getSize().getY() / 2);
+        g2d.rotate(getRadianAngle(), getCentralPoint().getX(), getCentralPoint().getY());
         if (getBackgroundType() == BackgroundType.FILL) {
             g.setColor(getBackgroundColor());
             g.fillRect((int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY());
@@ -77,5 +77,10 @@ public class RectangleLayer extends ShapeLayer{
     */
     @Override public ShapeType getRealShapeType() { return ShapeType.RECTANGLE; }
     @Override public String getIconFileName() { return "rectangle.png"; } ;
-
+    @Override public ShapeLayer getWireframe() {
+        RectangleLayer wireframe = (RectangleLayer)ShapeLayerFactory.createClone(ShapeType.RECTANGLE, this);
+        wireframe.setBackgroundType(BackgroundType.EMPTY);
+        wireframe.setBorderColor(Color.GRAY);
+        return wireframe;
+    }
 }

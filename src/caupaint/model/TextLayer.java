@@ -88,7 +88,7 @@ public class TextLayer extends ShapeLayer{
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         g.setFont(new Font(fontName, fontStyle, fontSize)); // 폰트 설정
         g2d.setStroke(getStroke());
-        g2d.rotate(getRadianAngle(), getPosition().getX() + getSize().getX() / 2, getPosition().getY() + getSize().getY() / 2);
+        g2d.rotate(getRadianAngle(), getCentralPoint().getX(), getCentralPoint().getY());
         Rectangle2D textBackgroundRectangle = g.getFontMetrics().getStringBounds(getName(), g);
         setSize(new Point((int)textBackgroundRectangle.getWidth(), (int)textBackgroundRectangle.getHeight())); // 크기 새로 설정
         if (getBackgroundType() == BackgroundType.FILL) { // 텍스트의 배경색 그리기
@@ -109,7 +109,12 @@ public class TextLayer extends ShapeLayer{
     public int getFontSize() { return fontSize; };
     @Override public ShapeType getRealShapeType() { return ShapeType.TEXT; }
     @Override public String getIconFileName() { return "text.png"; } ;
-
+    @Override public ShapeLayer getWireframe() {
+        TextLayer wireframe = (TextLayer)ShapeLayerFactory.createClone(ShapeType.TEXT, this);
+        wireframe.setBackgroundType(BackgroundType.EMPTY);
+        wireframe.setBorderColor(Color.GRAY);
+        return wireframe;
+    }
     public void setFont(Font font) {
         this.fontName = font.getName();
         this.fontStyle = font.getStyle();

@@ -68,8 +68,10 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             if (index == -1) throw new IndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
             ShapeLayer copiedShapeLayer;
             copiedShapeLayer = ShapeLayerFactory.createClone(shapeLayerArrayList.get(index).getRealShapeType(), shapeLayerArrayList.get(index));
+            copiedShapeLayer.setPosition(new Point((int)copiedShapeLayer.getPosition().getX() + 10, (int)copiedShapeLayer.getPosition().getY() + 10));// 위치를 일부로 약간 어긋나게 설정함
             shapeLayerArrayList.add(index + 1, copiedShapeLayer);
             shapeLayerArrayList.get(index + 1).setName(shapeLayerArrayList.get(index).getName() + Constant.defaultCopiedFileSuffix);
+            setSelectedLayerIndex(getSelectedLayerIndex() + 1); // 복제된 레이어를 선택함
             notifyCanvasContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
             JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
@@ -208,8 +210,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         try {
             switch(mouseActionType) {
                 case PRESSED:
-                    tempShapeLayer = ShapeLayerFactory.createClone(shapeLayerArrayList.get(index).getRealShapeType(), shapeLayerArrayList.get(index));
-                    tempShapeLayer.setBorderColor(Color.LIGHT_GRAY);
+                    tempShapeLayer = shapeLayerArrayList.get(index).getWireframe();
                     break;
                 case DRAGGED:
                         tempShapeLayer.translate(recentlyDraggedMousePosition, currentMousePosition);
@@ -230,8 +231,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         try {
             switch(mouseActionType) {
                 case PRESSED:
-                    tempShapeLayer = ShapeLayerFactory.createClone(shapeLayerArrayList.get(index).getRealShapeType(), shapeLayerArrayList.get(index));
-                    tempShapeLayer.setBorderColor(Color.LIGHT_GRAY);
+                    tempShapeLayer = shapeLayerArrayList.get(index).getWireframe();
                     break;
                 case DRAGGED:
                         tempShapeLayer.scale(recentlyDraggedMousePosition, currentMousePosition);
@@ -253,8 +253,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         try {
             switch(mouseActionType) {
                 case PRESSED:
-                    tempShapeLayer = ShapeLayerFactory.createClone(shapeLayerArrayList.get(index).getRealShapeType(), shapeLayerArrayList.get(index));
-                    tempShapeLayer.setBorderColor(Color.LIGHT_GRAY);
+                    tempShapeLayer = shapeLayerArrayList.get(index).getWireframe();
                     break;
                 case DRAGGED:
                         tempShapeLayer.rotate(recentlyDraggedMousePosition, currentMousePosition);
@@ -300,7 +299,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             if (tempWidth <= 0) throw new IllegalArgumentException();
             tempHeight = Integer.parseInt(JOptionPane.showInputDialog(null, "캔버스의 높이를 입력하세요.", (int)canvasSize.getY()));
             if (tempHeight <= 0) throw new IllegalArgumentException();
-            canvasSize = new Point(tempWidth, tempHeight);
+            setCanvasSize(new Point(tempWidth, tempHeight));
         } catch (NumberFormatException exp){
             JOptionPane.showMessageDialog(null, "잘못된 값이 입력되었습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException exp){
@@ -310,7 +309,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     }
     public void showSetCanvasBackgroundColorDialogBox() {
         JColorChooser chooser=new JColorChooser();
-        canvasBackgroundColor = chooser.showDialog(null,"Color",Color.YELLOW);
+        setCanvasBackgroundColor(chooser.showDialog(null,"Color",Color.YELLOW));
         notifyCanvasContainerObservers();
     }
     public void clearCanvas() {
@@ -426,8 +425,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     public void setShapeLayer(int index, ShapeLayer shapeLayer) { shapeLayerArrayList.set(index, shapeLayer); notifyCanvasContainerObservers(); }
     public void setCanvasSize(Point size) { this.canvasSize = size; notifyCanvasContainerObservers(); }
     public void setCanvasBackgroundColor(Color color) { this.canvasBackgroundColor = color; notifyCanvasContainerObservers(); }
-    public void setSelectedLayerIndex(int index) { selectedLayerIndex = index; notifyCanvasContainerObservers();
-    }
+    public void setSelectedLayerIndex(int index) { selectedLayerIndex = index; notifyCanvasContainerObservers(); }
     public void setFilePath(String filePath) { this.filePath = filePath; notifyCanvasContainerObservers(); }
     
     /*

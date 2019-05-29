@@ -3,7 +3,9 @@ package caupaint.model;
 import caupaint.model.Enum.*;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 abstract public class ShapeLayer implements Serializable { // 파일로 저장해야 하므로 직렬화 구현
 
@@ -63,6 +65,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         float strokeDashPhase; // 외곽선 속성 - 점선 간격
         BackgroundType backgroundType; // 배경색 속성
         double radianAngle; // 회전 각도(라디안)
+        ArrayList<Point2D.Double> vertexArrayList; // 이 도형을 구성하는 점의 위치 정보를 저장하는 ArrayList
         Font font; // 글꼴
         String imagePath; // 이미지 경로
         int isFlipped; // 대칭 여부를 나타내는 플래그
@@ -79,6 +82,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
             this.strokeDashPhase = Constant.defaultSolidLineBasicStroke.getDashPhase();
             this.backgroundType = Constant.defaultBackgroundType;
             this.radianAngle = 0;
+            this.vertexArrayList = new ArrayList<Point2D.Double>();
             this.font = Constant.defaultFont;
             this.imagePath = "";
             this.isFlipped = 0x0;
@@ -102,6 +106,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         public Builder setBackgroundType (BackgroundType backgroundType) { this.backgroundType = backgroundType; return this; }
         public Builder setRadianAngle(double radianAngle) { this.radianAngle = radianAngle; return this; }
         public Builder setFont(Font font) { this.font = font; return this; }
+        public Builder setVertexArrayList(ArrayList<Point2D.Double> vertexArrayList) { this.vertexArrayList = vertexArrayList; return this; }
         public Builder setImagePath(String imagePath) { this.imagePath = imagePath; return this; }
         public Builder setIsVisible(boolean isVisible) { this.isVisible = isVisible; return this; }
 
@@ -118,26 +123,28 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     ** 레이어 변형 관련 메소드
     */
     public void translate(Point recentlyDraggedMousePosition, Point currentMousePosition) {
-        double dx = currentMousePosition.getX() - recentlyDraggedMousePosition.getX();   double dy = currentMousePosition.getY() - recentlyDraggedMousePosition.getY();
-        setPosition(new Point((int)(getPosition().getX() + dx), (int)(getPosition().getY() + dy)));
+        Point differential = new Point((int)currentMousePosition.getX() - (int)recentlyDraggedMousePosition.getX(), (int)currentMousePosition.getY() - (int)recentlyDraggedMousePosition.getY());
+        setPosition(new Point((int)(getPosition().getX() + differential.getX()), (int)(getPosition().getY() + differential.getY())));
     }
     public void scale(Point recentlyDraggedMousePosition, Point currentMousePosition) {
-        double dx = currentMousePosition.getX() - recentlyDraggedMousePosition.getX();   double dy = currentMousePosition.getY() - recentlyDraggedMousePosition.getY();
-        if (isNearTopLeftCorner(currentMousePosition) == true) {
-            setPosition(new Point((int)(getPosition().getX() + dx), (int)(getPosition().getY() + dy)));
-            setSize(new Point((int)(getSize().getX() - dx), (int)(getSize().getY() - dy)));
+        Point differential = new Point((int)currentMousePosition.getX() - (int)recentlyDraggedMousePosition.getX(), (int)currentMousePosition.getY() - (int)recentlyDraggedMousePosition.getY());
+        differential = rotatePoint(differential, new Point(0, 0), -1 * getRadianAngle());
+        
+        if (isNearTopLeftCorner(recentlyDraggedMousePosition) == true) {
+            setPosition(new Point((int)(getPosition().getX() + differential.getX()), (int)(getPosition().getY() + differential.getY())));
+            setSize(new Point((int)(getSize().getX() - differential.getX()), (int)(getSize().getY() - differential.getY())));
         }
-        else if (isNearTopRightCorner(currentMousePosition) == true) {
-            setPosition(new Point((int)(getPosition().getX()), (int)(getPosition().getY() + dy)));
-            setSize(new Point((int)(getSize().getX() + dx), (int)(getSize().getY() - dy)));
+        else if (isNearTopRightCorner(recentlyDraggedMousePosition) == true) {
+            setPosition(new Point((int)(getPosition().getX()), (int)(getPosition().getY() + differential.getY())));
+            setSize(new Point((int)(getSize().getX() + differential.getX()), (int)(getSize().getY() - differential.getY())));
         }
-        else if (isNearBottomLeftCorner(currentMousePosition) == true) {
-            setPosition(new Point((int)(getPosition().getX() + dx), (int)(getPosition().getY())));
-            setSize(new Point((int)(getSize().getX() - dx), (int)(getSize().getY() + dy)));
+        else if (isNearBottomLeftCorner(recentlyDraggedMousePosition) == true) {
+            setPosition(new Point((int)(getPosition().getX() + differential.getX()), (int)(getPosition().getY())));
+            setSize(new Point((int)(getSize().getX() - differential.getX()), (int)(getSize().getY() + differential.getY())));
         }
-        else if (isNearBottomRightCorner(currentMousePosition) == true) {
-            // position은 바뀌지 않음
-            setSize(new Point((int)(getSize().getX() + dx), (int)(getSize().getY() + dy)));
+        else if (isNearBottomRightCorner(recentlyDraggedMousePosition) == true) {
+            setPosition(new Point((int)(getPosition().getX()), (int)(getPosition().getY())));
+            setSize(new Point((int)(getSize().getX() + differential.getX()), (int)(getSize().getY() + differential.getY())));
         }
         else return;
     }
@@ -161,12 +168,12 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         else if (getIsFlippedVertically() == false) isFlipped |= Constant.isFlippedVerticallyFlag;
         setRadianAngle(getRadianAngle() * -1);
     }
-    /*
     public Point rotatePoint(Point targetPoint, Point centerPoint, double radianAngle) {
-        return new Point((int)targetPoint.getX() + (int)(targetPoint.getX() - centerPoint.getX()) * (int)Math.cos(radianAngle) - (int)(targetPoint.getY() - (int)centerPoint.getX()) * (int)Math.sin(radianAngle),
-                         (int)centerPoint.getY() + (int)(targetPoint.getX() - centerPoint.getX()) * (int)Math.sin(radianAngle) + (int)(targetPoint.getY() - (int)centerPoint.getY()) * (int)Math.cos(radianAngle));
+        return new Point(
+                            (int)Math.round((Math.cos(radianAngle)) * (targetPoint.getX() - centerPoint.getX())) - (int)Math.round((Math.sin(radianAngle)) * (targetPoint.getY() - centerPoint.getY())) + (int)centerPoint.getX(),
+                            (int)Math.round((Math.sin(radianAngle)) * (targetPoint.getX() - centerPoint.getX())) + (int)Math.round((Math.cos(radianAngle)) * (targetPoint.getY() - centerPoint.getY())) + (int)centerPoint.getY()
+                        );
     }
-    */
     
     /*
     ** 레이어 인식 관련 메소드
@@ -177,20 +184,52 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
         else return false;
     }
     public boolean isNearTopLeftCorner(Point mousePosition) { // 현재 마우스의 위치가 레이어의 왼쪽 위 모서리인지 판단하는 메소드
+        if  (   mousePosition.getX() > rotatePoint(getTopLeftCornerPoint(), getCentralPoint(), getRadianAngle()).getX() - Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getX() < rotatePoint(getTopLeftCornerPoint(), getCentralPoint(), getRadianAngle()).getX() + Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getY() > rotatePoint(getTopLeftCornerPoint(), getCentralPoint(), getRadianAngle()).getY() - Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getY() < rotatePoint(getTopLeftCornerPoint(), getCentralPoint(), getRadianAngle()).getY() + Constant.nearPointRecognitionRangeRadius
+            ) return true;
+        else return false;
+        /*
         if (mousePosition.getX() < getCentralPoint().getX() && mousePosition.getY() < getCentralPoint().getY()) return true;
         else return false;
+        */
     }
     public boolean isNearTopRightCorner(Point mousePosition) { // 현재 마우스의 위치가 레이어의 오른쪽 위 모서리인지 판단하는 메소드
+        if  (   mousePosition.getX() > rotatePoint(getTopRightCornerPoint(), getCentralPoint(), getRadianAngle()).getX() - Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getX() < rotatePoint(getTopRightCornerPoint(), getCentralPoint(), getRadianAngle()).getX() + Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getY() > rotatePoint(getTopRightCornerPoint(), getCentralPoint(), getRadianAngle()).getY() - Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getY() < rotatePoint(getTopRightCornerPoint(), getCentralPoint(), getRadianAngle()).getY() + Constant.nearPointRecognitionRangeRadius
+            ) return true;
+        else return false;
+        /*
         if (mousePosition.getX() >= getCentralPoint().getX() && mousePosition.getY() < getCentralPoint().getY()) return true;
         else return false;
+        */
     }
     public boolean isNearBottomLeftCorner(Point mousePosition) { // 현재 마우스의 위치가 레이어의 왼쪽 아래 모서리인지 판단하는 메소드
+        if  (   mousePosition.getX() > rotatePoint(getBottomLeftCornerPoint(), getCentralPoint(), getRadianAngle()).getX() - Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getX() < rotatePoint(getBottomLeftCornerPoint(), getCentralPoint(), getRadianAngle()).getX() + Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getY() > rotatePoint(getBottomLeftCornerPoint(), getCentralPoint(), getRadianAngle()).getY() - Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getY() < rotatePoint(getBottomLeftCornerPoint(), getCentralPoint(), getRadianAngle()).getY() + Constant.nearPointRecognitionRangeRadius
+            ) return true;
+        else return false;
+        /*
         if (mousePosition.getX() < getCentralPoint().getX() && mousePosition.getY() >= getCentralPoint().getY()) return true;
         else return false;
+        */
     }
     public boolean isNearBottomRightCorner(Point mousePosition) { // 현재 마우스의 위치가 레이어의 오른쪽 아래 모서리인지 판단하는 메소드
+        if  (   mousePosition.getX() > rotatePoint(getBottomRightCornerPoint(), getCentralPoint(), getRadianAngle()).getX() - Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getX() < rotatePoint(getBottomRightCornerPoint(), getCentralPoint(), getRadianAngle()).getX() + Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getY() > rotatePoint(getBottomRightCornerPoint(), getCentralPoint(), getRadianAngle()).getY() - Constant.nearPointRecognitionRangeRadius
+             && mousePosition.getY() < rotatePoint(getBottomRightCornerPoint(), getCentralPoint(), getRadianAngle()).getY() + Constant.nearPointRecognitionRangeRadius
+            ) return true;
+        else return false;
+        /*
         if (mousePosition.getX() >= getCentralPoint().getX() && mousePosition.getY() >= getCentralPoint().getY()) return true;
         else return false;
+        */
     }
     
     /*
@@ -204,6 +243,10 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     public String getName() { return name; }
     public Point getPosition() { return position; }
     public Point getSize() { return size; }
+    public Point getTopLeftCornerPoint() { return new Point((int)getPosition().getX(), (int)getPosition().getY()); }
+    public Point getTopRightCornerPoint() { return new Point((int)getPosition().getX() + (int)getSize().getX(), (int)getPosition().getY()); }
+    public Point getBottomLeftCornerPoint() { return new Point((int)getPosition().getX(), (int)getPosition().getY() + (int)getSize().getY()); }
+    public Point getBottomRightCornerPoint() { return new Point((int)getPosition().getX() + (int)getSize().getX(), (int)getPosition().getY() + (int)getSize().getY()); }
     //public Point getCentralPoint() { return new Point((getPosition().getX() + getSize().getX() / 2), (getPosition().getY() + getSize().getY() / 2)); } // 한 줄로 코드를 작성하면 런타임 오류 발생
     public Point getCentralPoint() {
         Point point = new Point();
@@ -231,6 +274,7 @@ abstract public class ShapeLayer implements Serializable { // 파일로 저장�
     abstract public ShapeType getRealShapeType();
     abstract public String getIconFileName();
     public Rectangle getBoundingBox() { return new Rectangle((int)position.getX(), (int)position.getY(), (int)size.getX(), (int)size.getY()); }
+    abstract public ShapeLayer getWireframe();
     
     public void setName(String name) { this.name = name; }
     public void setPosition(Point position) { this.position = position; }

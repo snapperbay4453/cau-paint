@@ -9,15 +9,12 @@ import java.awt.Dimension;
 import javax.swing.*;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 
 public class CanvasView extends JPanel implements CanvasContainerObserver{
     
     private CanvasContainer canvasContainer;
     private Variable variable;
-    
-    private MouseAdapter canvasViewMouseAdapter;
     
     /*
     ** 생성자
@@ -31,7 +28,7 @@ public class CanvasView extends JPanel implements CanvasContainerObserver{
         
         this.setPreferredSize(new Dimension((int)canvasContainer.getCanvasSize().getX(), (int)canvasContainer.getCanvasSize().getY())); // Controller를 통해 CanvasContainer에 저장된 Canvas 크기 정보를 불러옴
     }
-    
+
     /*
     ** 그래픽 관련 메소드
     */
@@ -53,12 +50,15 @@ public class CanvasView extends JPanel implements CanvasContainerObserver{
             Graphics2D g2d = (Graphics2D)g;
             AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
             g.setColor(Color.GRAY);
+            g2d.rotate(canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getRadianAngle(),
+                    canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getCentralPoint().getX(),
+                    canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getCentralPoint().getY());
             g2d.setStroke(Constant.defaultLayerSelectedLineBasicStroke);
             g.drawRect(
-                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getX() - 10, 
-                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getY() - 10,
-                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getWidth() + 20,
-                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getHeight() + 20 // 외곽선 그리기
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getX(), 
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getY(),
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getWidth(),
+                    (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getHeight() // 외곽선 그리기
             );
             g.fillOval(
                     (int)canvasContainer.getShapeLayerArrayList().get(canvasContainer.getSelectedLayerIndex()).getBoundingBox().getCenterX() - 5, 
@@ -75,9 +75,11 @@ public class CanvasView extends JPanel implements CanvasContainerObserver{
     */
     @Override
     public void updateCanvasContainer() {
+        /*
         this.setPreferredSize(new Dimension((int)canvasContainer.getCanvasSize().getX(), (int)canvasContainer.getCanvasSize().getY()));
         this.setBackground(canvasContainer.getCanvasBackgroundColor());
         this.repaint();
+        */
     }
     
 }

@@ -5,17 +5,9 @@ import caupaint.model.Enum.*;
 import caupaint.model.command.CommandFactory;
 import caupaint.view.*;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.*;
 import javax.swing.AbstractButton;
-import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
-import javax.swing.JSpinner;
-import javax.swing.JToggleButton;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 public class Controller{
     

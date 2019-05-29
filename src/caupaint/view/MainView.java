@@ -50,7 +50,7 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
         buttonArrayList = new ArrayList<AbstractButton>();
         
         createView();
-        
+
         //canvasContainer.registerCanvasContainerObserver(this); // CanvasContainerObserver를 구현하는 클래스에 옵저버로 등록
         //variable.registerVariableObserver(this); // VariableObserver를 구현하는 클래스에 옵저버로 등록        
     }
@@ -64,35 +64,13 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
             canvasViewInnerContainerPanel.revalidate(); // canvasInnerContainerPanel 새로고침
             sidebarView.refreshLayerList();
             frame.setTitle(canvasContainer.generateMainViewWindowTitle());
-            frame.repaint();
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(MainView.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-    }
-    
-    
-    
-    
-    
-    
-    
-
-    /*
-    ** 스레드 관련 메소드
-    */    
-        /*
-    public void run() {
-        
-        while(true) {
-            canvasViewInnerContainerPanel.revalidate(); // canvasInnerContainerPanel 새로고침
+            
+            canvasView.setPreferredSize(new Dimension((int)canvasContainer.getCanvasSize().getX(), (int)canvasContainer.getCanvasSize().getY()));
+            canvasView.setBackground(canvasContainer.getCanvasBackgroundColor());
+            canvasView.repaint();
             sidebarView.refreshLayerList();
-            frame.setTitle(canvasContainer.generateMainViewWindowTitle());
-            //chooseBorderColorButton.setBackground(variable.getBorderColor()); // chooseBorderColorButton의 배경색 새로고침
-            //chooseBackgroundColorButton.setBackground(variable.getBackgroundColor()); // chooseBackgroundColorButton의 배경색 새로고침
+            sidebarView.repaint();
+            
             frame.repaint();
             try {
                 Thread.sleep(50);
@@ -102,10 +80,6 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
         }
 
     }
-    */
-    
-    
-    
     
     
     /*
@@ -168,8 +142,8 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
         addButtonToToolBar("load.png", "저장된 파일로부터 캔버스를 불러옵니다.", "loadFromFile");
         addButtonToToolBar("save.png", "캔버스를 파일로 저장합니다.", "saveToFile");
                 toolBar.addSeparator();    
-        addToggleButtonToToolBarAndButtonGroup("polyline.png", "마우스를 클릭하여 폴리선을 그립니다. 같은 곳을 두 번 클릭하여 폴리선을 완성합니다.", "drawPolyline", functionAndShapeTypeButtonGroup);
-        addToggleButtonToToolBarAndButtonGroup("pen.png", "마우스를 드래그하여 자유곡선을 그립니다.", "drawPen", functionAndShapeTypeButtonGroup);
+        addToggleButtonToToolBarAndButtonGroup("polyline.png", "마우스로 클릭하여 폴리선을 그립니다. 같은 곳을 두 번 클릭하여 폴리선을 완성합니다.", "drawPolyline", functionAndShapeTypeButtonGroup);
+        addToggleButtonToToolBarAndButtonGroup("pen.png", "마우스로 드래그하여 자유곡선을 그립니다.", "drawPen", functionAndShapeTypeButtonGroup);
         addToggleButtonToToolBarAndButtonGroup("rectangle.png", "마우스로 드래그하여 직사각형을 그립니다.", "drawRectangle", functionAndShapeTypeButtonGroup);
         addToggleButtonToToolBarAndButtonGroup("ellipse.png", "마우스로 드래그하여 타원을 그립니다.", "drawEllipse", functionAndShapeTypeButtonGroup);
         addToggleButtonToToolBarAndButtonGroup("triangle.png", "마우스로 드래그하여 삼각형을 그립니다.", "drawTriangle", functionAndShapeTypeButtonGroup);
@@ -178,10 +152,10 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
         addButtonToToolBar("text.png", "텍스트를 삽입합니다.", "insertText");
         addButtonToToolBar("image.png", "이미지를 삽입합니다.", "insertImage");      
                 toolBar.addSeparator();
-        addToggleButtonToToolBarAndButtonGroup("select.png", "마우스를 클릭하여 도형을 선택합니다.", "selectShape", functionAndShapeTypeButtonGroup);      
-        addToggleButtonToToolBarAndButtonGroup("move.png", "선택한 도형의 위치를 이동합니다.", "moveShape", functionAndShapeTypeButtonGroup);      
-        addToggleButtonToToolBarAndButtonGroup("resize.png", "선택한 도형의 크기를 이동합니다.", "resizeShape", functionAndShapeTypeButtonGroup);      
-        addToggleButtonToToolBarAndButtonGroup("rotate.png", "선택한 도형을 회전시킵니다.", "rotateShape", functionAndShapeTypeButtonGroup);      
+        addToggleButtonToToolBarAndButtonGroup("select.png", "마우스로 클릭하여 도형을 선택합니다.", "selectShape", functionAndShapeTypeButtonGroup);      
+        addToggleButtonToToolBarAndButtonGroup("move.png", "마우스로 드래그하여 선택한 도형을 이동시킵니다.", "moveShape", functionAndShapeTypeButtonGroup);      
+        addToggleButtonToToolBarAndButtonGroup("resize.png", "마우스로 드래그하여 선택한 도형의 크기를 변경합니다.", "resizeShape", functionAndShapeTypeButtonGroup);      
+        addToggleButtonToToolBarAndButtonGroup("rotate.png", "마우스로 드래그하여 선택한 도형을 회전시킵니다.", "rotateShape", functionAndShapeTypeButtonGroup);      
                 toolBar.addSeparator();
         toolBar.add(new JLabel("색상 "));
         addButtonToToolBar("bgcolor.png", "외곽선 색상을 설정합니다.", "chooseBorderColor");      

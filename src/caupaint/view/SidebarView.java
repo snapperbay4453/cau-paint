@@ -5,6 +5,8 @@ import caupaint.observer.*;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 public class SidebarView extends JPanel implements CanvasContainerObserver, VariableObserver{

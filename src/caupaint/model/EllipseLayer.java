@@ -61,7 +61,7 @@ public class EllipseLayer extends ShapeLayer{
         AffineTransform resetAffineTransform = g2d.getTransform(); // 기존 아핀 변환 정보 저장
         
         g2d.setStroke(getStroke());
-        g2d.rotate(getRadianAngle(), getPosition().getX() + getSize().getX() / 2, getPosition().getY() + getSize().getY() / 2);
+        g2d.rotate(getRadianAngle(), getCentralPoint().getX(), getCentralPoint().getY());
         if (getBackgroundType() == BackgroundType.FILL) {
             g.setColor(getBackgroundColor());
             g.fillOval((int)getPosition().getX(), (int)getPosition().getY(), (int)getSize().getX(), (int)getSize().getY());
@@ -76,5 +76,10 @@ public class EllipseLayer extends ShapeLayer{
     */
     @Override public ShapeType getRealShapeType() { return ShapeType.ELLIPSE; }
     @Override public String getIconFileName() { return "ellipse.png"; } ;
-    
+    @Override public ShapeLayer getWireframe() {
+        EllipseLayer wireframe = (EllipseLayer)ShapeLayerFactory.createClone(ShapeType.ELLIPSE, this);
+        wireframe.setBackgroundType(BackgroundType.EMPTY);
+        wireframe.setBorderColor(Color.GRAY);
+        return wireframe;
+    }
 }
