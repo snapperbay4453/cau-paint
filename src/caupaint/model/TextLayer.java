@@ -71,12 +71,16 @@ public class TextLayer extends ShapeLayer{
     ** 레이어 변형 관련 메소드
     */
     @Override
-        public void flipHorizontally(){
-            JOptionPane.showMessageDialog(null, "이 레이어는 대칭 기능을 지원하지 않습니다.", "지원하지 않는 명령", JOptionPane.ERROR_MESSAGE);
+    public void scale(Point recentlyDraggedMousePosition, Point currentMousePosition, ShapeLayerAnchorType anchorType) {
+        JOptionPane.showMessageDialog(null, "이 레이어는 크기 조정 기능을 지원하지 않습니다.", "지원하지 않는 명령", JOptionPane.ERROR_MESSAGE);
+    }
+    @Override
+    public void flipHorizontally(){
+        JOptionPane.showMessageDialog(null, "이 레이어는 반전 기능을 지원하지 않습니다.", "지원하지 않는 명령", JOptionPane.ERROR_MESSAGE);
     }
     @Override
     public void flipVertically(){
-        JOptionPane.showMessageDialog(null, "이 레이어는 대칭 기능을 지원하지 않습니다.", "지원하지 않는 명령", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "이 레이어는 반전 기능을 지원하지 않습니다.", "지원하지 않는 명령", JOptionPane.ERROR_MESSAGE);
     }
     
     /*

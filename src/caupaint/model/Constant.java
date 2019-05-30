@@ -22,7 +22,9 @@ public class Constant {
     final static public BasicStroke defaultLongDashedLineBasicStroke = new BasicStroke(5.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{50, 50}, 100.0f); // 긴파선
     final static public BasicStroke defaultDashSingleDottedLineBasicStroke = new BasicStroke(5.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{40, 11, 2, 11}, 100.0f); // 1점 쇄선
     final static public BasicStroke defaultDashDoubleDottedLineBasicStroke = new BasicStroke(5.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{40, 10, 2, 10, 2, 10}, 110.0f); // 2점 쇄선
-    final static public int nearPointRecognitionRangeRadius = 10; // 마우스가 특정 좌표의 근처에 있는지 판단하기 위한 반지름
+    final static public BasicStroke anchorStroke = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f); // 앵커 draw 시 사용하는 선
+    final static public int nearPointRecognitionRangeRadius = 5; // 마우스가 특정 좌표의 근처에 있는지 판단하기 위한 반지름
+    final static public int upperTopMargin = 50; // UPPER_TOP과 TOP 간의 y좌표 차이
     
     /*
     ** Canvas 관련 상수
@@ -38,6 +40,7 @@ public class Constant {
     final static public ShapeType defaultShapeType = ShapeType.RECTANGLE;
     final static public BackgroundType defaultBackgroundType = BackgroundType.EMPTY;
     final static public MouseActionType defaultMouseActionType = MouseActionType.RELEASED;
+    final static public ShapeLayerAnchorType defaultShapeLayerAnchorType = ShapeLayerAnchorType.CENTER;
     final static public Color defaultBorderColor = Color.BLACK;
     final static public Color defaultBackgroundColor = Color.WHITE;
     final static public BasicStroke defaultStroke = defaultSolidLineBasicStroke;
@@ -60,6 +63,8 @@ public class Constant {
     */
     final static public Dimension defaultLayerListScrollPaneSize = new Dimension(300, 1000);
     final static public Dimension defaultToolBarButtonSize = new Dimension(28, 28);
+    final static public Dimension defaultToggleSelectedLayerVisibleButtonSize = new Dimension(14, 14);
+    final static public Dimension defaultLayerListLabelSize = new Dimension(165, 20);
     final static public Dimension defaultToolBarButtonImageSize = new Dimension(20, 20);
     
 }

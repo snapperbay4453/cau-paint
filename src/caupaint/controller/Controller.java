@@ -79,40 +79,48 @@ public class Controller{
     ** Canvas 이벤트 리스너 관련 메소드
     */
     class CanvasViewMouseListener extends MouseAdapter{
+        public void mouseClicked(MouseEvent event) {
+            variable.setRecentlyPressedMousePosition(event.getPoint());
+            variable.setRecentlyDraggedMousePosition(event.getPoint());
+            CommandFactory.create("selectLayerByMousePoint", canvasContainer, variable, event, null).execute();
+        }
         public void mousePressed(MouseEvent event) {
             variable.setMouseActionType(MouseActionType.PRESSED);
             variable.setRecentlyPressedMousePosition(event.getPoint());
             variable.setRecentlyDraggedMousePosition(event.getPoint());
             switch(variable.getFunctionType()) {
-                case SELECT:    CommandFactory.create("selectLayerByMousePoint", canvasContainer, variable, event, null).execute();  break;
-                case DRAW:      CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                case MOVE:      CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                case RESIZE:    CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                case ROTATE:    CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                default:        break;
+                case SELECT:            CommandFactory.create("selectLayerByMousePoint", canvasContainer, variable, event, null).execute();  break;
+                case DRAW:              CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case MOVE:              CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case RESIZE:            CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case ROTATE:            CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case FREE_TRANSFORM:    CommandFactory.create("freeTransformShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                default:                break;
             }
         }
         public void mouseDragged(MouseEvent event) {
             variable.setMouseActionType(MouseActionType.DRAGGED);
             switch(variable.getFunctionType()) {
-                case SELECT:    break;
-                case DRAW:      CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                case MOVE:      CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                case RESIZE:    CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                case ROTATE:    CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                default:        break;
+                case SELECT:            break;
+                case DRAW:              CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case MOVE:              CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case RESIZE:            CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case ROTATE:            CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case FREE_TRANSFORM:    CommandFactory.create("freeTransformShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                default:                break;
             }
             variable.setRecentlyDraggedMousePosition(event.getPoint());
         }
         public void mouseReleased(MouseEvent event) {
             variable.setMouseActionType(MouseActionType.RELEASED);
             switch(variable.getFunctionType()) {
-                case SELECT:    break;
-                case DRAW:      CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                case MOVE:      CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                case RESIZE:    CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                case ROTATE:    CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
-                default:        break;
+                case SELECT:            break;
+                case DRAW:              CommandFactory.create("createNewShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case MOVE:              CommandFactory.create("moveShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case RESIZE:            CommandFactory.create("resizeShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case ROTATE:            CommandFactory.create("rotateShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                case FREE_TRANSFORM:    CommandFactory.create("freeTransformShapeLayer", canvasContainer, variable, event, null).execute();  break;
+                default:                break;
             }
         }
     }

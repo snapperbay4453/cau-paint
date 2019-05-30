@@ -32,6 +32,9 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
     private ButtonGroup functionAndShapeTypeButtonGroup;
     private ButtonGroup backgroundTypeButtonGroup;
     
+    private JButton chooseBorderColorButton;
+    private JButton chooseBackgroundColorButton;
+    
     private JComboBox strokeTypeComboBox;
     private JSpinner strokeWidthSpinner;
     private JComboBox fontNameComboBox;
@@ -64,6 +67,8 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
             canvasViewInnerContainerPanel.revalidate(); // canvasInnerContainerPanel 새로고침
             sidebarView.refreshLayerList();
             frame.setTitle(canvasContainer.generateMainViewWindowTitle());
+            chooseBorderColorButton.setBackground(variable.getBorderColor());
+            chooseBackgroundColorButton.setBackground(variable.getBackgroundColor());
             
             canvasView.setPreferredSize(new Dimension((int)canvasContainer.getCanvasSize().getX(), (int)canvasContainer.getCanvasSize().getY()));
             canvasView.setBackground(canvasContainer.getCanvasBackgroundColor());
@@ -129,8 +134,9 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
         addMenuItemToMenu("종료", "checkExit", fileMenu);
         addMenuItemToMenu("캔버스 크기 설정", "setCanvasSize", canvasMenu);
         addMenuItemToMenu("캔버스 배경색 설정", "setCanvasBackgroundColor", canvasMenu);
-        addMenuItemToMenu("레이어 가로 대칭", "flipLayerHorizontally", layerMenu);
-        addMenuItemToMenu("레이어 세로 대칭", "flipLayerVertically", layerMenu);
+        //addMenuItemToMenu("자유 변형", "freeTransformShape", layerMenu);
+        addMenuItemToMenu("레이어 가로 반전", "flipLayerHorizontally", layerMenu);
+        addMenuItemToMenu("레이어 세로 반전", "flipLayerVertically", layerMenu);
     }
     private void createToolBar() { // 툴바를 생성하고 리스너에 등록함
         toolBar = new JToolBar();
@@ -158,8 +164,8 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
         addToggleButtonToToolBarAndButtonGroup("rotate.png", "마우스로 드래그하여 선택한 도형을 회전시킵니다.", "rotateShape", functionAndShapeTypeButtonGroup);      
                 toolBar.addSeparator();
         toolBar.add(new JLabel("색상 "));
-        addButtonToToolBar("bgcolor.png", "외곽선 색상을 설정합니다.", "chooseBorderColor");      
-        addButtonToToolBar("bgcolor.png", "배경 색상을 설정합니다.", "chooseBackgroundColor");      
+        chooseBorderColorButton = addButtonToToolBar("bgcolor.png", "외곽선 색상을 설정합니다.", "chooseBorderColor");      
+        chooseBackgroundColorButton = addButtonToToolBar("bgcolor.png", "배경 색상을 설정합니다.", "chooseBackgroundColor");      
                 toolBar.addSeparator();
         addToggleButtonToToolBarAndButtonGroup("background_empty.png", "도형의 배경이 비어있도록 설정합니다.", "emptyBackgroundType", backgroundTypeButtonGroup);      
         addToggleButtonToToolBarAndButtonGroup("background_fill.png", "도형의 배경이 선택한 색상으로 채워지도록 설정합니다.", "fillBackgroundType", backgroundTypeButtonGroup);      
@@ -216,22 +222,24 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
     }
     
     
-    private void addMenuItemToMenu (String text, String actionCommand, JMenu menu) {
+    private JMenuItem addMenuItemToMenu (String text, String actionCommand, JMenu menu) {
         JMenuItem menuItem = new JMenuItem(text);
         menuItem.setActionCommand(actionCommand);
         menu.add(menuItem);
         menuItemArrayList.add(menuItem);
         // actionListener로의 등록은 controller에서 함
+        return menuItem;
     }
-    private void addButtonToToolBar (String iconPath, String toolTipText, String actionCommand) {
+    private JButton addButtonToToolBar (String iconPath, String toolTipText, String actionCommand) {
         JButton button = new JButton(new ImageIcon(Constant.defaultIconDirectoryPath + iconPath));
         button.setToolTipText(toolTipText);
         button.setActionCommand(actionCommand);
         toolBar.add(button);
         buttonArrayList.add(button);
         // actionListener로의 등록은 controller에서 함
+        return button;
     }
-    private void addToggleButtonToToolBarAndButtonGroup (String iconPath, String toolTipText, String actionCommand, ButtonGroup buttonGroup) {
+    private JToggleButton addToggleButtonToToolBarAndButtonGroup (String iconPath, String toolTipText, String actionCommand, ButtonGroup buttonGroup) {
         JToggleButton toggleButton = new JToggleButton(new ImageIcon(Constant.defaultIconDirectoryPath + iconPath));
         toggleButton.setToolTipText(toolTipText);
         toggleButton.setActionCommand(actionCommand);
@@ -239,6 +247,7 @@ public class MainView implements Runnable, CanvasContainerObserver, VariableObse
         if (buttonGroup != null) buttonGroup.add(toggleButton);
         buttonArrayList.add(toggleButton);
         // actionListener로의 등록은 controller에서 함
+        return toggleButton;
     }
     
     /*

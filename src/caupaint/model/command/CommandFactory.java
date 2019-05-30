@@ -32,6 +32,7 @@ public class CommandFactory {
             case "moveShape": return new SetFunctionTypeCommand(variable, FunctionType.MOVE);
             case "resizeShape": return new SetFunctionTypeCommand(variable, FunctionType.RESIZE);
             case "rotateShape": return new SetFunctionTypeCommand(variable, FunctionType.ROTATE);
+            case "freeTransformShape": return new SetFunctionTypeCommand(variable, FunctionType.FREE_TRANSFORM);
             
             case "chooseBorderColor": return new ChooseBorderColorCommand(variable);
             case "chooseBackgroundColor": return new ChooseBackgroundColorCommand(variable);
@@ -57,10 +58,12 @@ public class CommandFactory {
             case "createNewShapeLayer": return new CreateShapeLayerCommand(canvasContainer, variable, ((MouseEvent)event).getPoint());
             case "selectLayerByMousePoint": return new SelectLayerByMousePointCommand(canvasContainer, (MouseEvent)event);
             case "moveShapeLayer": return new MoveShapeLayerCommand(canvasContainer, canvasContainer.getSelectedLayerIndex(), variable.getMouseActionType(), variable.getRecentlyDraggedMousePosition(), ((MouseEvent)event).getPoint());
-            case "resizeShapeLayer": return new ResizeShapeLayerCommand(canvasContainer, canvasContainer.getSelectedLayerIndex(), variable.getMouseActionType(), variable.getRecentlyDraggedMousePosition(), ((MouseEvent)event).getPoint());
+            case "resizeShapeLayer": return new ResizeShapeLayerCommand(canvasContainer, canvasContainer.getSelectedLayerIndex(), variable.getMouseActionType(), variable.getRecentlyPressedMousePosition(), variable.getRecentlyDraggedMousePosition(), ((MouseEvent)event).getPoint());
             case "rotateShapeLayer": return new RotateShapeLayerCommand(canvasContainer, canvasContainer.getSelectedLayerIndex(), variable.getMouseActionType(), variable.getRecentlyDraggedMousePosition(), ((MouseEvent)event).getPoint());
             case "flipLayerHorizontally": return new FlipLayerHorizontallyCommand(canvasContainer, canvasContainer.getSelectedLayerIndex());
             case "flipLayerVertically": return new FlipLayerVerticallyCommand(canvasContainer, canvasContainer.getSelectedLayerIndex());
+            case "freeTransformShapeLayer": return new FreeTransformShapeLayerCommand(canvasContainer, canvasContainer.getSelectedLayerIndex(), variable.getMouseActionType(), variable.getRecentlyPressedMousePosition(), variable.getRecentlyDraggedMousePosition(), ((MouseEvent)event).getPoint());
+            
             
             case "checkExit": return new CheckExitCommand(canvasContainer);
             

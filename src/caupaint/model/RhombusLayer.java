@@ -108,17 +108,17 @@ public class RhombusLayer extends ShapeLayer{
         g2d.setStroke(getStroke());
         g2d.rotate(getRadianAngle(), getCentralPoint().getX(), getCentralPoint().getY());
         
-        // drawPen 메소드에서 Pen을 그리기 위해 필요한 배열을 생성함
+        // drawRhombus 메소드에서 Rhombus를 그리기 위해 필요한 배열을 생성함
         int[] xPoints = new int[vertexArrayList.size()];
         for(int i = 0; i < vertexArrayList.size(); i++) {
             if (getIsFinishedInitializing() == true && getIsFlippedHorizontally() == true) xPoints[i] = (int)(getSize().getX() - (vertexArrayList.get(i).getX()) * (getSize().getX() / originalSize.getX()) + getPosition().getX());
-            else if (getIsFinishedInitializing() == true) xPoints[i] = (int)((vertexArrayList.get(i).getX()) * (getSize().getX() / originalSize.getX()) + getPosition().getX());
+            else if (getIsFinishedInitializing() == true && getIsFlippedHorizontally() == false) xPoints[i] = (int)((vertexArrayList.get(i).getX()) * (getSize().getX() / originalSize.getX()) + getPosition().getX());
             else xPoints[i] = (int)(vertexArrayList.get(i).getX());
         }
         int[] yPoints = new int[vertexArrayList.size()];
         for(int i = 0; i < vertexArrayList.size(); i++) {
             if (getIsFinishedInitializing() == true && getIsFlippedVertically() == true) yPoints[i] = (int)(getSize().getY() - (vertexArrayList.get(i).getY()) * (getSize().getY() / originalSize.getY()) + getPosition().getY());
-            else if (getIsFinishedInitializing() == true) yPoints[i] = (int)((vertexArrayList.get(i).getY()) * (getSize().getY() / originalSize.getY()) + getPosition().getY());
+            else if (getIsFinishedInitializing() == true && getIsFlippedVertically() == false) yPoints[i] = (int)((vertexArrayList.get(i).getY()) * (getSize().getY() / originalSize.getY()) + getPosition().getY());
             else yPoints[i] = (int)(vertexArrayList.get(i).getY());
         }
 

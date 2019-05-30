@@ -23,6 +23,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     private Point canvasSize; // 캔버스의 너비와 높이를 저장
     private Color canvasBackgroundColor; // 캔버스의 배경색을 저장
     private int selectedLayerIndex; // 현재 선택된 레이어의 인덱스
+    transient private ShapeLayerAnchorType shapeLayerAnchorType; // 현재 선택된 레이어의 앵커 타입
     
     transient private String filePath; // 불러온 파일의 절대 위치
     transient private ShapeLayer tempShapeLayer; // 레이어를 생성 또는 변형 시 임시로 정보를 저장하는 ShapeLayer
@@ -36,6 +37,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         canvasSize = Constant.defaultCanvasSize; // 캔버스의 크기
         canvasBackgroundColor = Constant.defaultCanvasBackgroundColor; // 캔버스의 배경색
         selectedLayerIndex = Constant.defaultSelectedLayerIndex;
+        shapeLayerAnchorType = Constant.defaultShapeLayerAnchorType;
         filePath = Constant.defaultFilePath;
     }
     
@@ -44,9 +46,15 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     ** Canvas 관련 메소드
     */
     public void createNewCanvas() { // 캔버스와 레이어를 모두 초기화
-        deleteAllLayers();
-        setFilePath(Constant.defaultFilePath);
-        clearCanvas();
+        if (JOptionPane.showConfirmDialog(null, "캔버스를 초기화합니다.", "캔버스 초기화", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+            shapeLayerArrayList.clear();
+            setSelectedLayerIndex(-1);
+            notifyCanvasContainerObservers();
+            setFilePath(Constant.defaultFilePath);
+            canvasSize = Constant.defaultCanvasSize;
+            canvasBackgroundColor = Constant.defaultCanvasBackgroundColor;
+            notifyCanvasContainerObservers();
+        }
     }
     
     /*
@@ -57,7 +65,10 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     }
     public int selectLayerByMousePoint(Point mousePoint) { // 마우스의 위치로 레이어를 선택하는 메소드
         for(int i = shapeLayerArrayList.size() - 1; i >= 0; i--) { // shapeLayerArrayList를 역순으로, 즉 가장 최근의 레이어부터 순회함
-            if (shapeLayerArrayList.get(i).isOnLayer(mousePoint) == true) return i;
+            if (shapeLayerArrayList.get(i).isOnLayer(mousePoint) == true) {
+                setSelectedLayerIndex(i);
+                return i;
+            }
         }
         // 어떤 레이어도 선택되지 않았을 경우
         setSelectedLayerIndex(-1);
@@ -114,6 +125,8 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             if (index == -1) throw new ArrayIndexOutOfBoundsException(); // 선택된 도형이 없을 경우 예외 호출
             if (JOptionPane.showConfirmDialog(null, "현재 레이어를 삭제합니다.", "도형 삭제", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                 shapeLayerArrayList.remove(index);
+                if (shapeLayerArrayList.size() == 0) setSelectedLayerIndex(-1);
+                else setSelectedLayerIndex(index - 1);
                 notifyCanvasContainerObservers();
             }
         } catch (ArrayIndexOutOfBoundsException exp) {
@@ -127,6 +140,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         }
         if (JOptionPane.showConfirmDialog(null, "모든 레이어를 삭제합니다.", "모든 도형 삭제", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
             shapeLayerArrayList.clear();
+            setSelectedLayerIndex(-1);
             notifyCanvasContainerObservers();
         }
     }
@@ -150,6 +164,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             tempShapeLayer.setBackgroundType(backgroundType);
             addLayerToArrayList(tempShapeLayer);
             tempShapeLayer = null;
+            setSelectedLayerIndex(shapeLayerArrayList.size() - 1);
         }
         notifyCanvasContainerObservers();
     }
@@ -159,13 +174,14 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             name = JOptionPane.showInputDialog(null, "텍스트를 입력하세요.", "새 텍스트");
             if (name == null) throw new IllegalArgumentException();
             shapeLayerArrayList.add(ShapeLayerFactory.createBuilder(ShapeType.TEXT).setName(name).setBorderColor(borderColor).setBackgroundColor(backgroundColor).setStroke(stroke).setBackgroundType(backgroundType).setFont(font).build());
+            setSelectedLayerIndex(shapeLayerArrayList.size() - 1);
         } catch (IllegalArgumentException Creexp){}    // 취소 버튼을 누른 경우 catch문 발동
     }
     public void insertImageLayer(Color backgroundColor, BasicStroke stroke, BackgroundType backgroundType) {
         String imagePath = getImageFilePathToOpen();
         if (imagePath == null) return;
         shapeLayerArrayList.add(ShapeLayerFactory.createBuilder(ShapeType.IMAGE).setImagePath(imagePath).setBackgroundColor(backgroundColor).setStroke(stroke).setBackgroundType(backgroundType).build());
-        //shapeLayerArrayList.add(new ImageLayer(new Point(0, 0), new Point(0, 0), imagePath));
+        setSelectedLayerIndex(shapeLayerArrayList.size() - 1);
         notifyCanvasContainerObservers();
     }
     
@@ -207,13 +223,17 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     ** ShapeLayer 도형 변형 관련 메소드
     */
     public void moveLayer(int index, MouseActionType mouseActionType, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException {
+        if (index == -1) {
+            selectLayerByMousePoint(currentMousePosition);
+            return;
+        } 
         try {
             switch(mouseActionType) {
                 case PRESSED:
                     tempShapeLayer = shapeLayerArrayList.get(index).getWireframe();
                     break;
                 case DRAGGED:
-                        tempShapeLayer.translate(recentlyDraggedMousePosition, currentMousePosition);
+                    tempShapeLayer.translate(recentlyDraggedMousePosition, currentMousePosition);
                     break;
                 case RELEASED:
                     shapeLayerArrayList.get(index).setPosition(tempShapeLayer.getPosition());
@@ -224,17 +244,25 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             }
             notifyCanvasContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
-            JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            //JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        } catch (NullPointerException exp) {
+            //JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void resizeLayer(int index, MouseActionType mouseActionType, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException {
+    public void resizeLayer(int index, MouseActionType mouseActionType, Point recentlyPressedMousePosition, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException {
+        if (index == -1) {
+            selectLayerByMousePoint(currentMousePosition);
+            return;
+        } 
         try {
             switch(mouseActionType) {
                 case PRESSED:
                     tempShapeLayer = shapeLayerArrayList.get(index).getWireframe();
+                    setShapeLayerAnchorType(tempShapeLayer.getAnchorType(recentlyDraggedMousePosition));
                     break;
                 case DRAGGED:
-                        tempShapeLayer.scale(recentlyDraggedMousePosition, currentMousePosition);
+                    tempShapeLayer.scale(recentlyDraggedMousePosition, currentMousePosition, getShapeLayerAnchorType());
+                        //tempShapeLayer.scale(shapeLayerArrayList.get(index).getPosition(), shapeLayerArrayList.get(index).getSize(), recentlyPressedMousePosition, currentMousePosition, getShapeLayerAnchorType());
                     break;
                 case RELEASED:
                     shapeLayerArrayList.get(index).setPosition(tempShapeLayer.getPosition());
@@ -246,10 +274,16 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             }
             notifyCanvasContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
-            JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            //JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        } catch (NullPointerException exp) {
+            //JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
     public void rotateLayer(int index, MouseActionType mouseActionType, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException {
+        if (index == -1) {
+            selectLayerByMousePoint(currentMousePosition);
+            return;
+        } 
         try {
             switch(mouseActionType) {
                 case PRESSED:
@@ -267,7 +301,9 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             }
             notifyCanvasContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
-            JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            //JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        } catch (NullPointerException exp) {
+            //JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
     public void flipLayerHorizontally(int index) throws IndexOutOfBoundsException{
@@ -286,6 +322,22 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         notifyCanvasContainerObservers();
         } catch (IndexOutOfBoundsException exp) {
             JOptionPane.showMessageDialog(null, "레이어가 선택되지 않았습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public void freeTransformLayer(int index, MouseActionType mouseActionType, Point recentlyPressedMousePosition, Point recentlyDraggedMousePosition, Point currentMousePosition) throws IndexOutOfBoundsException {
+        if (mouseActionType == MouseActionType.PRESSED) tempShapeLayer = shapeLayerArrayList.get(index).getWireframe();
+        switch(tempShapeLayer.getAnchorType(recentlyDraggedMousePosition)) {
+            case CENTER:        moveLayer(index, mouseActionType, recentlyDraggedMousePosition, currentMousePosition);   break;
+            case TOP:
+            case TOP_RIGHT:
+            case RIGHT:
+            case BOTTOM_RIGHT:
+            case BOTTOM:
+            case BOTTOM_LEFT:
+            case LEFT:
+            case TOP_LEFT:      resizeLayer(index, mouseActionType, recentlyPressedMousePosition, recentlyDraggedMousePosition, currentMousePosition);    break;
+            case UPPER_TOP:     rotateLayer(index, mouseActionType, recentlyDraggedMousePosition, currentMousePosition);   break;
+            default:    break;
         }
     }
 
@@ -312,11 +364,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         setCanvasBackgroundColor(chooser.showDialog(null,"Color",Color.YELLOW));
         notifyCanvasContainerObservers();
     }
-    public void clearCanvas() {
-        canvasSize = Constant.defaultCanvasSize;
-        canvasBackgroundColor = Constant.defaultCanvasBackgroundColor;
-        notifyCanvasContainerObservers();
-    }
+
     
     
     /*
@@ -379,10 +427,6 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
         if(fileChooser.showSaveDialog(null) == 0) return fileChooser.getSelectedFile().getPath(); // 대화상자를 불러온 후 파일 저장 위치 확인에 성공한 경우, 그 절대 주소를 반환함
         else return null; // 대화상자를 불러온 후 파일 저장 위치 확인에 실패한 경우
     }
-    public String generateMainViewWindowTitle(){ // 파일 주소 존재 여부에 따라 프로그램의 제목 표시줄 내용을 결정
-        if (getFilePath() == null) return ("제목 없음 - CauPaint");
-        else return(getFilePath() + " - CauPaint");
-    }
     public void saveLayersToFile(String filePath) throws IOException {
         if (filePath == null) {
             if (getFilePath() == null) return; // 매개변수와 variable 모두 파일 경로가 지정되어 있지 않은 경우
@@ -401,7 +445,10 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
             exp.printStackTrace();
         }
     }
-    
+    public String generateMainViewWindowTitle(){ // 파일 주소 존재 여부에 따라 프로그램의 제목 표시줄 내용을 결정
+        if (getFilePath() == null) return ("제목 없음 - CauPaint");
+        else return(getFilePath() + " - CauPaint");
+    }
     
     
     /*
@@ -418,6 +465,7 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     public Point getCanvasSize() { return canvasSize; }
     public Color getCanvasBackgroundColor() { return canvasBackgroundColor; }
     public int getSelectedLayerIndex() { return selectedLayerIndex; }
+    public ShapeLayerAnchorType getShapeLayerAnchorType() { return shapeLayerAnchorType; }
     public String getFilePath() { return filePath; }
     public ShapeLayer getTempShapeLayer() { return tempShapeLayer; }
     
@@ -426,13 +474,14 @@ public class CanvasContainer implements Serializable, CanvasContainerSubject{
     public void setCanvasSize(Point size) { this.canvasSize = size; notifyCanvasContainerObservers(); }
     public void setCanvasBackgroundColor(Color color) { this.canvasBackgroundColor = color; notifyCanvasContainerObservers(); }
     public void setSelectedLayerIndex(int index) { selectedLayerIndex = index; notifyCanvasContainerObservers(); }
+    public void setShapeLayerAnchorType(ShapeLayerAnchorType shapeLayerAnchorType) { this.shapeLayerAnchorType = shapeLayerAnchorType; notifyCanvasContainerObservers(); }
     public void setFilePath(String filePath) { this.filePath = filePath; notifyCanvasContainerObservers(); }
     
     /*
     ** 옵저버 관련 메소드 - 사용하지 않음
     */
-    public void registerCanvasContainerObserver(CanvasContainerObserver o) { CanvasContainerObserverArrayList.add(o); }
-    public void removeCanvasContainerObserver(CanvasContainerObserver o) { CanvasContainerObserverArrayList.remove(o); }
-    public void notifyCanvasContainerObservers() { for (CanvasContainerObserver o : CanvasContainerObserverArrayList) { o.updateCanvasContainer(); } }
+    public void registerCanvasContainerObserver(CanvasContainerObserver o) { /*CanvasContainerObserverArrayList.add(o);*/ }
+    public void removeCanvasContainerObserver(CanvasContainerObserver o) { /*CanvasContainerObserverArrayList.remove(o);*/ }
+    public void notifyCanvasContainerObservers() { /*for (CanvasContainerObserver o : CanvasContainerObserverArrayList) { o.updateCanvasContainer(); }*/ }
     
 }

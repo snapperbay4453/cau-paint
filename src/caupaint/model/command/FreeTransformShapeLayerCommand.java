@@ -5,7 +5,7 @@ import caupaint.model.*;
 import caupaint.model.Enum.*;
 import java.awt.Point;
 
-public class ResizeShapeLayerCommand implements Command {
+public class FreeTransformShapeLayerCommand implements Command {
     
     CanvasContainer canvasContainer;
     int index;
@@ -14,7 +14,7 @@ public class ResizeShapeLayerCommand implements Command {
     Point recentlyDraggedMousePosition;
     Point currentMousePosition;
     
-    public ResizeShapeLayerCommand(CanvasContainer canvasContainer, int index, MouseActionType mouseActionType, Point recentlyPressedMousePosition, Point recentlyDraggedMousePosition, Point currentMousePosition) {
+    public FreeTransformShapeLayerCommand(CanvasContainer canvasContainer, int index, MouseActionType mouseActionType, Point recentlyPressedMousePosition, Point recentlyDraggedMousePosition, Point currentMousePosition) {
         this.canvasContainer = canvasContainer;
         this.index = index;
         this.mouseActionType = mouseActionType;
@@ -24,7 +24,7 @@ public class ResizeShapeLayerCommand implements Command {
     }
     
     public void execute() {
-        canvasContainer.resizeLayer(index, mouseActionType, recentlyPressedMousePosition, recentlyDraggedMousePosition, currentMousePosition);
+        canvasContainer.freeTransformLayer(index, mouseActionType, recentlyPressedMousePosition, recentlyDraggedMousePosition, currentMousePosition);
     }
     
 }

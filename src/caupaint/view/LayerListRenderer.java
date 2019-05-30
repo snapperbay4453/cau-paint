@@ -42,22 +42,22 @@ public class LayerListRenderer extends JPanel implements ListCellRenderer<ShapeL
     public Component getListCellRendererComponent(JList<? extends ShapeLayer> list, ShapeLayer shapeLayer, int index, boolean isSelected, boolean cellHasFocus) {
         
         // 레이어 숨김 여부 표시
-        if (shapeLayer.getIsVisible() == false) isVisibleIconLabel.setIcon(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "invisible.png").getImage().getScaledInstance((int)new Dimension(14, 14).getWidth(), (int)new Dimension(14, 14).getHeight(), java.awt.Image.SCALE_SMOOTH)));
-        else isVisibleIconLabel.setIcon(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "null.png").getImage().getScaledInstance((int)new Dimension(14, 14).getWidth(), (int)new Dimension(14, 14).getHeight(), java.awt.Image.SCALE_SMOOTH)));
+        if (shapeLayer.getIsVisible() == false) isVisibleIconLabel.setIcon(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "invisible.png").getImage().getScaledInstance((int)Constant.defaultToggleSelectedLayerVisibleButtonSize.getWidth(), (int)Constant.defaultToggleSelectedLayerVisibleButtonSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
+        else isVisibleIconLabel.setIcon(new ImageIcon(new ImageIcon(Constant.defaultIconDirectoryPath + "null.png").getImage().getScaledInstance((int)Constant.defaultToggleSelectedLayerVisibleButtonSize.getWidth(), (int)Constant.defaultToggleSelectedLayerVisibleButtonSize.getHeight(), java.awt.Image.SCALE_SMOOTH)));
         
         indexLabel.setText(Integer.toString(index));
         shapeIconLabel.setIcon(new ImageIcon(Constant.defaultIconDirectoryPath + shapeLayer.getIconFileName()));
         
         nameLabel.setText(shapeLayer.getName());
-        nameLabel.setMaximumSize(new Dimension(190, 20));
-        nameLabel.setPreferredSize(new Dimension(190, 20));
+        nameLabel.setMaximumSize(Constant.defaultLayerListLabelSize);
+        nameLabel.setPreferredSize(Constant.defaultLayerListLabelSize);
         if (shapeLayer instanceof TextLayer) sizeLabel.setText(((TextLayer)shapeLayer).getFontName() + ", " + ((TextLayer)shapeLayer).getFontSize() + "pt"); // 텍스트일 경우 폰트 크기를 표시
         else  sizeLabel.setText((int)shapeLayer.getBoundingBox().getSize().getWidth() + " x " + (int)shapeLayer.getBoundingBox().getSize().getHeight());
-        sizeLabel.setMaximumSize(new Dimension(190, 20));
-        sizeLabel.setPreferredSize(new Dimension(190, 20));
+        sizeLabel.setMaximumSize(Constant.defaultLayerListLabelSize);
+        sizeLabel.setPreferredSize(Constant.defaultLayerListLabelSize);
         
         
-        setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5)); // 여백 (10, 5)
         if(index == canvasContainer.getSelectedLayerIndex()) setBackground(list.getSelectionBackground()); // 선택된 리스트를 강조 표시함
         else setBackground(list.getBackground());
         

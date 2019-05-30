@@ -32,8 +32,8 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
         this.canvasContainer = canvasContainer;
         this.variable = variable;
         
-        canvasContainer.registerCanvasContainerObserver(this); // CanvasContainerObserver를 구현하는 클래스에 옵저버로 등록
-        variable.registerVariableObserver(this); // VariableObserver를 구현하는 클래스에 옵저버로 등록  
+        //canvasContainer.registerCanvasContainerObserver(this); // CanvasContainerObserver를 구현하는 클래스에 옵저버로 등록
+        //variable.registerVariableObserver(this); // VariableObserver를 구현하는 클래스에 옵저버로 등록  
         
         layerListLabel = new JLabel();
         LayerListScrollPane = new ScrollPane();
@@ -47,13 +47,10 @@ public class SidebarView extends JPanel implements CanvasContainerObserver, Vari
         refreshLayerList(); // layerList에 Vector 형식 데이터 입력
         LayerListScrollPane.setMinimumSize(Constant.defaultLayerListScrollPaneSize);
         LayerListScrollPane.setPreferredSize(Constant.defaultLayerListScrollPaneSize); // LayerList의 크기 지정
-
         layerList.setCellRenderer(new LayerListRenderer(canvasContainer));
         
         createToolBar(); // 툴바에 아이콘을 추가하고 리스너에 등록함
-        
         LayerListScrollPane.add(layerList);
-        
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         // 그리드백에 배치함
