@@ -9,7 +9,7 @@ public class Constant {
     /*
     ** 기본 상수
     */
-    final static public String defaultIconDirectoryPath = "src/caupaint/source/icon/"; // 아이콘이 저장되는 디렉토리
+    final static public String defaultIconDirectoryPath = "./icon/"; // 아이콘이 저장되는 디렉토리
     final static public String defaultFilenameExtension = ".caupaint"; // 저장되는 파일이 가지는 확장자
     final static public String defaultCopiedFileSuffix = " - 사본";
     
